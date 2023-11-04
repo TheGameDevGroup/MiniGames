@@ -1,8 +1,20 @@
 name: Feature request
 description: Suggest an idea for this project
-labels: enhancement
+labels: [enhancement]
 
 body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Affected Project
+      description: Which project is this feature for
+      multiple: true
+      options:
+        - Connect4
+        - UI
+        - Utilities
+        - Other (please specify)
+
   - type: textarea
     id: feature-problem
     attributes:
