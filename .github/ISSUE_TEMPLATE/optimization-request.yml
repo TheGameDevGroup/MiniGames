@@ -1,0 +1,52 @@
+name: Optimization request
+description: Recommend a better (or more efficient) way of doing something
+labels: optimization
+
+body:
+  - type: textarea
+    id: current
+    attributes:
+      label: What is currently being done?
+      description: Describe what the code does that should change
+    validations:
+      required: true
+
+  - type: textarea
+    id: problems
+    attributes:
+      label: Why should this change?
+      description: List problems with the current method
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: How can this be improved?
+      description: Clearly describe the proposed improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why should the proposed way be used instead?
+      description: Demonstrate how the new way is better with benchmarks, articles, etc.
+    validations:
+      required: false
+
+  - type: textarea
+    id: issues
+    attributes:
+      label: What are potential issues with the proposed improvements?
+      description: Play devil's advocate
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here
+    validations:
+      required: false
