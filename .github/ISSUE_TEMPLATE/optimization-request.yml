@@ -1,8 +1,20 @@
 name: Optimization request
 description: Recommend a better (or more efficient) way of doing something
-labels: optimization
+labels: [optimization]
 
 body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Affected Project
+      description: Which project is being optimized
+      multiple: true
+      options:
+        - Connect4
+        - UI
+        - Utilities
+        - Other (please specify)
+
   - type: textarea
     id: current
     attributes:
