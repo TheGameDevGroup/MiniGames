@@ -1,8 +1,20 @@
 name: Bug report
 description: Create a report to help us improve
-labels: bug
+labels: [bug]
 
 body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Affected Project
+      description: Which project is this bug in
+      multiple: true
+      options:
+        - Connect4
+        - UI
+        - Utilities
+        - Other
+
   - type: textarea
     id: bug-description
     attributes:

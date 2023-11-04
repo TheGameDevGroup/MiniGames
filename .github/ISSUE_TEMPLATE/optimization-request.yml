@@ -1,6 +1,6 @@
 name: Optimization request
 description: Recommend a better (or more efficient) way of doing something
-labels: optimization
+labels: [optimization]
 
 body:
   - type: textarea
