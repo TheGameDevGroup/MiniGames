@@ -13,7 +13,7 @@ body:
         - Connect4
         - UI
         - Utilities
-        - Other
+        - Other (please specify)
 
   - type: textarea
     id: bug-description
