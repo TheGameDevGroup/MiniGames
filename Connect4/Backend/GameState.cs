@@ -1,26 +1,5 @@
-﻿using System.Collections.Generic;
-
-namespace Connect4.Backend
+﻿namespace Connect4.Backend
 {
-	internal struct Group
-	{
-		public int width = 1;
-		public int height = 1;
-		public int rdiag = 1;
-		public int ldiag = 1;
-
-		public Group() { }
-	}
-
-	internal struct Piece
-	{
-		public int playerToken = 0;
-		public int groupId = 0;
-
-		public Piece() { }
-		public Piece(int groupId) { this.groupId = groupId; }
-	}
-
 	class GameState
 	{
 		private const int BOARD_HEIGHT = 6, BOARD_WIDTH = 7;
@@ -29,57 +8,99 @@ namespace Connect4.Backend
 		private int[,] board = new int[BOARD_HEIGHT, BOARD_WIDTH];
 		// specify the rows in which a piece can be placed
 		private int[] moves = new int[BOARD_WIDTH];
-        private int[] surr = new int[NUM_NEIGHBORS];
 
-        private void SetSurrounding(ref int[] surr, int row, int col)
-		{
-			surr[0] = (row - 1 < 0) ? 0 : board[row - 1, col];
-			surr[1] = (row + 1 >= BOARD_HEIGHT) ? 0 : board[row + 1, col];
-			surr[2] = (col - 1 < 0) ? 0 : board[row, col - 1];
-			surr[3] = (col + 1 >= BOARD_WIDTH) ? 0 : board[row, col + 1];
-			surr[4] = (row - 1 < 0 || col - 1 < 0) ? 0 : board[row - 1, col - 1];
-			surr[5] = (row + 1 >= BOARD_HEIGHT || col + 1 >= BOARD_WIDTH) ? 0 : board[row + 1, col + 1];
-			surr[6] = (row - 1 < 0 || col + 1 >= BOARD_WIDTH) ? 0 : board[row - 1, col + 1];
-			surr[7] = (row + 1 >= BOARD_HEIGHT || col - 1 < 0) ? 0 : board[row + 1, col - 1];
+		private int checkAbove(int row, int col, int playerToken, int count = 0)
+		{	
+			if (board[row, col] != playerToken) return count;
+			if (row == 0) return count++;
+
+			count++;
+			count = checkAbove(row + 1, col, playerToken, count);
+			return count;
+		}
+
+        private int checkBelow(int row, int col, int playerToken, int count = 0)
+        {
+            if (board[row, col] != playerToken) return count;
+            if (row == BOARD_HEIGHT - 1) return count++;
+
+            count++;
+            count = checkBelow(row - 1, col, playerToken, count);
+            return count;
         }
 
-        // surr: array of Pieces
-        // cur: Piece
-        // groups: List<Group> groups = new List<Group>(); INDEXING NEEDS TO START AT 1
-        // End(): terminal function
-        private bool IsTerminal(int playerToken, int row, int col)
+        private int checkLeft(int row, int col, int playerToken, int count = 0)
+        {
+            if (board[row, col] != playerToken) return count;
+            if (col == 0) return count++;
+
+            count++;
+            count = checkLeft(row, col - 1, playerToken, count);
+            return count;
+        }
+
+        private int checkRight(int row, int col, int playerToken, int count = 0)
+        {
+            if (board[row, col] != playerToken) return count;
+            if (col == BOARD_WIDTH - 1) return count++;
+
+            count++;
+            count = checkRight(row, col + 1, playerToken, count);
+            return count;
+        }
+
+        private int checkAboveLeft(int row, int col, int playerToken, int count = 0)
+        {
+            if (board[row, col] != playerToken) return count;
+            if (row == 0 || col == 0) return count++;
+
+            count++;
+            count = checkAboveLeft(row - 1, col - 1, playerToken, count);
+            return count;
+        }
+
+        private int checkBelowRight(int row, int col, int playerToken, int count = 0)
+        {
+            if (board[row, col] != playerToken) return count;
+            if (row == BOARD_HEIGHT - 1 || col == BOARD_WIDTH - 1) return count++;
+
+            count++;
+            count = checkBelowRight(row + 1, col + 1, playerToken, count);
+            return count;
+        }
+
+        private int checkAboveRight(int row, int col, int playerToken, int count = 0)
+        {
+            if (board[row, col] != playerToken) return count;
+            if (row == 0 || col == BOARD_WIDTH - 1) return count++;
+
+            count++;
+            count = checkAboveRight(row - 1, col + 1, playerToken, count);
+            return count;
+        }
+
+        private int checkBelowLeft(int row, int col, int playerToken, int count = 0)
+        {
+            if (board[row, col] != playerToken) return count;
+            if (row == BOARD_HEIGHT - 1 || col == 0) return count++;
+
+            count++;
+            count = checkBelowLeft(row + 1, col - 1, playerToken, count);
+            return count;
+        }
+
+        private bool IsTerminal(int row, int col, int playerToken)
 		{
-            bool isTerminal = false;
-
-            SetSurrounding(ref surr, row, col);
-
-			for (int i = 0; i < NUM_NEIGHBORS; i++)
-			{
-				Piece neighbor = surr[i]; // reference var?
-				int curGroupId = neighbor.groupId;
-                if (neighbor.playerToken != playerToken) continue;
-				if (curGroupId == 0) continue;
-
-				Group curGroup = groups[curGroupId]; // reference var?
-
-				if (i == 0 || i == 1) isTerminal = checkWidth(row, col); // checks only need 3 pieces b/c of the new addition
-				if (i == 2 || i == 3) isTerminal = checkHeight(row, col);
-				if (i == 4 || i == 5) isTerminal = checkRdiag(row, col);
-				if (i == 6 || i == 7) isTerminal = checkLdiag(row, col);
-
-				cur.groupId = curGroupId;
-			}
-			
-			if (cur.groupId == 0)
-			{
-				int newGroupId = groups.Count;
-				Group group = new Group(newGroupId);
-				groups.Add(group);
-				cur.groupId = newGroupId;
-			}
-
-			return isTerminal;
+			return checkAbove(row, col, playerToken) + checkBelow(row, col, playerToken) < TERMINAL_LENGTH &&
+				   checkLeft(row, col, playerToken) + checkRight(row, col, playerToken) < TERMINAL_LENGTH &&
+				   checkAboveLeft(row, col, playerToken) + checkBelowRight(row, col, playerToken) < TERMINAL_LENGTH &&
+				   checkAboveRight(row, col, playerToken) + checkBelowLeft(row, col, playerToken) < TERMINAL_LENGTH;
 		}
+
+        private void End()
+        {
+            Console.WriteLine("END");
+        }
 
 		/// <summary>
 		/// Place (drop) a board piece in the desired column. Updates the board and legal moves arrays.
