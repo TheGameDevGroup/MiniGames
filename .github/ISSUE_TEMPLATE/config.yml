@@ -3,6 +3,6 @@ handle: template
 field:
   type: select
   options:
-    - bug report
+    - Bug report
     - feature request
     - optimization request
