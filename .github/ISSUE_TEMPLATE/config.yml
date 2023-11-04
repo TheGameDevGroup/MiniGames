@@ -1,1 +1,8 @@
 blank_issues_enabled: true
+handle: template
+field:
+  type: select
+  options:
+    - bug report
+    - feature request
+    - optimization request
