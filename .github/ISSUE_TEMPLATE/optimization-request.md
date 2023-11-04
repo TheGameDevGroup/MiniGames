@@ -1,5 +1,5 @@
 ---
-name: Optimization request
+name: Optimization request (old)
 about: Recommend a better (or more efficient) way of doing something
 title: ''
 labels: optimization
