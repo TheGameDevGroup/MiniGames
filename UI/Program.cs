@@ -1,4 +1,4 @@
-namespace MainUI
+namespace UI
 {
     internal static class Program
     {

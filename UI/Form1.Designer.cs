@@ -1,4 +1,4 @@
-﻿namespace MainUI
+﻿namespace UI
 {
     partial class Form1
     {
