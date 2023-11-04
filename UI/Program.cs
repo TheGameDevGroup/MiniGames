@@ -1,4 +1,4 @@
-namespace MainUI
+namespace UI
 {
     internal static class Program
     {
@@ -8,10 +8,11 @@ namespace MainUI
         [STAThread]
         static void Main()
         {
+            Connect4.Driver.Test();
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Application.Run(new Connect4UI());
         }
     }
 }

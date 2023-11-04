@@ -1,12 +1,12 @@
-﻿namespace Connect4.Backend
+﻿namespace Connect4
 {
-    class GameState
+    public class GameState
     {
         private const int BOARD_HEIGHT = 6, BOARD_WIDTH = 7;
         private int[,] board = new int[BOARD_HEIGHT, BOARD_WIDTH];
         // specify the rows in which a piece can be placed
         private int[] moves = new int[BOARD_WIDTH];
-        
+
         /// <summary>
         /// Place (drop) a board piece in the desired column. Updates the board and legal moves arrays.
         /// </summary>
