@@ -35,7 +35,7 @@
 		// cur: Piece
 		// groups: List<Group> groups = new List<Group>();
 		// End(): terminal function
-		private void UpdateGroups(int player)
+		unsafe private void UpdateGroups(int player)
 		{
 			for (int i = 0; i < NUM_NEIGHBORS; i++)
 			{
@@ -47,27 +47,13 @@
 				int curGroupId = neighbor.groupId;
 				Group curGroup = groups[curGroupId]; // reference var?
 
-				// TODO: use a pointer which points to curGroup.width for example
-				if (i == 0 || i == 1)
-				{
-					curGroup.width++;
-					if (curGroup.width >= TERMINAL_LENGTH) End();
-				}
-				if (i == 2 || i == 3)
-				{
-					curGroup.height++;
-					if (curGroup.height >= TERMINAL_LENGTH) End();
-				}
-				if (i == 4 || i == 5)
-				{
-					curGroup.rdiag++;
-					if (curGroup.rdiag >= TERMINAL_LENGTH) End();
-				}
-				if (i == 6 || i == 7)
-				{
-					curGroup.ldiag++;
-					if (curGroup.ldiag >= TERMINAL_LENGTH) End();
-				}
+				int* groupAttr = null;
+				if (i == 0 || i == 1) groupAttr = &curGroup.width;
+				if (i == 2 || i == 3) groupAttr = &curGroup.height;
+				if (i == 4 || i == 5) groupAttr = &curGroup.rdiag;
+				if (i == 6 || i == 7) groupAttr = &curGroup.ldiag;
+				*groupAttr += 1;
+				if (*groupAttr >= TERMINAL_LENGTH) End();
 				cur.groupId = curGroupId;
 			}
 			
