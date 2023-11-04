@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace UI
 {
-    public partial class Connect4 : Form
+    public partial class Connect4UI : Form
     {
-        public Connect4()
+        public Connect4UI()
         {
             InitializeComponent();
         }
