@@ -12,7 +12,7 @@
 		private int checkAbove(int row, int col, int playerToken, int count = 0)
 		{	
 			if (board[row, col] != playerToken) return count;
-			if (row == 0) return count++;
+			if (row == BOARD_HEIGHT - 1) return count++;
 
 			count++;
 			count = checkAbove(row + 1, col, playerToken, count);
@@ -22,7 +22,7 @@
         private int checkBelow(int row, int col, int playerToken, int count = 0)
         {
             if (board[row, col] != playerToken) return count;
-            if (row == BOARD_HEIGHT - 1) return count++;
+            if (row == 0) return count++;
 
             count++;
             count = checkBelow(row - 1, col, playerToken, count);
@@ -91,10 +91,10 @@
 
         private bool IsTerminal(int row, int col, int playerToken)
 		{
-			return checkAbove(row, col, playerToken) + checkBelow(row, col, playerToken) < TERMINAL_LENGTH &&
-				   checkLeft(row, col, playerToken) + checkRight(row, col, playerToken) < TERMINAL_LENGTH &&
-				   checkAboveLeft(row, col, playerToken) + checkBelowRight(row, col, playerToken) < TERMINAL_LENGTH &&
-				   checkAboveRight(row, col, playerToken) + checkBelowLeft(row, col, playerToken) < TERMINAL_LENGTH;
+			return checkAbove(row, col, playerToken) + checkBelow(row, col, playerToken) >= TERMINAL_LENGTH ||
+				   checkLeft(row, col, playerToken) + checkRight(row, col, playerToken) >= TERMINAL_LENGTH ||
+				   checkAboveLeft(row, col, playerToken) + checkBelowRight(row, col, playerToken) >= TERMINAL_LENGTH ||
+				   checkAboveRight(row, col, playerToken) + checkBelowLeft(row, col, playerToken) >= TERMINAL_LENGTH;
 		}
 
         private void End()
@@ -114,7 +114,7 @@
 
 			// update the board and check if a player has won
 			board[row, col] = playerToken;
-			if (IsTerminal(playerToken, row, col)) End();
+			if (IsTerminal(row, col, playerToken)) End();
 
 			// update the legal moves
 			moves[col]++;
