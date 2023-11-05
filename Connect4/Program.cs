@@ -7,9 +7,9 @@ internal class Program
     {
         GameState gameState = new GameState();
         gameState.Drop(0, 1);
-        gameState.Drop(1, 1);
-        gameState.Drop(2, 1);
-        gameState.Drop(3, 2);
+        gameState.Drop(0, 1);
+        gameState.Drop(0, 1);
+        gameState.Drop(0, 1);
         gameState.Drop(1, 1);
         gameState.Drop(2, 1);
         gameState.Drop(3, 1);

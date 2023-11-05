@@ -3,93 +3,94 @@
 	class GameState
 	{
 		private const int BOARD_HEIGHT = 6, BOARD_WIDTH = 7;
-		private const int NUM_NEIGHBORS = 8;
-		private const int TERMINAL_LENGTH = 4; // unused?
+		// specify the number of pieces in a row which ends the game
+		// does not include the most recently placed piece
+		private const int TERMINAL_LENGTH = 3;
 		private int[,] board = new int[BOARD_HEIGHT, BOARD_WIDTH];
 		// specify the rows in which a piece can be placed
 		private int[] moves = new int[BOARD_WIDTH];
 
 		private int checkAbove(int row, int col, int playerToken, int count = 0)
-		{	
-			if (board[row, col] != playerToken) return count;
-			if (row == BOARD_HEIGHT - 1) return count++;
+		{
+			if (count == 0) row = row + 1;
+			if (row > BOARD_HEIGHT - 1 || board[row, col] != playerToken) return count;
 
 			count++;
 			count = checkAbove(row + 1, col, playerToken, count);
 			return count;
 		}
 
-        private int checkBelow(int row, int col, int playerToken, int count = 0)
-        {
-            if (board[row, col] != playerToken) return count;
-            if (row == 0) return count++;
+		private int checkBelow(int row, int col, int playerToken, int count = 0)
+		{
+			if (count == 0) row = row - 1;
+			if (row < 0 || board[row, col] != playerToken) return count;
 
-            count++;
-            count = checkBelow(row - 1, col, playerToken, count);
-            return count;
-        }
+			count++;
+			count = checkBelow(row - 1, col, playerToken, count);
+			return count;
+		}
 
-        private int checkLeft(int row, int col, int playerToken, int count = 0)
-        {
-            if (board[row, col] != playerToken) return count;
-            if (col == 0) return count++;
+		private int checkLeft(int row, int col, int playerToken, int count = 0)
+		{
+			if (count == 0) col = col - 1;
+			if (col < 0 || board[row, col] != playerToken) return count;
 
-            count++;
-            count = checkLeft(row, col - 1, playerToken, count);
-            return count;
-        }
+			count++;
+			count = checkLeft(row, col - 1, playerToken, count);
+			return count;
+		}
 
-        private int checkRight(int row, int col, int playerToken, int count = 0)
-        {
-            if (board[row, col] != playerToken) return count;
-            if (col == BOARD_WIDTH - 1) return count++;
+		private int checkRight(int row, int col, int playerToken, int count = 0)
+		{
+			if (count == 0) col = col + 1;
+			if (col > BOARD_WIDTH - 1 || board[row, col] != playerToken) return count;
 
-            count++;
-            count = checkRight(row, col + 1, playerToken, count);
-            return count;
-        }
+			count++;
+			count = checkRight(row, col + 1, playerToken, count);
+			return count;
+		}
 
-        private int checkAboveLeft(int row, int col, int playerToken, int count = 0)
-        {
-            if (board[row, col] != playerToken) return count;
-            if (row == 0 || col == 0) return count++;
+		private int checkAboveLeft(int row, int col, int playerToken, int count = 0)
+		{
+			if (count == 0) { row = row - 1; col = col - 1; }
+			if (row < 0 || col < 0 || board[row, col] != playerToken) return count;
 
-            count++;
-            count = checkAboveLeft(row - 1, col - 1, playerToken, count);
-            return count;
-        }
+			count++;
+			count = checkAboveLeft(row - 1, col - 1, playerToken, count);
+			return count;
+		}
 
-        private int checkBelowRight(int row, int col, int playerToken, int count = 0)
-        {
-            if (board[row, col] != playerToken) return count;
-            if (row == BOARD_HEIGHT - 1 || col == BOARD_WIDTH - 1) return count++;
+		private int checkBelowRight(int row, int col, int playerToken, int count = 0)
+		{
+			if (count == 0) { row = row + 1; col = col + 1; }
+			if (row > BOARD_HEIGHT - 1 || col > BOARD_WIDTH - 1 || board[row, col] != playerToken) return count;
 
-            count++;
-            count = checkBelowRight(row + 1, col + 1, playerToken, count);
-            return count;
-        }
+			count++;
+			count = checkBelowRight(row + 1, col + 1, playerToken, count);
+			return count;
+		}
 
-        private int checkAboveRight(int row, int col, int playerToken, int count = 0)
-        {
-            if (board[row, col] != playerToken) return count;
-            if (row == 0 || col == BOARD_WIDTH - 1) return count++;
+		private int checkAboveRight(int row, int col, int playerToken, int count = 0)
+		{
+			if (count == 0) { row = row - 1; col = col + 1; }
+			if (row < 0 || col > BOARD_WIDTH - 1 || board[row, col] != playerToken) return count;
 
-            count++;
-            count = checkAboveRight(row - 1, col + 1, playerToken, count);
-            return count;
-        }
+			count++;
+			count = checkAboveRight(row - 1, col + 1, playerToken, count);
+			return count;
+		}
 
-        private int checkBelowLeft(int row, int col, int playerToken, int count = 0)
-        {
-            if (board[row, col] != playerToken) return count;
-            if (row == BOARD_HEIGHT - 1 || col == 0) return count++;
+		private int checkBelowLeft(int row, int col, int playerToken, int count = 0)
+		{
+			if (count == 0) { row = row + 1; col = col - 1; }
+			if (row > BOARD_HEIGHT - 1 || col < 0 || board[row, col] != playerToken) return count;
 
-            count++;
-            count = checkBelowLeft(row + 1, col - 1, playerToken, count);
-            return count;
-        }
+			count++;
+			count = checkBelowLeft(row + 1, col - 1, playerToken, count);
+			return count;
+		}
 
-        private bool IsTerminal(int row, int col, int playerToken)
+		private bool IsTerminal(int row, int col, int playerToken)
 		{
 			return checkAbove(row, col, playerToken) + checkBelow(row, col, playerToken) >= TERMINAL_LENGTH ||
 				   checkLeft(row, col, playerToken) + checkRight(row, col, playerToken) >= TERMINAL_LENGTH ||
@@ -97,10 +98,10 @@
 				   checkAboveRight(row, col, playerToken) + checkBelowLeft(row, col, playerToken) >= TERMINAL_LENGTH;
 		}
 
-        private void End()
-        {
-            Console.WriteLine("END");
-        }
+		private void End()
+		{
+			Console.WriteLine("END");
+		}
 
 		/// <summary>
 		/// Place (drop) a board piece in the desired column. Updates the board and legal moves arrays.
