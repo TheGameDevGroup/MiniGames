@@ -24,107 +24,26 @@
 			return next;
 		}
 
-		private int CheckBelow(int row, int col, int playerToken)
+		private int CheckDirection(int row, int col, int rowInc, int colInc, int playerToken)
 		{
 			int count = 0;
 			int next = playerToken;
-			for (int i = row - 1; ; i--)
-			{
-				next = getAdjacent(i, col, playerToken);
-				if (next == playerToken) count++;
-				else break;
-			}
-			return count;
-		}
-
-		private int CheckLeft(int row, int col, int playerToken)
-		{
-			int count = 0;
-			int next = playerToken;
-			for (int i = col - 1; ; i--)
-			{
-				next = getAdjacent(row, i, playerToken);
-				if (next == playerToken) count++;
-				else break;
-			}
-			return count;
-		}
-
-		private int CheckRight(int row, int col, int playerToken)
-		{
-			int count = 0;
-			int next = playerToken;
-			for (int i = col + 1; ; i++)
-			{
-				next = getAdjacent(row, i, playerToken);
-				if (next == playerToken) count++;
-				else break;
-			}
-			return count;
-		}
-
-		private int CheckAboveLeft(int row, int col, int playerToken)
-		{
-			int count = 0;
-			int next = playerToken;
-			int j = col - 1;
-			for (int i = row - 1; ; i--, j--)
+			int j = col + colInc;
+			for (int i = row + rowInc; ; i += rowInc, j += colInc)
 			{
 				next = getAdjacent(i, j, playerToken);
-				if (next == playerToken) count++;
-				else break;
-			}
-			return count;
-		}
-
-		private int CheckBelowRight(int row, int col, int playerToken)
-		{
-            int count = 0;
-            int next = playerToken;
-            int j = col + 1;
-            for (int i = row + 1; ; i++, j++)
-            {
-                next = getAdjacent(i, j, playerToken);
                 if (next == playerToken) count++;
                 else break;
             }
-            return count;
-        }
-
-        private int CheckAboveRight(int row, int col, int playerToken)
-        {
-            int count = 0;
-            int next = playerToken;
-            int j = col + 1;
-            for (int i = row - 1; ; i--, j++)
-            {
-                next = getAdjacent(i, j, playerToken);
-                if (next == playerToken) count++;
-                else break;
-            }
-            return count;
-        }
-
-        private int CheckBelowLeft(int row, int col, int playerToken)
-		{
-			int count = 0;
-			int next = playerToken;
-			int j = col - 1;
-			for (int i = row + 1; ; i++, j--)
-			{
-				next = getAdjacent(i, j, playerToken);
-				if (next == playerToken) count++;
-				else break;
-			}
 			return count;
 		}
 
         private bool IsTerminal(int row, int col, int playerToken)
         {
-            return CheckBelow(row, col, playerToken) >= TERMINAL_LENGTH ||
-                   CheckLeft(row, col, playerToken) + CheckRight(row, col, playerToken) >= TERMINAL_LENGTH ||
-                   CheckAboveLeft(row, col, playerToken) + CheckBelowRight(row, col, playerToken) >= TERMINAL_LENGTH ||
-                   CheckAboveRight(row, col, playerToken) + CheckBelowLeft(row, col, playerToken) >= TERMINAL_LENGTH;
+            return CheckDirection(row, col, -1, 0, playerToken) >= TERMINAL_LENGTH ||
+                   CheckDirection(row, col, 0, -1, playerToken) + CheckDirection(row, col, 0, 1, playerToken) >= TERMINAL_LENGTH ||
+                   CheckDirection(row, col, -1, -1, playerToken) + CheckDirection(row, col, 1, 1, playerToken) >= TERMINAL_LENGTH ||
+                   CheckDirection(row, col, -1, 1, playerToken) + CheckDirection(row, col, 1, -1, playerToken) >= TERMINAL_LENGTH;
         }
 
         private void End()
