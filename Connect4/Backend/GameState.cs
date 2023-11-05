@@ -68,7 +68,7 @@
 			int count = 0;
 			int next = playerToken;
 			int j = col - 1;
-			for (int i = row - 1; ; i++, j--)
+			for (int i = row - 1; ; i--, j--)
 			{
 				next = getAdjacent(i, j, playerToken);
 				if (next == playerToken) count++;
@@ -82,7 +82,7 @@
             int count = 0;
             int next = playerToken;
             int j = col + 1;
-            for (int i = row + 1; ; i++, j--)
+            for (int i = row + 1; ; i++, j++)
             {
                 next = getAdjacent(i, j, playerToken);
                 if (next == playerToken) count++;
@@ -96,7 +96,7 @@
             int count = 0;
             int next = playerToken;
             int j = col + 1;
-            for (int i = row - 1; ; i++, j--)
+            for (int i = row - 1; ; i--, j++)
             {
                 next = getAdjacent(i, j, playerToken);
                 if (next == playerToken) count++;
@@ -110,7 +110,7 @@
 			int count = 0;
 			int next = playerToken;
 			int j = col - 1;
-			for (int i = row + 1; ; i--, j--)
+			for (int i = row + 1; ; i++, j--)
 			{
 				next = getAdjacent(i, j, playerToken);
 				if (next == playerToken) count++;
