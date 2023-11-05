@@ -10,20 +10,22 @@
 		// specify the rows in which a piece can be placed
 		private int[] moves = new int[BOARD_WIDTH];
 
-		private int getAdjacent(int row, int col, int playerToken)
+		// determine whether a board space is populated with a playerToken
+		private bool IsPlayerPiece(int row, int col, int playerToken)
 		{
-			int next = 0;
+			bool isPlayerPiece = false;
 			try
 			{
-				if (board[row, col] == playerToken) next = playerToken;
+				if (board[row, col] == playerToken) isPlayerPiece = true;
 			}
 			catch (IndexOutOfRangeException)
 			{
-				return next;
+				return isPlayerPiece;
 			}
-			return next;
+			return isPlayerPiece;
 		}
 
+		// find the number of playerToken's pieces in a specified direction
 		private int CheckDirection(int row, int col, int rowInc, int colInc, int playerToken)
 		{
 			int count = 0;
@@ -31,13 +33,13 @@
 			int j = col + colInc;
 			for (int i = row + rowInc; ; i += rowInc, j += colInc)
 			{
-				next = getAdjacent(i, j, playerToken);
-                if (next == playerToken) count++;
+                if (IsPlayerPiece(i, j, playerToken)) count++;
                 else break;
             }
 			return count;
 		}
 
+		// determine if a 4-in-a-row has occurred
         private bool IsTerminal(int row, int col, int playerToken)
         {
             return CheckDirection(row, col, -1, 0, playerToken) >= TERMINAL_LENGTH ||
