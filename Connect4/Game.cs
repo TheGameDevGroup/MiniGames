@@ -11,10 +11,41 @@
 		public List<IConnect4Player> Players { get; init; }
 		public int[,] State { get; init; }
 
+		private const int TERMINAL_LENGTH = 3;
+
 		public Game(int rowCount, int columnCount, List<IConnect4Player> playerHandlers)
 		{
 			State = new int[rowCount, columnCount];
 			Players = new(playerHandlers);
+		}
+
+
+		// determine whether a board space is populated with a playerToken
+		private bool IsPlayerPiece(int row, int col, int playerToken)
+		{
+			bool isPlayerPiece = false;
+			try
+			{
+				if (State[row, col] == playerToken) isPlayerPiece = true;
+			}
+			catch (IndexOutOfRangeException)
+			{
+				return isPlayerPiece;
+			}
+			return isPlayerPiece;
+		}
+
+		// find the number of playerToken's pieces in a specified direction
+		private int CheckDirection(int row, int rowInc, int col, int colInc, int playerToken)
+		{
+			int count = 0;
+			int j = col + colInc;
+			for (int i = row + rowInc; ; i += rowInc, j += colInc)
+			{
+				if (IsPlayerPiece(i, j, playerToken)) count++;
+				else break;
+			}
+			return count;
 		}
 
 		/// <summary>
@@ -23,9 +54,28 @@
 		/// <param name="columnIndex">The index of the column in which the last piece was placed</param>
 		/// <param name="winningPosition">List of positions that make up the winning connect 4.</param>
 		/// <returns></returns>
-		private bool IsWinningMove(int columnIndex, out List<(int, int)> winningPosition)
+		private bool IsWinningMove(int column, out List<(int, int)> winningPosition)
 		{
-			throw new NotImplementedException();
+			// Get the row of the placed move
+			int row = 0;
+			for (int i = 0; i < State.GetLength(0); i++)
+			{
+				if (State[i, column] != 0)
+				{
+					row = i;
+				}
+				else
+				{
+					break;
+				}
+			}
+			int playerToken = State[row, column];
+			// TODO: set this
+			winningPosition = new List<(int, int)>();
+			return CheckDirection(row, -1, column, 0, playerToken) >= TERMINAL_LENGTH ||
+					CheckDirection(row, 0, column, -1, playerToken) + CheckDirection(row, 0, column, 1, playerToken) >= TERMINAL_LENGTH ||
+					CheckDirection(row, -1, column, -1, playerToken) + CheckDirection(row, 1, column, 1, playerToken) >= TERMINAL_LENGTH ||
+					CheckDirection(row, -1, column, 1, playerToken) + CheckDirection(row, 1, column, -1, playerToken) >= TERMINAL_LENGTH;
 		}
 
 		/// <summary>
@@ -56,7 +106,7 @@
 			{
 				return false;
 			}
-			else if (State[State.GetLength(0), column] != 0)
+			else if (State[State.GetLength(0) - 1, column] != 0)
 			{
 				return false;
 			}
@@ -70,10 +120,20 @@
 		/// <param name="playerToken">int representing the player's token.</param>
 		private void PlaceMove(int column, int playerToken)
 		{
-			throw new NotImplementedException();
-
-			// This invokes the event listeners
-			OnMove?.Invoke(this, column);
+			for (int i = 0; i < State.GetLength(0); i++)
+			{
+				// find the row where the piece is to be placed
+				if (State[i, column] == 0)
+				{
+					// update the board and check if a player has won
+					State[i, column] = playerToken;
+					// This invokes the event listeners
+					OnMove?.Invoke(this, column);
+					return;
+				}
+			}
+			// This should have gotten caught earlier...
+			throw new Exception("Invalid Move.");
 		}
 
 		/// <summary>
