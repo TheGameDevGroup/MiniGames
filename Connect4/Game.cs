@@ -20,11 +20,10 @@
 		/// <summary>
 		/// Checks if the player has won the game.
 		/// </summary>
-		/// <param name="playerToken">The integer used to represent this player's pieces.</param>
+		/// <param name="columnIndex">The index of the column in which the last piece was placed</param>
 		/// <param name="winningPosition">List of positions that make up the winning connect 4.</param>
 		/// <returns></returns>
-		/// <remarks>The playerToken is their index in the players list + 1.</remarks>
-		private bool PlayerWon(int playerToken, out List<(int, int)> winningPosition)
+		private bool IsWinningMove(int columnIndex, out List<(int, int)> winningPosition)
 		{
 			throw new NotImplementedException();
 		}
@@ -96,7 +95,7 @@
 							if (ValidMove(move))
 							{
 								PlaceMove(move, i + 1);
-								if (PlayerWon(i + 1, out var _))
+								if (IsWinningMove(move, out var _))
 								{
 									return i;
 								}
