@@ -1,4 +1,6 @@
-﻿namespace Connect4
+﻿using System.Numerics;
+
+namespace Connect4
 {
 	public class Game
 	{
@@ -11,7 +13,7 @@
 		public List<IConnect4Player> Players { get; init; }
 		public int[,] State { get; init; }
 
-		private const int TERMINAL_LENGTH = 3;
+		public int WinningLength { get; init; } = 3;
 
 		public Game(int rowCount, int columnCount, List<IConnect4Player> playerHandlers)
 		{
@@ -23,16 +25,15 @@
 		// determine whether a board space is populated with a playerToken
 		private bool IsPlayerPiece(int row, int col, int playerToken)
 		{
-			bool isPlayerPiece = false;
 			try
 			{
-				if (State[row, col] == playerToken) isPlayerPiece = true;
+				if (State[row, col] == playerToken) return true;
+				return false;
 			}
 			catch (IndexOutOfRangeException)
 			{
-				return isPlayerPiece;
+				return false;
 			}
-			return isPlayerPiece;
 		}
 
 		// find the number of playerToken's pieces in a specified direction
@@ -54,28 +55,16 @@
 		/// <param name="columnIndex">The index of the column in which the last piece was placed</param>
 		/// <param name="winningPosition">List of positions that make up the winning connect 4.</param>
 		/// <returns></returns>
-		private bool IsWinningMove(int column, out List<(int, int)> winningPosition)
+		private bool IsWinningMove(int column, int row, out List<(int, int)> winningPosition)
 		{
-			// Get the row of the placed move
-			int row = 0;
-			for (int i = 0; i < State.GetLength(0); i++)
-			{
-				if (State[i, column] != 0)
-				{
-					row = i;
-				}
-				else
-				{
-					break;
-				}
-			}
 			int playerToken = State[row, column];
 			// TODO: set this
 			winningPosition = new List<(int, int)>();
-			return CheckDirection(row, -1, column, 0, playerToken) >= TERMINAL_LENGTH ||
-					CheckDirection(row, 0, column, -1, playerToken) + CheckDirection(row, 0, column, 1, playerToken) >= TERMINAL_LENGTH ||
-					CheckDirection(row, -1, column, -1, playerToken) + CheckDirection(row, 1, column, 1, playerToken) >= TERMINAL_LENGTH ||
-					CheckDirection(row, -1, column, 1, playerToken) + CheckDirection(row, 1, column, -1, playerToken) >= TERMINAL_LENGTH;
+			int terminalLength = WinningLength - 1;
+			return CheckDirection(row, -1, column, 0, playerToken) >= terminalLength ||
+					CheckDirection(row, 0, column, -1, playerToken) + CheckDirection(row, 0, column, 1, playerToken) >= terminalLength ||
+					CheckDirection(row, -1, column, -1, playerToken) + CheckDirection(row, 1, column, 1, playerToken) >= terminalLength ||
+					CheckDirection(row, -1, column, 1, playerToken) + CheckDirection(row, 1, column, -1, playerToken) >= terminalLength;
 		}
 
 		/// <summary>
@@ -84,7 +73,7 @@
 		/// <returns>True if stalemated.</returns>
 		private bool IsStalemate()
 		{
-			int row = State.GetLength(0);
+			int row = State.GetLength(0) - 1;
 			for (int col = 0; col < State.GetLength(1); col++)
 			{
 				if (State[row, col] == 0)
@@ -102,7 +91,7 @@
 		/// <returns>True if valid, false otherwise.</returns>
 		private bool IsValidMove(int column)
 		{
-			if (column >= State.GetLength(1))
+			if (column >= State.GetLength(1) || column < 0)
 			{
 				return false;
 			}
@@ -118,7 +107,7 @@
 		/// </summary>
 		/// <param name="column">The column to drop the token into.</param>
 		/// <param name="playerToken">int representing the player's token.</param>
-		private void PlaceMove(int column, int playerToken)
+		private void PlaceMove(int column, int playerToken, out int placedRow)
 		{
 			for (int i = 0; i < State.GetLength(0); i++)
 			{
@@ -127,6 +116,7 @@
 				{
 					// update the board and check if a player has won
 					State[i, column] = playerToken;
+					placedRow = i;
 					// This invokes the event listeners
 					OnMove?.Invoke(this, column);
 					return;
@@ -154,8 +144,8 @@
 							int move = player.MakeMove((int[,])State.Clone(), i + 1);
 							if (IsValidMove(move))
 							{
-								PlaceMove(move, i + 1);
-								if (IsWinningMove(move, out var _))
+								PlaceMove(move, i + 1, out int row);
+								if (IsWinningMove(move, row, out var _))
 								{
 									return i;
 								}
