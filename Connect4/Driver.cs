@@ -5,10 +5,10 @@
         // driver code
         public static void Test()
         {
-            GameState gameState = new GameState();
-            gameState.drop(1, 0);
-            gameState.drop(1, 0);
-            gameState.drop(1, 0);
+            //GameState gameState = new();
+            //gameState.Drop(1, 0);
+            //gameState.Drop(1, 0);
+            //gameState.Drop(1, 0);
         }
     }
 }
