@@ -1,5 +1,5 @@
 ﻿
-using Connect4.Backend;
+using Connect4;
 internal class Program
 {   
     // driver code 
