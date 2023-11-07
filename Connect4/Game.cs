@@ -13,7 +13,7 @@ namespace Connect4
 		public List<IConnect4Player> Players { get; init; }
 		public int[,] State { get; init; }
 
-		public int WinningLength { get; init; } = 3;
+		public int WinningLength { get; init; } = 4;
 
 		public Game(int rowCount, int columnCount, List<IConnect4Player> playerHandlers)
 		{
@@ -164,6 +164,51 @@ namespace Connect4
 					}
 				}
 			});
+		}
+
+		public void Driver()
+		{
+			// (column, playerToken)
+			List<(int, int)> moves = new()
+			{
+				(3, 1), (4, 2),
+				(4, 1), (5, 2),
+				(3, 1), (5, 2),
+				(5, 1), (4, 2),
+				(6, 1), (3, 2),
+				(6, 1), (3, 2),
+				(3, 1), (4, 2),
+				(2, 1), (2, 2),
+				(1, 1), (0, 2),
+				(3, 1), (1, 2),
+				(2, 1), (0, 2),
+				(4, 1), (1, 2),
+				(6, 1), (6, 2),
+				(5, 1),
+			};
+			foreach (var move in moves)
+			{
+				if (this.IsValidMove(move.Item1))
+				{
+					Console.WriteLine($"Player {move.Item2} making move {move.Item1}");
+					this.PlaceMove(move.Item1, move.Item2, out int row);
+					Console.WriteLine($"Checking for win");
+					if (this.IsWinningMove(move.Item1, row, out var _))
+					{
+						Console.WriteLine($"Win! Player: {move.Item2}");
+					}
+					else if (this.IsStalemate())
+					{
+						Console.WriteLine("Stalemate");
+					}
+				}
+				else
+				{
+					Console.WriteLine($"Bad move: {move.Item1} by Player: {move.Item2}");
+					return;
+				}
+
+			}
 		}
 	}
 }

@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "UI\UI.csproj", "{C80B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Connect4", "Connect4\Connect4.csproj", "{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Driver", "Driver\Driver.csproj", "{5CBE099D-E894-48D7-B856-1DEA340E7862}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CBE099D-E894-48D7-B856-1DEA340E7862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CBE099D-E894-48D7-B856-1DEA340E7862}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CBE099D-E894-48D7-B856-1DEA340E7862}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CBE099D-E894-48D7-B856-1DEA340E7862}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
