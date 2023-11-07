@@ -69,7 +69,6 @@ namespace Connect4
 		{
 			int playerToken = State[row, column];
 			int terminalLength = WinningLength - 1;
-			winningPieces = new List<(int, int)>();
             return CheckDirection(row, -1, column, 0, playerToken, out winningPieces) >= terminalLength ||
 					CheckDirection(row, 0, column, -1, playerToken, out winningPieces) >= terminalLength ||
 					CheckDirection(row, -1, column, -1, playerToken, out winningPieces) >= terminalLength ||
