@@ -37,14 +37,24 @@ namespace Connect4
 		}
 
 		// find the number of playerToken's pieces in a specified direction
-		private int CheckDirection(int row, int rowInc, int col, int colInc, int playerToken)
+		private int CheckDirection(int row, int rowInc, int col, int colInc, int playerToken, out List<(int, int)> winningPieces)
 		{
-			int count = 0;
-			int j = col + colInc;
-			for (int i = row + rowInc; ; i += rowInc, j += colInc)
+			winningPieces = new List<(int, int)>() { (row, col) };
+            int count = 0;
+			for (int k = 0; k < 2; k++)
 			{
-				if (IsPlayerPiece(i, j, playerToken)) count++;
-				else break;
+				int j = col + colInc;
+				for (int i = row + rowInc; ; i += rowInc, j += colInc)
+				{
+					if (IsPlayerPiece(i, j, playerToken))
+					{
+						winningPieces.Add((i, j));
+						count++;
+					}
+					else break;
+				}
+				rowInc = (rowInc == 0) ? 0 : -rowInc;
+				colInc = (colInc == 0) ? 0 : -colInc;
 			}
 			return count;
 		}
@@ -53,18 +63,17 @@ namespace Connect4
 		/// Checks if the player has won the game.
 		/// </summary>
 		/// <param name="columnIndex">The index of the column in which the last piece was placed</param>
-		/// <param name="winningPosition">List of positions that make up the winning connect 4.</param>
+		/// <param name="winningPieces">List of positions that make up the winning connect 4.</param>
 		/// <returns></returns>
-		private bool IsWinningMove(int column, int row, out List<(int, int)> winningPosition)
+		private bool IsWinningMove(int column, int row, out List<(int, int)> winningPieces)
 		{
 			int playerToken = State[row, column];
-			// TODO: set this
-			winningPosition = new List<(int, int)>();
 			int terminalLength = WinningLength - 1;
-			return CheckDirection(row, -1, column, 0, playerToken) >= terminalLength ||
-					CheckDirection(row, 0, column, -1, playerToken) + CheckDirection(row, 0, column, 1, playerToken) >= terminalLength ||
-					CheckDirection(row, -1, column, -1, playerToken) + CheckDirection(row, 1, column, 1, playerToken) >= terminalLength ||
-					CheckDirection(row, -1, column, 1, playerToken) + CheckDirection(row, 1, column, -1, playerToken) >= terminalLength;
+			winningPieces = new List<(int, int)>();
+            return CheckDirection(row, -1, column, 0, playerToken, out winningPieces) >= terminalLength ||
+					CheckDirection(row, 0, column, -1, playerToken, out winningPieces) >= terminalLength ||
+					CheckDirection(row, -1, column, -1, playerToken, out winningPieces) >= terminalLength ||
+					CheckDirection(row, -1, column, 1, playerToken, out winningPieces) >= terminalLength;
 		}
 
 		/// <summary>
