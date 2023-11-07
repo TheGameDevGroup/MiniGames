@@ -108,42 +108,35 @@ namespace Connect4
 		}
 
 		/// <summary>
-		/// Check if the proposed move is valid.
+		/// Check if the proposed move is valid (i.e. not outside the board).
 		/// </summary>
 		/// <param name="column">The column in which the player wishes to place their piece.</param>
 		/// <returns>True if valid, false otherwise.</returns>
 		private bool IsValidMove(int column)
 		{
-			// The column is out of range.
 			if (column >= BoardState.GetLength(1) || column < 0) return false;
-			else if (BoardState[BoardState.GetLength(0) - 1, column] != 0)
-			{
-				return false;
-			}
+			else if (BoardState[BoardState.GetLength(0) - 1, column] != 0) return false;
 			return true;
 		}
 
 		/// <summary>
-		/// Make a move
 		/// </summary>
 		/// <param name="column">The column to drop the token into.</param>
-		/// <param name="playerToken">int representing the player's token.</param>
+		/// <param name="playerToken">Integer representation of the player.</param>
+		/// <param name="placedRow">Used in IsWinningMove.</param>
 		private void PlaceMove(int column, int playerToken, out int placedRow)
 		{
 			for (int i = 0; i < BoardState.GetLength(0); i++)
 			{
-				// find the row where the piece is to be placed
 				if (BoardState[i, column] == 0)
 				{
-					// update the board and check if a player has won
 					BoardState[i, column] = playerToken;
 					placedRow = i;
-					// This invokes the event listeners
+
 					OnMove?.Invoke(this, column);
 					return;
 				}
 			}
-			// This should have gotten caught earlier...
 			throw new Exception("Invalid Move.");
 		}
 
