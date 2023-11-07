@@ -5,31 +5,36 @@ namespace Connect4
 	public class Game
 	{
 		/// <summary>
-		/// Event invoked after each move. Can be used to trigger updates to the UI.
-		/// <br/>
-		/// Event argument is an int corresponding to the column in which the last piece was played.
+		/// Param: the column in which the last piece was played.
 		/// </summary>
 		public event EventHandler<int>? OnMove;
-
+		/// <summary>
+		/// Param: a list of winning piece positions.
+		/// </summary>
 		public event EventHandler<List<(int,int)>>? OnWin;
 		public List<IConnect4Player> Players { get; init; }
-		public int[,] State { get; init; }
-
+		public int[,] BoardState { get; init; }
 		public int WinningLength { get; init; } = 4;
 
 		public Game(int rowCount, int columnCount, List<IConnect4Player> playerHandlers)
 		{
-			State = new int[rowCount, columnCount];
+			BoardState = new int[rowCount, columnCount];
 			Players = new(playerHandlers);
 		}
 
 
-		// determine whether a board space is populated with a playerToken
+		/// <summary>
+		/// Determine whether a board space is populated with a playerToken.
+		/// </summary>
+		/// <param name="row"></param>
+		/// <param name="col"></param>
+		/// <param name="playerToken"></param>
+		/// <returns></returns>
 		private bool IsPlayerPiece(int row, int col, int playerToken)
 		{
 			try
 			{
-				if (State[row, col] == playerToken) return true;
+				if (BoardState[row, col] == playerToken) return true;
 				return false;
 			}
 			catch (IndexOutOfRangeException)
@@ -38,10 +43,20 @@ namespace Connect4
 			}
 		}
 
-		// find the number of playerToken's pieces in a specified direction
-		private int CheckDirection(int row, int rowInc, int col, int colInc, int playerToken, out List<(int, int)> winningPieces)
+		/// <summary>
+		/// Find the number of playerToken's pieces in both a specified direction and its opposite
+		/// (e.g. up-right would also look down-left).
+		/// </summary>
+		/// <param name="row">The starting row.</param>
+		/// <param name="rowInc">How the row index should be incremented.</param>
+		/// <param name="col">The starting column.</param>
+		/// <param name="colInc">How the column index shoud be incremented.</param>
+		/// <param name="playerToken">Integer representation of the current player.</param>
+		/// <param name="visitedPieces">The positions of each piece visited.</param>
+		/// <returns>The number of pieces visited.</returns>
+		private int CheckDirection(int row, int rowInc, int col, int colInc, int playerToken, out List<(int, int)> visitedPieces)
 		{
-			winningPieces = new List<(int, int)>() { (row, col) };
+			visitedPieces = new List<(int, int)>() { (row, col) };
 			int count = 0;
 			for (int k = 0; k < 2; k++)
 			{
@@ -50,15 +65,16 @@ namespace Connect4
 				{
 					if (IsPlayerPiece(i, j, playerToken))
 					{
-						winningPieces.Add((i, j));
+						visitedPieces.Add((i, j));
 						count++;
 					}
 					else break;
 				}
+				// Reverse the direction
 				rowInc = (rowInc == 0) ? 0 : -rowInc;
 				colInc = (colInc == 0) ? 0 : -colInc;
 			}
-			return count;
+			return count + 1;
 		}
 
 		/// <summary>
@@ -69,70 +85,58 @@ namespace Connect4
 		/// <returns></returns>
 		private bool IsWinningMove(int column, int row, out List<(int, int)> winningPieces)
 		{
-			int playerToken = State[row, column];
-			int terminalLength = WinningLength - 1;
-			return CheckDirection(row, -1, column, 0, playerToken, out winningPieces) >= terminalLength ||
-					CheckDirection(row, 0, column, -1, playerToken, out winningPieces) >= terminalLength ||
-					CheckDirection(row, -1, column, -1, playerToken, out winningPieces) >= terminalLength ||
-					CheckDirection(row, -1, column, 1, playerToken, out winningPieces) >= terminalLength;
+			int playerToken = BoardState[row, column];
+			return CheckDirection(row, -1, column, 0, playerToken, out winningPieces) >= WinningLength ||
+					CheckDirection(row, 0, column, -1, playerToken, out winningPieces) >= WinningLength ||
+					CheckDirection(row, -1, column, -1, playerToken, out winningPieces) >= WinningLength ||
+					CheckDirection(row, -1, column, 1, playerToken, out winningPieces) >= WinningLength;
 		}
 
 		/// <summary>
-		/// Check if the game cannot continue. e.g., no moves left.
+		/// Check if the game cannot continue (i.e. no moves left).
 		/// </summary>
 		/// <returns>True if stalemated.</returns>
 		private bool IsStalemate()
 		{
-			int row = State.GetLength(0) - 1;
-			for (int col = 0; col < State.GetLength(1); col++)
+			// Only check the top row
+			int row = BoardState.GetLength(0) - 1;
+			for (int col = 0; col < BoardState.GetLength(1); col++)
 			{
-				if (State[row, col] == 0)
-				{
-					return false;
-				}
+				if (BoardState[row, col] == 0) return false;
 			}
 			return true;
 		}
 
 		/// <summary>
-		/// Check if the proposed move is valid.
+		/// Check if the proposed move is valid (i.e. not outside the board).
 		/// </summary>
 		/// <param name="column">The column in which the player wishes to place their piece.</param>
 		/// <returns>True if valid, false otherwise.</returns>
 		private bool IsValidMove(int column)
 		{
-			if (column >= State.GetLength(1) || column < 0)
-			{
-				return false;
-			}
-			else if (State[State.GetLength(0) - 1, column] != 0)
-			{
-				return false;
-			}
+			if (column >= BoardState.GetLength(1) || column < 0) return false;
+			else if (BoardState[BoardState.GetLength(0) - 1, column] != 0) return false;
 			return true;
 		}
 
 		/// <summary>
-		/// Make a move
 		/// </summary>
 		/// <param name="column">The column to drop the token into.</param>
-		/// <param name="playerToken">int representing the player's token.</param>
+		/// <param name="playerToken">Integer representation of the player.</param>
+		/// <param name="placedRow">Used in IsWinningMove.</param>
 		private void PlaceMove(int column, int playerToken, out int placedRow)
 		{
-			for (int i = 0; i < State.GetLength(0); i++)
+			for (int i = 0; i < BoardState.GetLength(0); i++)
 			{
-				// find the row where the piece is to be placed
-				if (State[i, column] == 0)
+				if (BoardState[i, column] == 0)
 				{
-					// update the board and check if a player has won
-					State[i, column] = playerToken;
+					BoardState[i, column] = playerToken;
 					placedRow = i;
-					// This invokes the event listeners
+
 					OnMove?.Invoke(this, column);
 					return;
 				}
 			}
-			// This should have gotten caught earlier...
 			throw new Exception("Invalid Move.");
 		}
 
@@ -144,32 +148,29 @@ namespace Connect4
 		{
 			while(true)
 			{
-				// Loop through each player
 				for (int i = 0; i < Players.Count; i++)
 				{
 					var player = Players[i];
-					// Keep looping until they make a valid move
-					do
+					int playerToken = i + 1;
+
+					// Loop until a valid move is made
+					while (true)
 					{
 						// Get the move from the player
-						int move = player.MakeMove((int[,])State.Clone(), i + 1);
-						if (IsValidMove(move))
+						int column = player.MakeMove((int[,])BoardState.Clone(), playerToken);
+						if (IsValidMove(column))
 						{
-							// Make the move (update the state)
-							PlaceMove(move, i + 1, out int row);
-							// Check if the move causes a win
-							if (IsWinningMove(move, row, out var win))
+							PlaceMove(column, playerToken, out int row);
+							if (IsWinningMove(column, row, out var win))
 							{
 								OnWin?.Invoke(this, win);
-								// Return the index of the player
 								return i;
 							}
 							else if (IsStalemate())
 							{
-								// Nobody wins
 								return -1;
 							}
-							// Next player
+							// Go to the next player
 							break;
 						}
 						else
@@ -177,7 +178,7 @@ namespace Connect4
 							// TODO: The player made an invalid move... now what?
 							throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
 						}
-					} while (true);
+					}
 				}
 			}
 		}
@@ -223,7 +224,6 @@ namespace Connect4
 					Console.WriteLine($"Bad move: {move.Item1} by Player: {move.Item2}");
 					return;
 				}
-
 			}
 		}
 	}
