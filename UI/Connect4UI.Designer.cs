@@ -28,12 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Connect4UI";
+            board1 = new Board();
+            SuspendLayout();
+            // 
+            // board1
+            // 
+            board1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            board1.Location = new Point(12, 12);
+            board1.Name = "board1";
+            board1.Size = new Size(777, 449);
+            board1.TabIndex = 0;
+            // 
+            // Connect4UI
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(801, 473);
+            Controls.Add(board1);
+            Name = "Connect4UI";
+            Text = "Connect4";
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private Board board1;
     }
 }
