@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Connect4Components\" />
     <Folder Include="Resources\" />
   </ItemGroup>
 

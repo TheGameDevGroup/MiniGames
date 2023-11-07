@@ -5,8 +5,11 @@ namespace UI
 {
 	public partial class TokenSpace : UserControl
 	{
-		public TokenSpace()
+		public int ColumnIndex { get; init; }
+
+		public TokenSpace(int column)
 		{
+			this.ColumnIndex = column;
 			InitializeComponent();
 		}
 		public static float[][] GetColorMatrix(float red, float green, float blue, float alpha)
@@ -37,6 +40,11 @@ namespace UI
 					GraphicsUnit.Pixel,
 					attributes);
 			};
+		}
+
+		private void Picture_MouseUp(object sender, MouseEventArgs e)
+		{
+			this.OnMouseUp(e);
 		}
 	}
 }
