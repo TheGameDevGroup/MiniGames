@@ -10,6 +10,8 @@ namespace Connect4
 		/// Event argument is an int corresponding to the column in which the last piece was played.
 		/// </summary>
 		public event EventHandler<int>? OnMove;
+
+		public event EventHandler<List<(int,int)>>? OnWin;
 		public List<IConnect4Player> Players { get; init; }
 		public int[,] State { get; init; }
 
@@ -40,7 +42,7 @@ namespace Connect4
 		private int CheckDirection(int row, int rowInc, int col, int colInc, int playerToken, out List<(int, int)> winningPieces)
 		{
 			winningPieces = new List<(int, int)>() { (row, col) };
-            int count = 0;
+			int count = 0;
 			for (int k = 0; k < 2; k++)
 			{
 				int j = col + colInc;
@@ -69,7 +71,7 @@ namespace Connect4
 		{
 			int playerToken = State[row, column];
 			int terminalLength = WinningLength - 1;
-            return CheckDirection(row, -1, column, 0, playerToken, out winningPieces) >= terminalLength ||
+			return CheckDirection(row, -1, column, 0, playerToken, out winningPieces) >= terminalLength ||
 					CheckDirection(row, 0, column, -1, playerToken, out winningPieces) >= terminalLength ||
 					CheckDirection(row, -1, column, -1, playerToken, out winningPieces) >= terminalLength ||
 					CheckDirection(row, -1, column, 1, playerToken, out winningPieces) >= terminalLength;
@@ -156,8 +158,9 @@ namespace Connect4
 							// Make the move (update the state)
 							PlaceMove(move, i + 1, out int row);
 							// Check if the move causes a win
-							if (IsWinningMove(move, row, out var _))
+							if (IsWinningMove(move, row, out var win))
 							{
+								OnWin?.Invoke(this, win);
 								// Return the index of the player
 								return i;
 							}
@@ -176,6 +179,51 @@ namespace Connect4
 						}
 					} while (true);
 				}
+			}
+		}
+
+		public void Driver()
+		{
+			// (column, playerToken)
+			List<(int, int)> moves = new()
+			{
+				(3, 1), (4, 2),
+				(4, 1), (5, 2),
+				(3, 1), (5, 2),
+				(5, 1), (4, 2),
+				(6, 1), (3, 2),
+				(6, 1), (3, 2),
+				(3, 1), (4, 2),
+				(2, 1), (2, 2),
+				(1, 1), (0, 2),
+				(3, 1), (1, 2),
+				(2, 1), (0, 2),
+				(4, 1), (1, 2),
+				(6, 1), (6, 2),
+				(5, 1),
+			};
+			foreach (var move in moves)
+			{
+				if (this.IsValidMove(move.Item1))
+				{
+					Console.WriteLine($"Player {move.Item2} making move {move.Item1}");
+					this.PlaceMove(move.Item1, move.Item2, out int row);
+					Console.WriteLine($"Checking for win");
+					if (this.IsWinningMove(move.Item1, row, out List<(int, int)> list))
+					{
+						Console.WriteLine($"Win! Player: {move.Item2}");
+					}
+					else if (this.IsStalemate())
+					{
+						Console.WriteLine("Stalemate");
+					}
+				}
+				else
+				{
+					Console.WriteLine($"Bad move: {move.Item1} by Player: {move.Item2}");
+					return;
+				}
+
 			}
 		}
 	}
