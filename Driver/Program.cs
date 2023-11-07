@@ -9,18 +9,18 @@ Main();
 // driver code
 void Test()
 {
-    //GameState gameState = new();
-    //gameState.Drop(1, 0);
-    //gameState.Drop(1, 0);
-    //gameState.Drop(1, 0);
+	//GameState gameState = new();
+	//gameState.Drop(1, 0);
+	//gameState.Drop(1, 0);
+	//gameState.Drop(1, 0);
 }
 
 void Main()
 {
-    //MainGameState();
+	//MainGameState();
 
-    Game game = new(6, 7, new());
-    game.Driver();
+	Game game = new(6, 7, new());
+	game.Driver();
 }
 
 // driver code 
