@@ -127,43 +127,48 @@ namespace Connect4
 		}
 
 		/// <summary>
-		/// Starts the game asynchronously.
+		/// Starts the game synchronously.
 		/// </summary>
 		/// <returns>-1 if there is no winner; otherwise the player's index in <see cref="Players"/></returns>
-		public async Task<int> Play()
+		public int Play()
 		{
-			return await Task.Run(() =>
+			while(true)
 			{
-				while(true)
+				// Loop through each player
+				for (int i = 0; i < Players.Count; i++)
 				{
-					for (int i = 0; i < Players.Count; i++)
+					var player = Players[i];
+					// Keep looping until they make a valid move
+					do
 					{
-						var player = Players[i];
-						do
+						// Get the move from the player
+						int move = player.MakeMove((int[,])State.Clone(), i + 1);
+						if (IsValidMove(move))
 						{
-							int move = player.MakeMove((int[,])State.Clone(), i + 1);
-							if (IsValidMove(move))
+							// Make the move (update the state)
+							PlaceMove(move, i + 1, out int row);
+							// Check if the move causes a win
+							if (IsWinningMove(move, row, out var _))
 							{
-								PlaceMove(move, i + 1, out int row);
-								if (IsWinningMove(move, row, out var _))
-								{
-									return i;
-								}
-								else if (IsStalemate())
-								{
-									return -1;
-								}
-								break;
+								// Return the index of the player
+								return i;
 							}
-							else
+							else if (IsStalemate())
 							{
-								// The player made an invalid move... now what?
-								throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
+								// Nobody wins
+								return -1;
 							}
-						} while (true);
-					}
+							// Next player
+							break;
+						}
+						else
+						{
+							// TODO: The player made an invalid move... now what?
+							throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
+						}
+					} while (true);
 				}
-			});
+			}
 		}
 	}
 }
