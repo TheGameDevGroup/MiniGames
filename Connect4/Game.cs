@@ -70,7 +70,7 @@ namespace Connect4
 					}
 					else break;
 				}
-				// Reverse the direction.
+				// Reverse the direction
 				rowInc = (rowInc == 0) ? 0 : -rowInc;
 				colInc = (colInc == 0) ? 0 : -colInc;
 			}
@@ -98,7 +98,7 @@ namespace Connect4
 		/// <returns>True if stalemated.</returns>
 		private bool IsStalemate()
 		{
-			// Only check the top row.
+			// Only check the top row
 			int row = BoardState.GetLength(0) - 1;
 			for (int col = 0; col < BoardState.GetLength(1); col++)
 			{
@@ -148,32 +148,29 @@ namespace Connect4
 		{
 			while(true)
 			{
-				// Loop through each player
 				for (int i = 0; i < Players.Count; i++)
 				{
 					var player = Players[i];
-					// Keep looping until they make a valid move
-					do
+					int playerToken = i + 1;
+
+					// Loop until a valid move is made
+					while (true)
 					{
 						// Get the move from the player
-						int move = player.MakeMove((int[,])BoardState.Clone(), i + 1);
+						int move = player.MakeMove((int[,])BoardState.Clone(), playerToken);
 						if (IsValidMove(move))
 						{
-							// Make the move (update the state)
-							PlaceMove(move, i + 1, out int row);
-							// Check if the move causes a win
+							PlaceMove(move, playerToken, out int row);
 							if (IsWinningMove(move, row, out var win))
 							{
 								OnWin?.Invoke(this, win);
-								// Return the index of the player
 								return i;
 							}
 							else if (IsStalemate())
 							{
-								// Nobody wins
 								return -1;
 							}
-							// Next player
+							// Go to the next player
 							break;
 						}
 						else
@@ -181,7 +178,7 @@ namespace Connect4
 							// TODO: The player made an invalid move... now what?
 							throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
 						}
-					} while (true);
+					}
 				}
 			}
 		}
