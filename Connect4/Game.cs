@@ -13,7 +13,7 @@ namespace Connect4
 		public List<IConnect4Player> Players { get; init; }
 		public int[,] State { get; init; }
 
-		public int WinningLength { get; init; } = 3;
+		public int WinningLength { get; init; } = 4;
 
 		public Game(int rowCount, int columnCount, List<IConnect4Player> playerHandlers)
 		{
