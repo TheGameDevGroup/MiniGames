@@ -157,11 +157,11 @@ namespace Connect4
 					while (true)
 					{
 						// Get the move from the player
-						int move = player.MakeMove((int[,])BoardState.Clone(), playerToken);
-						if (IsValidMove(move))
+						int column = player.MakeMove((int[,])BoardState.Clone(), playerToken);
+						if (IsValidMove(column))
 						{
-							PlaceMove(move, playerToken, out int row);
-							if (IsWinningMove(move, row, out var win))
+							PlaceMove(column, playerToken, out int row);
+							if (IsWinningMove(column, row, out var win))
 							{
 								OnWin?.Invoke(this, win);
 								return i;
