@@ -37,14 +37,24 @@ namespace Connect4
 		}
 
 		// find the number of playerToken's pieces in a specified direction
-		private int CheckDirection(int row, int rowInc, int col, int colInc, int playerToken)
+		private int CheckDirection(int row, int rowInc, int col, int colInc, int playerToken, out List<(int, int)> winningPieces)
 		{
-			int count = 0;
-			int j = col + colInc;
-			for (int i = row + rowInc; ; i += rowInc, j += colInc)
+			winningPieces = new List<(int, int)>() { (row, col) };
+            int count = 0;
+			for (int k = 0; k < 2; k++)
 			{
-				if (IsPlayerPiece(i, j, playerToken)) count++;
-				else break;
+				int j = col + colInc;
+				for (int i = row + rowInc; ; i += rowInc, j += colInc)
+				{
+					if (IsPlayerPiece(i, j, playerToken))
+					{
+						winningPieces.Add((i, j));
+						count++;
+					}
+					else break;
+				}
+				rowInc = (rowInc == 0) ? 0 : -rowInc;
+				colInc = (colInc == 0) ? 0 : -colInc;
 			}
 			return count;
 		}
@@ -53,18 +63,16 @@ namespace Connect4
 		/// Checks if the player has won the game.
 		/// </summary>
 		/// <param name="columnIndex">The index of the column in which the last piece was placed</param>
-		/// <param name="winningPosition">List of positions that make up the winning connect 4.</param>
+		/// <param name="winningPieces">List of positions that make up the winning connect 4.</param>
 		/// <returns></returns>
-		private bool IsWinningMove(int column, int row, out List<(int, int)> winningPosition)
+		private bool IsWinningMove(int column, int row, out List<(int, int)> winningPieces)
 		{
 			int playerToken = State[row, column];
-			// TODO: set this
-			winningPosition = new List<(int, int)>();
 			int terminalLength = WinningLength - 1;
-			return CheckDirection(row, -1, column, 0, playerToken) >= terminalLength ||
-					CheckDirection(row, 0, column, -1, playerToken) + CheckDirection(row, 0, column, 1, playerToken) >= terminalLength ||
-					CheckDirection(row, -1, column, -1, playerToken) + CheckDirection(row, 1, column, 1, playerToken) >= terminalLength ||
-					CheckDirection(row, -1, column, 1, playerToken) + CheckDirection(row, 1, column, -1, playerToken) >= terminalLength;
+            return CheckDirection(row, -1, column, 0, playerToken, out winningPieces) >= terminalLength ||
+					CheckDirection(row, 0, column, -1, playerToken, out winningPieces) >= terminalLength ||
+					CheckDirection(row, -1, column, -1, playerToken, out winningPieces) >= terminalLength ||
+					CheckDirection(row, -1, column, 1, playerToken, out winningPieces) >= terminalLength;
 		}
 
 		/// <summary>
@@ -127,43 +135,48 @@ namespace Connect4
 		}
 
 		/// <summary>
-		/// Starts the game asynchronously.
+		/// Starts the game synchronously.
 		/// </summary>
 		/// <returns>-1 if there is no winner; otherwise the player's index in <see cref="Players"/></returns>
-		public async Task<int> Play()
+		public int Play()
 		{
-			return await Task.Run(() =>
+			while(true)
 			{
-				while(true)
+				// Loop through each player
+				for (int i = 0; i < Players.Count; i++)
 				{
-					for (int i = 0; i < Players.Count; i++)
+					var player = Players[i];
+					// Keep looping until they make a valid move
+					do
 					{
-						var player = Players[i];
-						do
+						// Get the move from the player
+						int move = player.MakeMove((int[,])State.Clone(), i + 1);
+						if (IsValidMove(move))
 						{
-							int move = player.MakeMove((int[,])State.Clone(), i + 1);
-							if (IsValidMove(move))
+							// Make the move (update the state)
+							PlaceMove(move, i + 1, out int row);
+							// Check if the move causes a win
+							if (IsWinningMove(move, row, out var _))
 							{
-								PlaceMove(move, i + 1, out int row);
-								if (IsWinningMove(move, row, out var _))
-								{
-									return i;
-								}
-								else if (IsStalemate())
-								{
-									return -1;
-								}
-								break;
+								// Return the index of the player
+								return i;
 							}
-							else
+							else if (IsStalemate())
 							{
-								// The player made an invalid move... now what?
-								throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
+								// Nobody wins
+								return -1;
 							}
-						} while (true);
-					}
+							// Next player
+							break;
+						}
+						else
+						{
+							// TODO: The player made an invalid move... now what?
+							throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
+						}
+					} while (true);
 				}
-			});
+			}
 		}
 
 		public void Driver()
