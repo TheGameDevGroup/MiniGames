@@ -9,7 +9,7 @@ namespace Connect4
 		/// <br/>
 		/// Event argument is an int corresponding to the column in which the last piece was played.
 		/// </summary>
-		public event EventHandler<int>? OnMove;
+		public event EventHandler<int[,]>? OnMove;
 
 		public event EventHandler<List<(int,int)>>? OnWin;
 		public List<IConnect4Player> Players { get; init; }
@@ -128,7 +128,7 @@ namespace Connect4
 					State[i, column] = playerToken;
 					placedRow = i;
 					// This invokes the event listeners
-					OnMove?.Invoke(this, column);
+					OnMove?.Invoke(this, (int[,])State.Clone());
 					return;
 				}
 			}

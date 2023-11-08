@@ -3,12 +3,10 @@
 	public class HumanPlayer : IConnect4Player
 	{
 
-		public event EventHandler<int[,]> UpdateUI;
 		private ManualResetEventSlim MoveSubmitEvent = new(false);
-		public int ProposedMove;
-		public HumanPlayer(EventHandler<int[,]> updateUICallback)
+		private int ProposedMove;
+		public HumanPlayer()
 		{
-			UpdateUI = updateUICallback;
 		}
 		public int MakeMove(in int[,] gameState, int playerToken)
 		{

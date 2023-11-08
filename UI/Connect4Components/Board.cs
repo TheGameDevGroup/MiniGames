@@ -3,33 +3,54 @@
 	public partial class Board : UserControl
 	{
 		public event EventHandler<int>? MoveClick;
-		public Board() : this(6, 7)
+		public int TokenSize { get; private set; } = 100;
+		private List<TokenSpace> Tokens { get; set; } = new();
+		public Dictionary<int, Color> ColorMap { get; set; } = new()
+		{
+			{ 0, Color.White },
+		};
+
+		public Board()
+			: this(6, 7)
 		{
 		}
 		public Board(int rows, int columns)
 		{
-			int tokenSize = 100;
-			Random random = new();
 			InitializeComponent();
 			for (int i = 0; i < rows; i++)
 			{
 				for (int j = 0; j < columns; j++)
 				{
-					TokenSpace newSpot = new(j)
+					TokenSpace newSpot = new(i, j, ColorMap[0])
 					{
-						Width = tokenSize,
-						Height = tokenSize,
-						Location = new(tokenSize * j, tokenSize * i),
+						Width = TokenSize,
+						Height = TokenSize,
+						Location = new(TokenSize * j, TokenSize * i),
 					};
-					this.Controls.Add(newSpot);
-					newSpot.MouseUp += Board_MouseUp;
-					newSpot.SetToken(Color.FromArgb(random.Next(256), random.Next(256), random.Next(256)));
-					//newSpot.SetToken(Color.AliceBlue);
+					Tokens.Add(newSpot);
+					newSpot.MouseUp += Token_MouseUp;
 				}
 			}
+			this.Controls.AddRange(Tokens.ToArray());
 		}
-
-		private void Board_MouseUp(object? sender, MouseEventArgs e)
+		public void Update(int[,] state)
+		{
+			foreach (var token in Tokens)
+			{
+				token.SetToken(ColorMap[state[token.RowIndex, token.ColumnIndex]]);
+			}
+		}
+		public void SetTokenSize(int size)
+		{
+			TokenSize = size;
+			foreach (var token in Tokens)
+			{
+				token.Width = TokenSize;
+				token.Height = TokenSize;
+				Location = new(TokenSize * token.ColumnIndex, TokenSize * token.RowIndex);
+			}
+		}
+		private void Token_MouseUp(object? sender, MouseEventArgs e)
 		{
 			if (sender != null)
 			{

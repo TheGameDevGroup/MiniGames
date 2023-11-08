@@ -1,4 +1,5 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 using UI.Properties;
 
 namespace UI
@@ -6,40 +7,47 @@ namespace UI
 	public partial class TokenSpace : UserControl
 	{
 		public int ColumnIndex { get; init; }
+		public int RowIndex { get; init; }
+		private ImageAttributes Attributes { get; set; } = new();
+		private Image Image { get; set; } = new Bitmap(Resources.test);
 
-		public TokenSpace(int column)
+		public TokenSpace(int row, int column, Color startColor)
 		{
-			this.ColumnIndex = column;
 			InitializeComponent();
-		}
-		public static float[][] GetColorMatrix(float red, float green, float blue, float alpha)
-		{
-			return new float[5][]
+			RowIndex = row;
+			ColumnIndex = column;
+			pictureBox1.Image = Image;
+			SetToken(startColor);
+			pictureBox1.Paint += (object? sender, PaintEventArgs e) =>
 			{
-				new float[5] { red, 0, 0, 0, 0},
-				new float[5] { 0, green, 0, 0, 0},
-				new float[5] { 0, 0, blue, 0, 0},
-				new float[5] { 0, 0, 0, alpha, 0},
-				new float[5] { 0, 0, 0, 0, 1}
+				e.Graphics.DrawImage(
+					Image,
+					new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height),
+					0, 0,
+					Image.Width, Image.Height,
+					GraphicsUnit.Pixel,
+					Attributes);
 			};
 		}
 		public void SetToken(Color color)
 		{
-			var colorMatrix = GetColorMatrix(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
-			ImageAttributes attributes = new();
-			attributes.SetColorMatrix(new ColorMatrix(colorMatrix), ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-			Image image = new Bitmap(Resources.test);
-			pictureBox1.Image = image;
-			pictureBox1.Paint += (object? sender, PaintEventArgs e) =>
+			ColorMatrix matrix = new(new float[5][]
 			{
-				e.Graphics.DrawImage(
-					image,
-					new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height),
-					0, 0,
-					image.Width, image.Height,
-					GraphicsUnit.Pixel,
-					attributes);
-			};
+				new float[5] { color.R / 255f, 0, 0, 0, 0},
+				new float[5] { 0, color.G / 255f, 0, 0, 0},
+				new float[5] { 0, 0, color.B / 255f, 0, 0},
+				new float[5] { 0, 0, 0, color.A / 255f, 0},
+				new float[5] { 0, 0, 0, 0, 1}
+			});
+			Attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+			if (pictureBox1.InvokeRequired)
+			{
+				pictureBox1.Invoke(pictureBox1.Refresh);
+			}
+			else
+			{
+				pictureBox1.Refresh();
+			}
 		}
 
 		private void Picture_MouseUp(object sender, MouseEventArgs e)
