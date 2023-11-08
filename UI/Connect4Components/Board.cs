@@ -25,7 +25,7 @@
 					{
 						Width = TokenSize,
 						Height = TokenSize,
-						Location = new(TokenSize * j, TokenSize * i),
+						Location = new(TokenSize * j, TokenSize * (rows - i - 1)),
 					};
 					Tokens.Add(newSpot);
 					newSpot.MouseUp += Token_MouseUp;
@@ -43,11 +43,12 @@
 		public void SetTokenSize(int size)
 		{
 			TokenSize = size;
+			int maxRowIndex = Tokens.Max(t => t.RowIndex);
 			foreach (var token in Tokens)
 			{
 				token.Width = TokenSize;
 				token.Height = TokenSize;
-				Location = new(TokenSize * token.ColumnIndex, TokenSize * token.RowIndex);
+				Location = new(TokenSize * token.ColumnIndex, TokenSize * (maxRowIndex - token.RowIndex));
 			}
 		}
 		private void Token_MouseUp(object? sender, MouseEventArgs e)

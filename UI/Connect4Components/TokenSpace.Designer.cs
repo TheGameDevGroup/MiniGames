@@ -35,7 +35,7 @@
             // pictureBox1
             // 
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBox1.BackColor = Color.Gray;
+            pictureBox1.BackColor = Color.Yellow;
             pictureBox1.BackgroundImageLayout = ImageLayout.None;
             pictureBox1.Location = new Point(0, 0);
             pictureBox1.Name = "pictureBox1";

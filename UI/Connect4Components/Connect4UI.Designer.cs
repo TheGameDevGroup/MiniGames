@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Connect4UI));
             board1 = new Board();
             SuspendLayout();
             // 
             // board1
             // 
             board1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            board1.ColorMap = (Dictionary<int, Color>)resources.GetObject("board1.ColorMap");
             board1.Location = new Point(12, 12);
             board1.Name = "board1";
             board1.Size = new Size(777, 449);

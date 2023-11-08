@@ -175,7 +175,7 @@ namespace Connect4
 						else
 						{
 							// TODO: The player made an invalid move... now what?
-							throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
+							//throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
 						}
 					} while (true);
 				}
