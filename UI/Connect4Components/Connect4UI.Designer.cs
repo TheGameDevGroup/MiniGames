@@ -35,6 +35,7 @@
             // board1
             // 
             board1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            board1.AutoScroll = true;
             board1.ColorMap = (Dictionary<int, Color>)resources.GetObject("board1.ColorMap");
             board1.Location = new Point(12, 12);
             board1.Name = "board1";
@@ -49,6 +50,7 @@
             Controls.Add(board1);
             Name = "Connect4UI";
             Text = "Connect4";
+            WindowState = FormWindowState.Maximized;
             ResumeLayout(false);
         }
 

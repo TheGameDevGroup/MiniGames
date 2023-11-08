@@ -54,5 +54,15 @@ namespace UI
         {
             this.OnMouseUp(e);
         }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.OnMouseDown(e);
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            this.OnClick(e);
+        }
     }
 }
