@@ -1,13 +1,20 @@
-﻿namespace Connect4
+﻿using System.Drawing;
+
+namespace Connect4
 {
 	public class HumanPlayer : IConnect4Player
 	{
+		public string Name { get; set; }
+		public Color Color { get; set; }
 
-		private ManualResetEventSlim MoveSubmitEvent = new(false);
+		private readonly ManualResetEventSlim MoveSubmitEvent = new(false);
 		private int ProposedMove;
-		public HumanPlayer()
+		public HumanPlayer(string name, Color color)
 		{
+			Name = name;
+			Color = color;
 		}
+
 		public int MakeMove(in int[,] gameState, int playerToken)
 		{
 			MoveSubmitEvent.Reset();
@@ -17,7 +24,7 @@
 				return ProposedMove;
 			}
 		}
-		public void SubmitMove(int column)
+		public void HandleClick(int column)
 		{
 			lock (this)
 			{

@@ -4,29 +4,26 @@ namespace UI
 {
 	public partial class Connect4UI : Form
 	{
-		List<IConnect4Player> players = new();
-		public Connect4UI()
+		List<IConnect4Player> Players = new();
+		public Connect4UI(int rows, int columns)
 		{
 			InitializeComponent();
-			HumanPlayer player1 = new();
-			HumanPlayer player2 = new();
-			HumanPlayer player3 = new();
-			board1.MoveClick += (object? sender, int column) =>
-			{
-				player1.SubmitMove(column);
-				player2.SubmitMove(column);
-				player3.SubmitMove(column);
-			};
-			board1.ColorMap[1] = Color.Red;
-			board1.ColorMap[2] = Color.Blue;
-			board1.ColorMap[3] = Color.Green;
-			players.Add(player1);
-			players.Add(player2);
-			//players.Add(player3);
-			board1.SetTokenSize(70);
-			int rows = 6, columns = 7;
+			board1.SetTokenSize(100);
+			AddPlayer(new HumanPlayer("Red", Color.Red));
+			AddPlayer(new HumanPlayer("Blue", Color.Blue));
+			//AddPlayer(new HumanPlayer("Green", Color.Green));
+			StartGame(rows, columns);
+		}
+		public void AddPlayer(IConnect4Player player)
+		{
+			Players.Add(player);
+			board1.ColorMap.Add(player.Color);
+			board1.MoveClick += (object? sender, int column) => { player.HandleClick(column); };
+		}
+		public void StartGame(int rows, int columns)
+		{
 			board1.Reset(rows, columns);
-			Game game = new(rows, columns, players);
+			Game game = new(rows, columns, Players);
 			game.OnMove += (object? sender, int[,] state) => { board1.Update(state); };
 			game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
 			Task.Run(() =>
@@ -38,7 +35,7 @@ namespace UI
 				}
 				else
 				{
-					MessageBox.Show($"{board1.ColorMap[result + 1].Name} Wins.");
+					MessageBox.Show($"{Players[result].Name} Wins.");
 				}
 			});
 		}

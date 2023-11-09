@@ -5,9 +5,9 @@
 		public event EventHandler<int>? MoveClick;
 		public int TokenSize { get; private set; } = 100;
 		private List<TokenSpace> Tokens { get; set; } = new();
-		public Dictionary<int, Color> ColorMap { get; set; } = new()
+		public List<Color> ColorMap { get; set; } = new()
 		{
-			{ 0, Color.White },
+			Color.White,
 		};
 
 		public Board()
