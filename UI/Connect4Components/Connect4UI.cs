@@ -11,9 +11,9 @@ namespace UI
 			board1.SetTokenSize(100);
 			//AddPlayer(new HumanPlayer("Red", Color.Red));
 			//AddPlayer(new HumanPlayer("Blue", Color.Blue));
+			//AddPlayer(new HumanPlayer("Green", Color.Green));
 			AddPlayer(new RandomBot("Random 1", Color.Orange));
 			AddPlayer(new RandomBot("Random 2", Color.Purple));
-			//AddPlayer(new HumanPlayer("Green", Color.Green));
 			StartGame(rows, columns, true);
 		}
 		public void AddPlayer(IConnect4Player player)
