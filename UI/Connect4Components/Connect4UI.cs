@@ -9,10 +9,12 @@ namespace UI
 		{
 			InitializeComponent();
 			board1.SetTokenSize(100);
-			AddPlayer(new HumanPlayer("Red", Color.Red));
-			AddPlayer(new HumanPlayer("Blue", Color.Blue));
+			//AddPlayer(new HumanPlayer("Red", Color.Red));
+			//AddPlayer(new HumanPlayer("Blue", Color.Blue));
+			AddPlayer(new RandomBot("Random 1", Color.Orange));
+			AddPlayer(new RandomBot("Random 2", Color.Purple));
 			//AddPlayer(new HumanPlayer("Green", Color.Green));
-			StartGame(rows, columns);
+			StartGame(rows, columns, true);
 		}
 		public void AddPlayer(IConnect4Player player)
 		{
@@ -20,15 +22,24 @@ namespace UI
 			board1.ColorMap.Add(player.Color);
 			board1.MoveClick += (object? sender, int column) => { player.HandleClick(column); };
 		}
-		public void StartGame(int rows, int columns)
+		public void StartGame(int rows, int columns, bool infinite = false, int betweenGameDelay = 2000)
 		{
-			board1.Reset(rows, columns);
-			Game game = new(rows, columns, Players);
-			game.OnMove += (object? sender, int[,] state) => { board1.Update(state); };
-			game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
 			Task.Run(() =>
 			{
-				int result = game.Play();
+				int result;
+				do
+				{
+					Game game = new(rows, columns, Players)
+					{
+						WinningLength = 4,
+					};
+					game.OnMove += (object? sender, int[,] state) => { board1.Update(state); };
+					game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
+					board1.Reset(rows, columns);
+					result = game.Play();
+
+					Thread.Sleep(betweenGameDelay);
+				} while (infinite);
 				if (result == -1)
 				{
 					MessageBox.Show("Stalemate");

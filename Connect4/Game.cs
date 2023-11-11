@@ -7,7 +7,7 @@ namespace Connect4
 		public event EventHandler<int[,]>? OnMove;
 
 		public event EventHandler<List<(int,int)>>? OnWin;
-		public List<IConnect4Player> Players { get; init; }
+		public List<IConnect4Player> Players { get; private init; }
 		public int[,] BoardState { get; init; }
 		public int WinningLength { get; init; } = 4;
 

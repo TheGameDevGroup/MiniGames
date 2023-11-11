@@ -39,7 +39,10 @@ namespace UI
 				new float[5] { 0, 0, 0, color.A / 255f, 0},
 				new float[5] { 0, 0, 0, 0, 1}
 			});
-			Attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+			lock(matrix)
+			{
+				Attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+			}
 			if (pictureBox1.InvokeRequired)
 			{
 				pictureBox1.Invoke(pictureBox1.Refresh);
