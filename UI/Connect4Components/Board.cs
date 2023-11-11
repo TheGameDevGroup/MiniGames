@@ -21,7 +21,13 @@
 		}
 		public void Reset(int rows, int columns)
 		{
+			if (this.InvokeRequired)
+			{
+				this.Invoke(Reset, rows, columns);
+				return;
+			}
 			this.Controls.Clear();
+			Tokens = new List<TokenSpace>();
 			for (int i = 0; i < rows; i++)
 			{
 				for (int j = 0; j < columns; j++)
