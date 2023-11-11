@@ -4,13 +4,8 @@ namespace Connect4
 {
 	public class Game
 	{
-		/// <summary>
-		/// Param: the column in which the last piece was played.
-		/// </summary>
-		public event EventHandler<int>? OnMove;
-		/// <summary>
-		/// Param: a list of winning piece positions.
-		/// </summary>
+		public event EventHandler<int[,]>? OnMove;
+
 		public event EventHandler<List<(int,int)>>? OnWin;
 		public List<IConnect4Player> Players { get; init; }
 		public int[,] BoardState { get; init; }
@@ -132,8 +127,7 @@ namespace Connect4
 				{
 					BoardState[i, column] = playerToken;
 					placedRow = i;
-
-					OnMove?.Invoke(this, column);
+					OnMove?.Invoke(this, (int[,])BoardState.Clone());
 					return;
 				}
 			}
@@ -176,7 +170,7 @@ namespace Connect4
 						else
 						{
 							// TODO: The player made an invalid move... now what?
-							throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
+							//throw new InvalidOperationException($"Player {i} attempted to make an invalid move.");
 						}
 					}
 				}
