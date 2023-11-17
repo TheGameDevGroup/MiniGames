@@ -11,12 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Driver", "Driver\Driver.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Connect4Backend", "Connect4Backend\Connect4Backend.csproj", "{EFBE2B21-9692-4081-8135-9469ADDEAE99}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D03D4CFC-DBD3-47EC-AE0F-A7699AEEA0AA}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		IgnoredWords.dic = IgnoredWords.dic
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
