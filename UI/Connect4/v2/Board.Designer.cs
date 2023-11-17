@@ -1,6 +1,6 @@
-﻿namespace UI.Connect4.v1
+﻿namespace UI.Connect4.v2
 {
-    partial class TokenSpace
+    partial class Board
     {
         /// <summary> 
         /// Required designer variable.
@@ -35,25 +35,19 @@
             // pictureBox1
             // 
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBox1.BackColor = Color.Yellow;
-            pictureBox1.BackgroundImageLayout = ImageLayout.None;
             pictureBox1.Location = new Point(0, 0);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(50, 50);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.Size = new Size(289, 203);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
-            pictureBox1.Click += Picture_Click;
-            pictureBox1.MouseDown += Picture_MouseDown;
-            pictureBox1.MouseUp += Picture_MouseUp;
             // 
-            // TokenSpace
+            // Board
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(pictureBox1);
-            Name = "TokenSpace";
-            Size = new Size(50, 50);
+            Name = "Board";
+            Size = new Size(289, 203);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }

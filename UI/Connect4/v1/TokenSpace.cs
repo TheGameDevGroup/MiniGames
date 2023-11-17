@@ -1,8 +1,7 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 using UI.Properties;
 
-namespace UI
+namespace UI.Connect4.v1
 {
 	public partial class TokenSpace : UserControl
 	{
