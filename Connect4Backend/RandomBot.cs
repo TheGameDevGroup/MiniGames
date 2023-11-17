@@ -24,24 +24,21 @@ namespace Connect4Backend
 			}
 			else
 			{
-				return RandomMove(gameState, playerToken);
+				return RandomMove(gameState);
 			}
 		}
 		private int WeightedReandomMove(in int[,] gameState, int playerToken)
 		{
 			var columns = GetMoves(gameState, playerToken);
 			PreviousState = gameState;
-			return columns.Count > 0 ? columns.ElementAt(random.Next(columns.Count)) : RandomMove(gameState, playerToken);
+			return columns.Count > 0 ? columns.ElementAt(random.Next(columns.Count)) : RandomMove(gameState);
 
 		}
 
 		private HashSet<int> GetMoves(in int[,] gameState, int playerToken)
 		{
 			HashSet<int> movesMade = new();
-			if (PreviousState == null)
-			{
-				PreviousState = new int[gameState.GetLength(0), gameState.GetLength(1)];
-			}
+			PreviousState ??= new int[gameState.GetLength(0), gameState.GetLength(1)];
 			for (int column = 0; column < gameState.GetLength(1); column++)
 			{
 				for (int row = gameState.GetLength(0) - 1; row >= 0 ; row--)
@@ -61,7 +58,7 @@ namespace Connect4Backend
 			return movesMade;
 		}
 
-		private int RandomMove(in int[,] gameState, int playerToken)
+		private int RandomMove(in int[,] gameState)
 		{
 			int columnCount = gameState.GetLength(1);
 			return random.Next(columnCount);
