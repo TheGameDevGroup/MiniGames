@@ -30,15 +30,11 @@
 		/// <returns></returns>
 		private bool IsPlayerPiece(int row, int col, int playerToken)
 		{
-			try
-			{
-				if (BoardState[row, col] == playerToken) return true;
-				return false;
-			}
-			catch (IndexOutOfRangeException)
+			if (row >= BoardState.GetLength(0) || col >= BoardState.GetLength(1) || row < 0 || col < 0)
 			{
 				return false;
 			}
+			return BoardState[row, col] == playerToken;
 		}
 
 		/// <summary>
@@ -143,6 +139,7 @@
 		/// <returns>-1 if there is no winner; otherwise the player's index in <see cref="Players"/></returns>
 		public int Play()
 		{
+			if (Players.Count == 0) return -1;
 			while(true)
 			{
 				for (int i = 0; i < Players.Count; i++)
