@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Connect4
+namespace Connect4Backend
 {
     internal class TestPlayer : IConnect4Player
     {

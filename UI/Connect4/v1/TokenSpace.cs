@@ -1,15 +1,14 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 using UI.Properties;
 
-namespace UI
+namespace UI.Connect4.v1
 {
 	public partial class TokenSpace : UserControl
 	{
 		public int ColumnIndex { get; init; }
 		public int RowIndex { get; init; }
 		private ImageAttributes Attributes { get; set; } = new();
-		private Image Image { get; set; } = new Bitmap(Resources.test);
+		private Image Image { get; set; } = new Bitmap(Resources.Connect4_Token);
 
 		public TokenSpace(int row, int column, Color startColor)
 		{

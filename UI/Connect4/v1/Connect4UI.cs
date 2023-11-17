@@ -1,10 +1,10 @@
-﻿using Connect4;
+﻿using Connect4Backend;
 
-namespace UI
+namespace UI.Connect4.v1
 {
 	public partial class Connect4UI : Form
 	{
-		List<IConnect4Player> Players = new();
+		List<IConnect4Player> Players { get; set; } = new();
 		public Connect4UI(int rows, int columns)
 		{
 			InitializeComponent();
@@ -12,8 +12,8 @@ namespace UI
 			//AddPlayer(new HumanPlayer("Red", Color.Red));
 			//AddPlayer(new HumanPlayer("Blue", Color.Blue));
 			//AddPlayer(new HumanPlayer("Green", Color.Green));
-			AddPlayer(new RandomBot("Random 1", Color.Orange));
-			AddPlayer(new RandomBot("Random 2", Color.Purple));
+			AddPlayer(new RandomBot("Random 1", Color.Orange, false));
+			AddPlayer(new RandomBot("Random 2", Color.Purple, true));
 			StartGame(rows, columns, true);
 		}
 		public void AddPlayer(IConnect4Player player)

@@ -1,4 +1,4 @@
-﻿namespace Connect4
+﻿namespace Connect4Backend
 {
 	/// <summary>
 	/// This is used to enforce common behavior across different implementations.

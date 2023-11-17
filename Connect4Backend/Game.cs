@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Connect4
+﻿namespace Connect4Backend
 {
 	public class Game
 	{
@@ -8,6 +6,11 @@ namespace Connect4
 
 		public event EventHandler<List<(int,int)>>? OnWin;
 		public List<IConnect4Player> Players { get; private init; }
+		/// <summary>
+		/// [row, column]
+		/// <br/>
+		/// [0,0] is the bottom left corner of the board.
+		/// </summary>
 		public int[,] BoardState { get; init; }
 		public int WinningLength { get; init; } = 4;
 
@@ -27,15 +30,11 @@ namespace Connect4
 		/// <returns></returns>
 		private bool IsPlayerPiece(int row, int col, int playerToken)
 		{
-			try
-			{
-				if (BoardState[row, col] == playerToken) return true;
-				return false;
-			}
-			catch (IndexOutOfRangeException)
+			if (row >= BoardState.GetLength(0) || col >= BoardState.GetLength(1) || row < 0 || col < 0)
 			{
 				return false;
 			}
+			return BoardState[row, col] == playerToken;
 		}
 
 		/// <summary>
@@ -140,6 +139,7 @@ namespace Connect4
 		/// <returns>-1 if there is no winner; otherwise the player's index in <see cref="Players"/></returns>
 		public int Play()
 		{
+			if (Players.Count == 0) return -1;
 			while(true)
 			{
 				for (int i = 0; i < Players.Count; i++)
@@ -204,7 +204,7 @@ namespace Connect4
 					Console.WriteLine($"Player {move.Item2} making move {move.Item1}");
 					this.PlaceMove(move.Item1, move.Item2, out int row);
 					Console.WriteLine($"Checking for win");
-					if (this.IsWinningMove(move.Item1, row, out List<(int, int)> list))
+					if (this.IsWinningMove(move.Item1, row, out List<(int, int)> _))
 					{
 						Console.WriteLine($"Win! Player: {move.Item2}");
 					}
