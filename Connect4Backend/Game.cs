@@ -6,6 +6,11 @@
 
 		public event EventHandler<List<(int,int)>>? OnWin;
 		public List<IConnect4Player> Players { get; private init; }
+		/// <summary>
+		/// [row, column]
+		/// <br/>
+		/// [0,0] is the bottom left corner of the board.
+		/// </summary>
 		public int[,] BoardState { get; init; }
 		public int WinningLength { get; init; } = 4;
 
