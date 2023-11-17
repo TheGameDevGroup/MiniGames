@@ -1,10 +1,10 @@
 ﻿using System.Drawing;
 
-namespace Connect4
+namespace Connect4Backend
 {
 	public class RandomBot : IConnect4Player
 	{
-		private Random random = new Random();
+		private readonly Random random = new();
 		public string Name { get; set; }
 		public Color Color { get; set; }
 		public RandomBot(string name, Color color)

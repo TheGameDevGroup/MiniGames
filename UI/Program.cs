@@ -11,7 +11,7 @@ namespace UI
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
 			ApplicationConfiguration.Initialize();
-			Application.Run(new Connect4UI(6, 7));
+			Application.Run(new Connect4.v1.Connect4UI(6, 7));
 		}
 	}
 }

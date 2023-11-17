@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Connect4
+﻿namespace Connect4Backend
 {
 	public class Game
 	{
@@ -204,7 +202,7 @@ namespace Connect4
 					Console.WriteLine($"Player {move.Item2} making move {move.Item1}");
 					this.PlaceMove(move.Item1, move.Item2, out int row);
 					Console.WriteLine($"Checking for win");
-					if (this.IsWinningMove(move.Item1, row, out List<(int, int)> list))
+					if (this.IsWinningMove(move.Item1, row, out List<(int, int)> _))
 					{
 						Console.WriteLine($"Win! Player: {move.Item2}");
 					}

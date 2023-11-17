@@ -63,9 +63,9 @@ namespace UI.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap test {
+        internal static System.Drawing.Bitmap Connect4_Token {
             get {
-                object obj = ResourceManager.GetObject("test", resourceCulture);
+                object obj = ResourceManager.GetObject("Connect4_Token", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

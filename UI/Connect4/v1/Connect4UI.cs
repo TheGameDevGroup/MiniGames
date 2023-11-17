@@ -1,10 +1,10 @@
-﻿using Connect4;
+﻿using Connect4Backend;
 
-namespace UI
+namespace UI.Connect4.v1
 {
 	public partial class Connect4UI : Form
 	{
-		List<IConnect4Player> Players = new();
+		List<IConnect4Player> Players { get; set; } = new();
 		public Connect4UI(int rows, int columns)
 		{
 			InitializeComponent();

@@ -1,4 +1,4 @@
-﻿using Connect4;
+﻿using Connect4Backend;
 
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");

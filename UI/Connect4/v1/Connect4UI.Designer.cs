@@ -1,4 +1,4 @@
-﻿namespace UI
+﻿namespace UI.Connect4.v1
 {
 	partial class Connect4UI
 	{

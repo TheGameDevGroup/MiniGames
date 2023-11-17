@@ -7,9 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "Utilities\Util
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "UI\UI.csproj", "{C80BE0BD-77C1-4986-9CEF-F57287D55742}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Connect4", "Connect4\Connect4.csproj", "{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Driver", "Driver\Driver.csproj", "{5CBE099D-E894-48D7-B856-1DEA340E7862}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Driver", "Driver\Driver.csproj", "{5CBE099D-E894-48D7-B856-1DEA340E7862}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Connect4Backend", "Connect4Backend\Connect4Backend.csproj", "{EFBE2B21-9692-4081-8135-9469ADDEAE99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D03D4CFC-DBD3-47EC-AE0F-A7699AEEA0AA}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		IgnoredWords.dic = IgnoredWords.dic
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +31,14 @@ Global
 		{C80BE0BD-77C1-4986-9CEF-F57287D55742}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C80BE0BD-77C1-4986-9CEF-F57287D55742}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C80BE0BD-77C1-4986-9CEF-F57287D55742}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4BD456F3-78DE-411C-8DBD-33CBDEA382B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5CBE099D-E894-48D7-B856-1DEA340E7862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5CBE099D-E894-48D7-B856-1DEA340E7862}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CBE099D-E894-48D7-B856-1DEA340E7862}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CBE099D-E894-48D7-B856-1DEA340E7862}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFBE2B21-9692-4081-8135-9469ADDEAE99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFBE2B21-9692-4081-8135-9469ADDEAE99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFBE2B21-9692-4081-8135-9469ADDEAE99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFBE2B21-9692-4081-8135-9469ADDEAE99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
