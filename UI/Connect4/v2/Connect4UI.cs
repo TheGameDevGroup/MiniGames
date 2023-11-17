@@ -37,8 +37,8 @@ namespace UI.Connect4.v2
 					{
 						WinningLength = 4,
 					};
-					//game.OnMove += (object? sender, int[,] state) => { board1.Update(state); };
-					//game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
+					game.OnMove += (object? sender, int[,] state) => { board1.Update(state); };
+					game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
 					board1.Reset(rows, columns);
 					result = game.Play();
 					if (shiftFirstPlayer)
@@ -62,7 +62,7 @@ namespace UI.Connect4.v2
 						winString += $"; {temp.ElementAt(i).Color.Name}: {Wins[temp.ElementAt(i)]}";
 					}
 					Debug.WriteLine(winString);
-					//Thread.Sleep(betweenGameDelay);
+					Thread.Sleep(betweenGameDelay);
 				} while (infinite);
 				if (result == -1)
 				{
