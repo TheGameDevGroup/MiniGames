@@ -41,15 +41,6 @@ namespace UI.Connect4.v2
 					game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
 					board1.Reset(rows, columns);
 					result = game.Play();
-					if (shiftFirstPlayer)
-					{
-						var fp = Players.First();
-						Players.Remove(fp);
-						Players.Add(fp);
-						var pc = board1.ColorMap[1];
-						board1.ColorMap.Remove(pc);
-						board1.ColorMap.Add(pc);
-					}
 					if (result == -1)
 					{
 						Stalemates++;
@@ -65,6 +56,15 @@ namespace UI.Connect4.v2
 						winString += $"; {temp.ElementAt(i).Color.Name}: {Wins[temp.ElementAt(i)]}";
 					}
 					Debug.WriteLine(winString);
+					if (shiftFirstPlayer)
+					{
+						var fp = Players.First();
+						Players.Remove(fp);
+						Players.Add(fp);
+						var pc = board1.ColorMap[1];
+						board1.ColorMap.Remove(pc);
+						board1.ColorMap.Add(pc);
+					}
 					Thread.Sleep(betweenGameDelay);
 				} while (infinite);
 				if (result == -1)

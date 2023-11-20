@@ -31,6 +31,7 @@ namespace UI.Connect4.v2
 		public Board(int rowCount, int columnCount)
 		{
 			InitializeComponent();
+			SetTokenSize(TokenSize);
 			DefaultAttributes = BuildAttributes(Color.White);
 			ColorMap = new() { Color.White };
 			pictureBox1.Paint += Board_Paint;
