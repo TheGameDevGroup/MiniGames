@@ -35,18 +35,20 @@
             // board1
             // 
             board1.ColorMap = (List<Color>)resources.GetObject("board1.ColorMap");
-            board1.Location = new Point(12, 12);
+            board1.Location = new Point(12, 11);
+            board1.Margin = new Padding(3, 2, 3, 2);
             board1.Name = "board1";
-            board1.Size = new Size(744, 616);
+            board1.Size = new Size(751, 617);
             board1.TabIndex = 0;
             // 
             // Connect4UI
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new Size(768, 640);
+            ClientSize = new Size(786, 639);
             Controls.Add(board1);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "Connect4UI";
             Text = "Connect4UI";
             ResumeLayout(false);
