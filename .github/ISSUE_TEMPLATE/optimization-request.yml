@@ -11,6 +11,7 @@ body:
       multiple: true
       options:
         - Connect4
+        - Minesweeper
         - UI
         - Utilities
         - Other (please specify)
@@ -45,7 +46,7 @@ body:
       label: Why should the proposed way be used instead?
       description: Demonstrate how the new way is better with benchmarks, articles, etc.
     validations:
-      required: false
+      required: true
 
   - type: textarea
     id: issues
@@ -53,7 +54,7 @@ body:
       label: What are potential issues with the proposed improvements?
       description: Play devil's advocate
     validations:
-      required: false
+      required: true
 
   - type: textarea
     id: context

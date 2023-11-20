@@ -14,8 +14,8 @@ namespace UI.Connect4.v2
 			InitializeComponent();
 			//AddPlayer(new HumanPlayer("Red", Color.Red));
 			//AddPlayer(new HumanPlayer("Blue", Color.Blue));
-			//AddPlayer(new HumanPlayer("Green", Color.Green));
-			AddPlayer(new RandomBot("Random 1", Color.Orange, false));
+			AddPlayer(new HumanPlayer("Green", Color.Green));
+			//AddPlayer(new RandomBot("Random 1", Color.Orange, false));
 			AddPlayer(new RandomBot("Random 2", Color.Purple, true));
 			StartGame(rowCount, columnCount, true, true);
 		}
@@ -46,6 +46,9 @@ namespace UI.Connect4.v2
 						var fp = Players.First();
 						Players.Remove(fp);
 						Players.Add(fp);
+						var pc = board1.ColorMap[1];
+						board1.ColorMap.Remove(pc);
+						board1.ColorMap.Add(pc);
 					}
 					if (result == -1)
 					{

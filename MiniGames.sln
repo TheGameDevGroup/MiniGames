@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Driver", "Driver\Driver.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Connect4Backend", "Connect4Backend\Connect4Backend.csproj", "{EFBE2B21-9692-4081-8135-9469ADDEAE99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinesweeperBackend", "MinesweeperBackend\MinesweeperBackend.csproj", "{1947169E-6BC9-402C-80AC-90343FD810CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{EFBE2B21-9692-4081-8135-9469ADDEAE99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFBE2B21-9692-4081-8135-9469ADDEAE99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFBE2B21-9692-4081-8135-9469ADDEAE99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1947169E-6BC9-402C-80AC-90343FD810CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1947169E-6BC9-402C-80AC-90343FD810CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1947169E-6BC9-402C-80AC-90343FD810CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1947169E-6BC9-402C-80AC-90343FD810CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
