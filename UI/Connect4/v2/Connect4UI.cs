@@ -23,7 +23,6 @@ namespace UI.Connect4.v2
 		{
 			Players.Add(player);
 			Wins[player] = 0;
-			board1.ColorMap.Add(player.Color);
 			board1.ColumnClick += (object? sender, int column) => { player.HandleClick(column); };
 		}
 		public void StartGame(int rows, int columns, bool infinite = false, bool shiftFirstPlayer = false, int betweenGameDelay = 2000)
@@ -37,7 +36,7 @@ namespace UI.Connect4.v2
 					{
 						WinningLength = 4,
 					};
-					game.OnMove += (object? sender, int[,] state) => { board1.Update(state); };
+					game.OnMove += (object? sender, int[,] state) => { board1.Update(state, Players.Select(p => p.Color).ToList()); };
 					game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
 					board1.Reset(rows, columns);
 					result = game.Play();
@@ -61,9 +60,6 @@ namespace UI.Connect4.v2
 						var fp = Players.First();
 						Players.Remove(fp);
 						Players.Add(fp);
-						var pc = board1.ColorMap[1];
-						board1.ColorMap.Remove(pc);
-						board1.ColorMap.Add(pc);
 					}
 					Thread.Sleep(betweenGameDelay);
 				} while (infinite);

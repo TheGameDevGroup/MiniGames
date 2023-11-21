@@ -7,7 +7,6 @@ namespace UI.Connect4.v2
 	{
 		private Dictionary<(int, int), (int, ImageAttributes, Color?)> Attributes { get; set; } = new();
 		private ImageAttributes DefaultAttributes { get; set; }
-		public List<Color> ColorMap { get; set; }
 		public int TokenSize { get; private set; } = 100;
 		public int RowCount { get; private set; }
 		public int ColumnCount { get; private set; }
@@ -15,14 +14,14 @@ namespace UI.Connect4.v2
 		private readonly Image TokenImage = new Bitmap(Resources.Connect4_Token);
 		private static ImageAttributes BuildAttributes(Color color)
 		{
-			ColorMatrix matrix = new(new float[5][]
-			{
-				new float[5] { color.R / 255f, 0, 0, 0, 0},
-				new float[5] { 0, color.G / 255f, 0, 0, 0},
-				new float[5] { 0, 0, color.B / 255f, 0, 0},
-				new float[5] { 0, 0, 0, color.A / 255f, 0},
-				new float[5] { 0, 0, 0, 0, 1}
-			});
+			ColorMatrix matrix = new(
+			[
+				[color.R / 255f, 0, 0, 0, 0],
+				[0, color.G / 255f, 0, 0, 0],
+				[0, 0, color.B / 255f, 0, 0],
+				[0, 0, 0, color.A / 255f, 0],
+				[0, 0, 0, 0, 1]
+			]);
 			ImageAttributes toReturn = new();
 			toReturn.SetColorMatrix(matrix);
 			return toReturn;
@@ -33,7 +32,6 @@ namespace UI.Connect4.v2
 			InitializeComponent();
 			SetTokenSize(TokenSize);
 			DefaultAttributes = BuildAttributes(Color.White);
-			ColorMap = new() { Color.White };
 			pictureBox1.Paint += Board_Paint;
 			pictureBox1.MouseUp += Picture_Click;
 			pictureBox1.BackColor = Color.Yellow;
@@ -59,10 +57,10 @@ namespace UI.Connect4.v2
 		{
 			RowCount = rows;
 			ColumnCount = columns;
-			Attributes = new();
+			Attributes = [];
 			SetTokenSize(TokenSize);
 		}
-		public void Update(int[,] newState)
+		public void Update(int[,] newState, List<Color> colorMap)
 		{
 			RowCount = newState.GetLength(0);
 			ColumnCount = newState.GetLength(1);
@@ -70,9 +68,10 @@ namespace UI.Connect4.v2
 			{
 				for (int column = 0; column < ColumnCount; column++)
 				{
-					if (!Attributes.TryGetValue((row, column), out var attr) || newState[row, column] != attr.Item1)
+					int tokenState = newState[row, column];
+					if (tokenState != 0 && (!Attributes.TryGetValue((row, column), out var attr) || tokenState != attr.Item1))
 					{
-						Attributes[(row, column)] = (newState[row, column], BuildAttributes(ColorMap[newState[row, column]]), null);
+						Attributes[(row, column)] = (tokenState, BuildAttributes(colorMap[tokenState - 1]), null);
 					}
 				}
 			}
@@ -111,12 +110,12 @@ namespace UI.Connect4.v2
 						}
 					}
 					e.Graphics.DrawImage(
-							TokenImage,
-							rect,
-							0, 0, TokenImage.Width, TokenImage.Height,
-							GraphicsUnit.Pixel,
-							attributes ?? DefaultAttributes
-						);
+						TokenImage,
+						rect,
+						0, 0, TokenImage.Width, TokenImage.Height,
+						GraphicsUnit.Pixel,
+						attributes ?? DefaultAttributes
+					);
 				}
 			}
 		}
