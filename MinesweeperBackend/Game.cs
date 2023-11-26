@@ -3,10 +3,6 @@
 	public class Game
 	{
 		/// <summary>
-		/// Provides the location selected, the number of surrounding bombs, and whether that tile is a bomb
-		/// </summary>
-		public event EventHandler<((int,int),byte, bool)>? OnMove;
-		/// <summary>
 		/// Provides the array indicating which tiles have bombs
 		/// </summary>
 		public event EventHandler<bool[,]>? OnEnd;
@@ -16,6 +12,9 @@
 		private readonly bool[,] Bombs;
 		private readonly bool[,] Uncovered;
 		private readonly byte[,] BombCounts;
+
+		private readonly byte?[,] CurrentState; // Updated and returned to player
+
 		private readonly int TotalBombCount;
 		private int TotalClearedCount = 0;
 		private readonly int TotalTileCount;
@@ -27,12 +26,14 @@
 			Bombs = new bool[rows, columns];
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
+			CurrentState = new byte?[rows, columns];
 			// There is probably a better way to populate the bombs
 			Random random = new();
 			for (int i = 0; i < bombCount; )
 			{
 				int r = random.Next(rows);
 				int c = random.Next(columns);
+				// Make sure there is not already a bomb here
 				if (!Bombs[r, c])
 				{
 					Bombs[r, c] = true;
@@ -55,17 +56,15 @@
 		{
 			while (true)
 			{
-				var move = Player.MakeMove(BuildState());
+				var move = Player.MakeMove(in CurrentState);
 				if (Bombs[move.Item1, move.Item2])
 				{
-					OnMove?.Invoke(this, (move, BombCounts[move.Item1, move.Item2], true));
 					OnEnd?.Invoke(this, Bombs);
 					return false; // lost
 				}
 				else
 				{
 					DoMove(move.Item1, move.Item2);
-					OnMove?.Invoke(this, (move, BombCounts[move.Item1, move.Item2], false));
 					if (IsWin())
 					{
 						OnEnd?.Invoke(this, Bombs);
@@ -88,20 +87,48 @@
 			}
 			return toReturn;
 		}
-		private byte CountSurroundingBombs(int rowIndex, int columnIndex)
+		private byte CountSurroundingBombs(int row, int column)
 		{
-			throw new NotImplementedException();
+			// There is likely a better way to do this, any improvement is gladly 
+			bool TryGetAt(int rowIndex, int columnIndex)
+			{
+				if (rowIndex < 0 || columnIndex < 0 || rowIndex >= Bombs.GetLength(0) || columnIndex >= Bombs.GetLength(1))
+				{
+					return false;
+				}
+				else
+				{
+					return Bombs[rowIndex, columnIndex];
+				}
+			}
+			byte sum = 0;
+			for (int i = row - 1; i <= row + 1; i++)
+			{
+				for (int j = column - 1; j <= column + 1; j++)
+				{
+					if (TryGetAt(i, j))
+					{
+						sum++;
+					}
+				}
+			}
+			return sum;
 		}
 		private void DoMove(int row, int column)
 		{
-			// TODO: check for invalid move
-
-			// Check for repeated move (e.i., already uncovered)
-			if (!Uncovered[row, column])
+			if (row < 0 || column < 0 || row >= Uncovered.GetLength(0) || column >= Uncovered.GetLength(1))
 			{
-				Uncovered[row, column] = true;
-				TotalClearedCount++;
+				return; //invalid move
 			}
+			// Check for repeated move (e.i., already uncovered)
+			if (Uncovered[row, column])
+			{
+				return;
+			}
+			Uncovered[row, column] = true;
+			TotalClearedCount++;
+			// Update state
+			CurrentState[row, column] = BombCounts[row, column];
 			if (BombCounts[row, column] == 0 && !Bombs[row, column])
 			{
 				// Auto expand

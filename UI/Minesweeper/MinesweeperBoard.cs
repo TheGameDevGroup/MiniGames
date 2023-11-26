@@ -4,6 +4,7 @@ namespace UI.Minesweeper
 {
 	public partial class MinesweeperBoard : UserControl
 	{
+		public EventHandler<(int, int)>? MoveClick;
 		private byte?[,] CurrentState;
 		private int MineSize = 20;
 		private readonly Dictionary<byte, Brush> ColorMap = new()
@@ -32,6 +33,30 @@ namespace UI.Minesweeper
 			CurrentState[1, 7] = 7;
 			CurrentState[1, 8] = 8;
 			CurrentState[1, 9] = 9;
+		}
+		public void UpdateUI(byte?[,] newState)
+		{
+			CurrentState = newState;
+			if (pictureBox1.InvokeRequired)
+			{
+				pictureBox1.Invoke(pictureBox1.Refresh);
+			}
+			else
+			{
+				pictureBox1.Refresh();
+			}
+		}
+		public void Reset(int rows, int columns)
+		{
+			UpdateUI(new byte?[rows, columns]);
+		}
+		public void HandleEnd(bool[,] bombs)
+		{
+			throw new NotImplementedException();
+		}
+		private void Picture_Click(object? sender, MouseEventArgs e)
+		{
+			MoveClick?.Invoke(this, (e.X / MineSize, e.Y / MineSize));
 		}
 		private void HandlePaint(object? sender, PaintEventArgs e)
 		{

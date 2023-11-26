@@ -40,13 +40,14 @@
             pictureBox1.Size = new Size(150, 150);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
+            pictureBox1.MouseUp += Picture_Click;
             // 
-            // Board
+            // MinesweeperBoard
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(pictureBox1);
-            Name = "Board";
+            Name = "MinesweeperBoard";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
