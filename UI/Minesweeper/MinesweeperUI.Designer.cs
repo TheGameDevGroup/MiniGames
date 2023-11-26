@@ -28,12 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "MinesweeperUI";
+            minesweeperBoard1 = new MinesweeperBoard();
+            SuspendLayout();
+            // 
+            // minesweeperBoard1
+            // 
+            minesweeperBoard1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            minesweeperBoard1.Location = new Point(12, 12);
+            minesweeperBoard1.Name = "minesweeperBoard1";
+            minesweeperBoard1.Size = new Size(606, 602);
+            minesweeperBoard1.TabIndex = 0;
+            // 
+            // MinesweeperUI
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(630, 626);
+            Controls.Add(minesweeperBoard1);
+            Name = "MinesweeperUI";
+            Text = "MinesweeperUI";
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private MinesweeperBoard minesweeperBoard1;
     }
 }
