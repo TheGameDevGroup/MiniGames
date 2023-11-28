@@ -7,18 +7,16 @@
 		/// </summary>
 		public event EventHandler<bool[,]>? OnEnd;
 
-		public IMineSweeperPlayer Player;
+		public IMinesweeperPlayer Player;
 
 		private readonly bool[,] Bombs;
 		private readonly bool[,] Uncovered;
 		private readonly byte[,] BombCounts;
 
-		private readonly byte?[,] CurrentState; // Updated and returned to player
-
 		private readonly int TotalBombCount;
 		private int TotalClearedCount = 0;
 		private readonly int TotalTileCount;
-		public Game(int rows, int columns, int bombCount, IMineSweeperPlayer player)
+		public Game(int rows, int columns, int bombCount, IMinesweeperPlayer player)
 		{
 			TotalTileCount = rows * columns;
 			TotalBombCount = bombCount;
@@ -26,7 +24,6 @@
 			Bombs = new bool[rows, columns];
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
-			CurrentState = new byte?[rows, columns];
 			// There is probably a better way to populate the bombs
 			Random random = new();
 			for (int i = 0; i < bombCount; )
@@ -56,7 +53,7 @@
 		{
 			while (true)
 			{
-				var move = Player.MakeMove(in CurrentState);
+				var move = Player.MakeMove();
 				if (Bombs[move.Item1, move.Item2])
 				{
 					OnEnd?.Invoke(this, Bombs);
@@ -89,7 +86,7 @@
 		}
 		private byte CountSurroundingBombs(int row, int column)
 		{
-			// There is likely a better way to do this, any improvement is gladly 
+			// There is likely a better way to do this, any improvement is gladly accepted
 			bool TryGetAt(int rowIndex, int columnIndex)
 			{
 				if (rowIndex < 0 || columnIndex < 0 || rowIndex >= Bombs.GetLength(0) || columnIndex >= Bombs.GetLength(1))
@@ -128,18 +125,20 @@
 			Uncovered[row, column] = true;
 			TotalClearedCount++;
 			// Update state
-			CurrentState[row, column] = BombCounts[row, column];
+			Player.UpdateState(row, column, BombCounts[row, column]);
 			if (BombCounts[row, column] == 0 && !Bombs[row, column])
 			{
 				// Auto expand
-				DoMove(row - 1, column - 1);
-				DoMove(row - 1, column);
-				DoMove(row - 1, column + 1);
-				DoMove(row, column - 1);
-				DoMove(row, column + 1);
-				DoMove(row + 1, column - 1);
-				DoMove(row + 1, column);
-				DoMove(row + 1, column + 1);
+				for (int i = row - 1; i <= row + 1; i++)
+				{
+					for (int j = column - 1; j <= column + 1; j++)
+					{
+						if (i != row || j != column)
+						{
+							DoMove(i, j);
+						}
+					}
+				}
 			}
 		}
 		private bool IsWin()

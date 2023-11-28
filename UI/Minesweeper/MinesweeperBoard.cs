@@ -34,25 +34,39 @@ namespace UI.Minesweeper
 			CurrentState[1, 8] = 8;
 			CurrentState[1, 9] = 9;
 		}
-		public void UpdateUI(byte?[,] newState)
+		public void UpdateState(((int, int), byte) stateUpdate)
 		{
-			CurrentState = newState;
-			if (pictureBox1.InvokeRequired)
-			{
-				pictureBox1.Invoke(pictureBox1.Refresh);
-			}
-			else
-			{
-				pictureBox1.Refresh();
-			}
+			CurrentState[stateUpdate.Item1.Item1, stateUpdate.Item1.Item2] = stateUpdate.Item2;
 		}
 		public void Reset(int rows, int columns)
 		{
-			UpdateUI(new byte?[rows, columns]);
+			CurrentState = new byte?[rows, columns];
+			UpdateUI();
 		}
+		public void UpdateUI()
+		{
+            if (pictureBox1.InvokeRequired)
+            {
+                pictureBox1.Invoke(pictureBox1.Refresh);
+            }
+            else
+            {
+                pictureBox1.Refresh();
+            }
+        }
 		public void HandleEnd(bool[,] bombs)
 		{
-			throw new NotImplementedException();
+			for (int row = 0; row < bombs.GetLength(0); row++)
+			{
+				for (int col = 0; col < bombs.GetLength(1); col++)
+				{
+					if (bombs[row, col])
+					{
+						CurrentState[row, col] = 255;
+					}
+				}
+			}
+			UpdateUI();
 		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{
@@ -63,6 +77,7 @@ namespace UI.Minesweeper
 			var graphics = e.Graphics;
 			var covered = Resources.Minesweeper_Covered;
 			var uncovered = Resources.Minesweeper_Uncovered;
+			var bomb = Resources.Minesweeper_Bomb;
 			Font font = new("Arial", MineSize * 0.55f, FontStyle.Bold, GraphicsUnit.Point);
 			StringFormat format = new()
 			{
@@ -75,16 +90,23 @@ namespace UI.Minesweeper
 				{
 					Rectangle rect = new(row * MineSize, column * MineSize, MineSize, MineSize);
 					var state = CurrentState[row, column];
-					if (state != null)
+					if (state == 255)
+					{
+						graphics.DrawImage(bomb, rect);
+					}
+					else if (state != null)
 					{
 						graphics.DrawImage(uncovered, rect);
-						graphics.DrawString(
-							state.ToString(),
-							font,
-							ColorMap.TryGetValue(state.Value, out var color) ? color : Brushes.Black,
-							rect,
-							format
-						);
+						if (state != 0)
+						{
+							graphics.DrawString(
+								state.ToString(),
+								font,
+								ColorMap.TryGetValue(state.Value, out var color) ? color : Brushes.Black,
+								rect,
+								format
+							);
+						}
 					}
 					else
 					{
