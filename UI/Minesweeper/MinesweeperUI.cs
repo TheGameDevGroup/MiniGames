@@ -19,12 +19,12 @@ namespace UI.Minesweeper
 			Task.Run(() =>
 			{
 				while (!this.IsHandleCreated) { } // Wait for UI
-				while(infinite)
+				do
 				{
 					StartGame(rows, columns, bombCount);
 					Thread.Sleep(betweenGameDelay);
 					Player.NewGame();
-				}
+				} while (infinite);
 			});
 		}
 		public void StartGame(int rows, int columns, int bombs)
