@@ -1,20 +1,20 @@
 ﻿namespace UI.Connect4.v1
 {
-	public partial class Board : UserControl
+	public partial class Connect4Board : UserControl
 	{
 		public event EventHandler<int>? MoveClick;
 		public int TokenSize { get; private set; } = 100;
-		private List<TokenSpace> Tokens { get; set; } = new();
-		public List<Color> ColorMap { get; set; } = new()
-		{
-			Color.White,
-		};
+		private List<TokenSpace> Tokens { get; set; } = [];
+		public List<Color> ColorMap { get; set; } =
+        [
+            Color.White,
+		];
 
-		public Board()
+		public Connect4Board()
 		{
 			InitializeComponent();
 		}
-		public Board(int rows, int columns)
+		public Connect4Board(int rows, int columns)
 			: this()
 		{
 			Reset(rows, columns);
@@ -27,7 +27,7 @@
 				return;
 			}
 			this.Controls.Clear();
-			Tokens = new List<TokenSpace>();
+			Tokens = [];
 			for (int i = 0; i < rows; i++)
 			{
 				for (int j = 0; j < columns; j++)
@@ -54,7 +54,7 @@
 		public void SetTokenSize(int size)
 		{
 			TokenSize = size;
-			if (!Tokens.Any()) { return; }
+			if (Tokens.Count == 0) { return; }
 			int maxRowIndex = Tokens.Max(t => t.RowIndex);
 			foreach (var token in Tokens)
 			{

@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			board1 = new Board();
+			board1 = new Connect4Board();
 			SuspendLayout();
 			// 
 			// board1
@@ -54,6 +54,6 @@
 
 		#endregion
 
-		private Board board1;
+		private Connect4Board board1;
 	}
 }

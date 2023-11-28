@@ -1,6 +1,6 @@
 ﻿namespace UI.Connect4.v1
 {
-    partial class Board
+    partial class Connect4Board
     {
         /// <summary> 
         /// Required designer variable.

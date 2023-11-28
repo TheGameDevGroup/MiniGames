@@ -1,6 +1,6 @@
-﻿namespace UI.Connect4.v2
+﻿namespace UI.Minesweeper
 {
-    partial class Board
+    partial class MinesweeperBoard
     {
         /// <summary> 
         /// Required designer variable.
@@ -37,17 +37,17 @@
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             pictureBox1.Location = new Point(0, 0);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(289, 203);
+            pictureBox1.Size = new Size(150, 150);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
+            pictureBox1.MouseUp += Picture_Click;
             // 
-            // Board
+            // MinesweeperBoard
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(pictureBox1);
-            Name = "Board";
-            Size = new Size(289, 203);
+            Name = "MinesweeperBoard";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }

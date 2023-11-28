@@ -3,7 +3,7 @@ using UI.Properties;
 
 namespace UI.Connect4.v2
 {
-	public partial class Board : UserControl
+	public partial class Connect4Board : UserControl
 	{
 		private Dictionary<(int, int), (int, ImageAttributes, Color?)> Attributes { get; set; } = new();
 		private ImageAttributes DefaultAttributes { get; set; }
@@ -26,8 +26,8 @@ namespace UI.Connect4.v2
 			toReturn.SetColorMatrix(matrix);
 			return toReturn;
 		}
-		public Board() : this(6, 7) { }
-		public Board(int rowCount, int columnCount)
+		public Connect4Board() : this(6, 7) { }
+		public Connect4Board(int rowCount, int columnCount)
 		{
 			InitializeComponent();
 			SetTokenSize(TokenSize);
