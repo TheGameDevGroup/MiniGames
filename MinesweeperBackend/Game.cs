@@ -68,20 +68,6 @@
 				}
 			}
 		}
-		private byte?[,] BuildState()
-		{
-			int r = Uncovered.GetLength(0);
-			int c = Uncovered.GetLength(1);
-			var toReturn = new byte?[r, c];
-			for (int i = 0; i < r; i++)
-			{
-				for (int j = 0; j < c; j++)
-				{
-					toReturn[i, j] = Uncovered[i, j] ? BombCounts[i, j] : null;
-				}
-			}
-			return toReturn;
-		}
 		private void AddBomb(int row, int column)
 		{
 			if (!Bombs[row, column])
@@ -99,7 +85,6 @@
 				}
 			}
 		}
-
 		private void PopulateBombs(int rows, int columns, int bombCount)
 		{
 			HashSet<(int, int)> locations = new();
@@ -140,7 +125,6 @@
 				else Replacement = location;
 			}
 		}
-
 		private void RemoveBomb(int row, int column)
 		{
 			if (Bombs[row, column])
@@ -157,33 +141,6 @@
 					}
 				}
 			}
-		}
-		private byte CountSurroundingBombs(int row, int column)
-		{
-			// There is likely a better way to do this, any improvement is gladly accepted
-			bool TryGetAt(int rowIndex, int columnIndex)
-			{
-				if (rowIndex < 0 || columnIndex < 0 || rowIndex >= Bombs.GetLength(0) || columnIndex >= Bombs.GetLength(1))
-				{
-					return false;
-				}
-				else
-				{
-					return Bombs[rowIndex, columnIndex];
-				}
-			}
-			byte sum = 0;
-			for (int i = row - 1; i <= row + 1; i++)
-			{
-				for (int j = column - 1; j <= column + 1; j++)
-				{
-					if (TryGetAt(i, j))
-					{
-						sum++;
-					}
-				}
-			}
-			return sum;
 		}
 		private void DoMove(int row, int column)
 		{
@@ -218,6 +175,49 @@
 		private bool IsWin()
 		{
 			return TotalClearedCount == TotalTileCount - TotalBombCount;
+		}
+		[Obsolete]
+		private byte CountSurroundingBombs(int row, int column)
+		{
+			// There is likely a better way to do this, any improvement is gladly accepted
+			bool TryGetAt(int rowIndex, int columnIndex)
+			{
+				if (rowIndex < 0 || columnIndex < 0 || rowIndex >= Bombs.GetLength(0) || columnIndex >= Bombs.GetLength(1))
+				{
+					return false;
+				}
+				else
+				{
+					return Bombs[rowIndex, columnIndex];
+				}
+			}
+			byte sum = 0;
+			for (int i = row - 1; i <= row + 1; i++)
+			{
+				for (int j = column - 1; j <= column + 1; j++)
+				{
+					if (TryGetAt(i, j))
+					{
+						sum++;
+					}
+				}
+			}
+			return sum;
+		}
+		[Obsolete]
+		private byte?[,] BuildState()
+		{
+			int r = Uncovered.GetLength(0);
+			int c = Uncovered.GetLength(1);
+			var toReturn = new byte?[r, c];
+			for (int i = 0; i < r; i++)
+			{
+				for (int j = 0; j < c; j++)
+				{
+					toReturn[i, j] = Uncovered[i, j] ? BombCounts[i, j] : null;
+				}
+			}
+			return toReturn;
 		}
 	}
 }
