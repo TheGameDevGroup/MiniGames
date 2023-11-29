@@ -27,24 +27,13 @@
 			Bombs = new bool[rows, columns];
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
-			// There is probably a better way to populate the bombs
-			Random random = new();
-			
-			for (int i = 1; i <= bombCount; )
+
+			if (bombCount > TotalTileCount)
 			{
-				int r = random.Next(rows);
-				int c = random.Next(columns);
-				// Make sure there is not already a bomb here
-				if (!Bombs[r, c])
-				{
-					AddBomb(r, c);
-					i++;
-				}
+				throw new ArgumentOutOfRangeException(nameof(bombCount));
 			}
-			do
-			{
-				Replacement = (random.Next(rows), random.Next(columns));
-			} while (Bombs[Replacement.Item1, Replacement.Item2]);
+
+			PopulateBombs(rows, columns, bombCount);
 		}
 		/// <summary>
 		/// Synchronously start the game.
@@ -58,11 +47,11 @@
 				var move = Player.MakeMove(BombCounts.GetLength(0), BombCounts.GetLength(1));
 				if (isFirstMove && Bombs[move.Item1, move.Item2])
 				{
-					isFirstMove = false;
 					// Move the bomb
 					RemoveBomb(move.Item1, move.Item2);
 					AddBomb(Replacement.Item1, Replacement.Item2);
 				}
+				isFirstMove = false;
 				if (Bombs[move.Item1, move.Item2])
 				{
 					OnEnd?.Invoke(this, Bombs);
@@ -110,6 +99,48 @@
 				}
 			}
 		}
+
+		private void PopulateBombs(int rows, int columns, int bombCount)
+		{
+			HashSet<(int, int)> locations = new();
+			Random random = new();
+			int row, column, randRow, randColumn;
+
+			for (int i = 0; i <= bombCount; i++)
+			{
+				row = i / columns;
+				column = i % columns;
+
+				locations.Add((row, column));
+			}
+
+			for (int i = 0; i <= bombCount; i++)
+			{
+				row = i / columns;
+				column = i % columns;
+
+				randRow = random.Next(rows);
+				randColumn = random.Next(columns);
+
+				if (!locations.Contains((randRow, randColumn)))
+				{
+					locations.Remove((row, column));
+					locations.Add((randRow, randColumn));
+				}
+				else
+				{
+					continue;
+				}
+			}
+
+			int k = 0;
+			foreach (var location in locations)
+			{
+				if (k < bombCount) AddBomb(location.Item1, location.Item2);
+				else Replacement = location;
+			}
+		}
+
 		private void RemoveBomb(int row, int column)
 		{
 			if (Bombs[row, column])
