@@ -12,7 +12,7 @@ namespace UI
 			// see https://aka.ms/applicationconfiguration.
 			ApplicationConfiguration.Initialize();
 			//Application.Run(new Connect4.v2.Connect4UI(6, 7));
-			Application.Run(new Minesweeper.MinesweeperUI(30, 30, 20, new MinesweeperBackend.HumanPlayer(), true));
+			Application.Run(new Minesweeper.MinesweeperUI(15, 30, 20, new MinesweeperBackend.HumanPlayer(), true));
 		}
 	}
 }

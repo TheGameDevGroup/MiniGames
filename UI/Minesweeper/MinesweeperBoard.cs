@@ -45,15 +45,15 @@ namespace UI.Minesweeper
 		}
 		public void UpdateUI()
 		{
-            if (pictureBox1.InvokeRequired)
-            {
-                pictureBox1.Invoke(pictureBox1.Refresh);
-            }
-            else
-            {
-                pictureBox1.Refresh();
-            }
-        }
+			if (pictureBox1.InvokeRequired)
+			{
+				pictureBox1.Invoke(pictureBox1.Refresh);
+			}
+			else
+			{
+				pictureBox1.Refresh();
+			}
+		}
 		public void HandleEnd(bool[,] bombs)
 		{
 			for (int row = 0; row < bombs.GetLength(0); row++)
@@ -70,7 +70,12 @@ namespace UI.Minesweeper
 		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{
-			MoveClick?.Invoke(this, (e.X / MineSize, e.Y / MineSize));
+			int row = e.Y / MineSize;
+			int column = e.X / MineSize;
+			if (row >= 0 && column >= 0 && row < CurrentState.GetLength(0) && column < CurrentState.GetLength(1))
+			{
+				MoveClick?.Invoke(this, (row, column));
+			}
 		}
 		private void HandlePaint(object? sender, PaintEventArgs e)
 		{
@@ -88,7 +93,7 @@ namespace UI.Minesweeper
 			{
 				for (int column = 0; column < CurrentState.GetLength(1); column++)
 				{
-					Rectangle rect = new(row * MineSize, column * MineSize, MineSize, MineSize);
+					Rectangle rect = new(column * MineSize, row * MineSize, MineSize, MineSize);
 					var state = CurrentState[row, column];
 					if (state == 255)
 					{
