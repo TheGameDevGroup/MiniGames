@@ -28,7 +28,7 @@
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
 
-			if (bombCount > TotalTileCount)
+			if (bombCount >= TotalTileCount)
 			{
 				throw new ArgumentOutOfRangeException(nameof(bombCount));
 			}
