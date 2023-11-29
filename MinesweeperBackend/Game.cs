@@ -58,11 +58,11 @@
 				var move = Player.MakeMove(BombCounts.GetLength(0), BombCounts.GetLength(1));
 				if (isFirstMove && Bombs[move.Item1, move.Item2])
 				{
-					isFirstMove = false;
 					// Move the bomb
 					RemoveBomb(move.Item1, move.Item2);
 					AddBomb(Replacement.Item1, Replacement.Item2);
 				}
+				isFirstMove = false;
 				if (Bombs[move.Item1, move.Item2])
 				{
 					OnEnd?.Invoke(this, Bombs);
@@ -110,6 +110,45 @@
 				}
 			}
 		}
+
+		private void PopulateBombs(int rows, int columns, int bombCount)
+		{
+			HashSet<(int, int)> locations = new();
+			Random random = new();
+			int row, column, randRow, randColumn;
+			for (int i = 0; i < bombCount; i++)
+			{
+				row = i / columns;
+				column = i % columns;
+
+				AddBomb(row, column);
+			}
+			Replacement = ((bombCount + 1) / columns, (bombCount + 1) % columns);
+
+			for (int i = 0; i < bombCount; i++)
+			{
+				row = i / columns;
+				column = i % columns;
+
+				randRow = random.Next(rows);
+				randColumn = random.Next(columns);
+
+				if (!Bombs[randRow, randColumn])
+				{
+					RemoveBomb(row, column);
+					AddBomb(randRow, randColumn);
+				}
+				else
+				{
+					continue;
+				}
+
+				randRow = random.Next(rows);
+				randColumn = random.Next(columns);
+				if (!Bombs[randRow, randColumn]) Replacement = (randRow, randColumn);
+			}
+		}
+
 		private void RemoveBomb(int row, int column)
 		{
 			if (Bombs[row, column])
