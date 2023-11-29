@@ -27,24 +27,13 @@
 			Bombs = new bool[rows, columns];
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
-			// There is probably a better way to populate the bombs
-			Random random = new();
-			
-			for (int i = 1; i <= bombCount; )
+
+			if (bombCount > TotalTileCount)
 			{
-				int r = random.Next(rows);
-				int c = random.Next(columns);
-				// Make sure there is not already a bomb here
-				if (!Bombs[r, c])
-				{
-					AddBomb(r, c);
-					i++;
-				}
+				throw new ArgumentOutOfRangeException(nameof(bombCount));
 			}
-			do
-			{
-				Replacement = (random.Next(rows), random.Next(columns));
-			} while (Bombs[Replacement.Item1, Replacement.Item2]);
+
+			PopulateBombs(rows, columns, bombCount);
 		}
 		/// <summary>
 		/// Synchronously start the game.
@@ -116,16 +105,16 @@
 			HashSet<(int, int)> locations = new();
 			Random random = new();
 			int row, column, randRow, randColumn;
-			for (int i = 0; i < bombCount; i++)
+
+			for (int i = 0; i <= bombCount; i++)
 			{
 				row = i / columns;
 				column = i % columns;
 
-				AddBomb(row, column);
+				locations.Add((row, column));
 			}
-			Replacement = ((bombCount + 1) / columns, (bombCount + 1) % columns);
 
-			for (int i = 0; i < bombCount; i++)
+			for (int i = 0; i <= bombCount; i++)
 			{
 				row = i / columns;
 				column = i % columns;
@@ -133,19 +122,22 @@
 				randRow = random.Next(rows);
 				randColumn = random.Next(columns);
 
-				if (!Bombs[randRow, randColumn])
+				if (!locations.Contains((randRow, randColumn)))
 				{
-					RemoveBomb(row, column);
-					AddBomb(randRow, randColumn);
+					locations.Remove((row, column));
+					locations.Add((randRow, randColumn));
 				}
 				else
 				{
 					continue;
 				}
+			}
 
-				randRow = random.Next(rows);
-				randColumn = random.Next(columns);
-				if (!Bombs[randRow, randColumn]) Replacement = (randRow, randColumn);
+			int k = 0;
+			foreach (var location in locations)
+			{
+				if (k < bombCount) AddBomb(location.Item1, location.Item2);
+				else Replacement = location;
 			}
 		}
 
