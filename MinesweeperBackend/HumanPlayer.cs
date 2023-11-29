@@ -12,7 +12,7 @@ namespace MinesweeperBackend
 		private (int, int) ProposedMove;
 		private ManualResetEvent ResetEvent = new(false);
 
-		public (int, int) MakeMove()
+		public (int, int) MakeMove(int rows, int columns)
 		{
 			OnUpdateUI?.Invoke(this, new());
 			ResetEvent.Reset();
@@ -23,10 +23,6 @@ namespace MinesweeperBackend
 		{
 			ProposedMove = (row, column);
 			ResetEvent.Set();
-		}
-		public void UpdateState(int row, int col, byte bombCount)
-		{
-			OnUpdateState?.Invoke(this, ((row, col), bombCount));
 		}
 		public void NewGame()
 		{

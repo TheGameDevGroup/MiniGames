@@ -16,6 +16,9 @@
 		private readonly int TotalBombCount;
 		private int TotalClearedCount = 0;
 		private readonly int TotalTileCount;
+
+		// Use to store valid locations for new bombs
+		private (int, int) Replacement;
 		public Game(int rows, int columns, int bombCount, IMinesweeperPlayer player)
 		{
 			TotalTileCount = rows * columns;
@@ -26,24 +29,22 @@
 			BombCounts = new byte[rows, columns];
 			// There is probably a better way to populate the bombs
 			Random random = new();
-			for (int i = 0; i < bombCount; )
+			
+			for (int i = 1; i <= bombCount; )
 			{
 				int r = random.Next(rows);
 				int c = random.Next(columns);
 				// Make sure there is not already a bomb here
 				if (!Bombs[r, c])
 				{
-					Bombs[r, c] = true;
+					AddBomb(r, c);
 					i++;
 				}
 			}
-			for (int i = 0; i < rows; i++)
+			do
 			{
-				for (int j = 0; j < columns; j++)
-				{
-					BombCounts[i, j] = CountSurroundingBombs(i, j);
-				}
-			}
+				Replacement = (random.Next(rows), random.Next(columns));
+			} while (Bombs[Replacement.Item1, Replacement.Item2]);
 		}
 		/// <summary>
 		/// Synchronously start the game.
@@ -51,9 +52,17 @@
 		/// <returns>True if the game is won.</returns>
 		public bool Play()
 		{
+			bool isFirstMove = true;
 			while (true)
 			{
-				var move = Player.MakeMove();
+				var move = Player.MakeMove(BombCounts.GetLength(0), BombCounts.GetLength(1));
+				if (isFirstMove && Bombs[move.Item1, move.Item2])
+				{
+					isFirstMove = false;
+					// Move the bomb
+					RemoveBomb(move.Item1, move.Item2);
+					AddBomb(Replacement.Item1, Replacement.Item2);
+				}
 				if (Bombs[move.Item1, move.Item2])
 				{
 					OnEnd?.Invoke(this, Bombs);
@@ -83,6 +92,40 @@
 				}
 			}
 			return toReturn;
+		}
+		private void AddBomb(int row, int column)
+		{
+			if (!Bombs[row, column])
+			{
+				Bombs[row, column] = true;
+				for (int i = row - 1; i <= row + 1; i++)
+				{
+					for(int j = column - 1; j <= column + 1; j++)
+					{
+						if (i >= 0 && j >= 0 && i < BombCounts.GetLength(0) && j < BombCounts.GetLength(1))
+						{
+							BombCounts[i, j]++;
+						}
+					}
+				}
+			}
+		}
+		private void RemoveBomb(int row, int column)
+		{
+			if (Bombs[row, column])
+			{
+				Bombs[row, column] = false;
+				for (int i = row - 1; i <= row + 1; i++)
+				{
+					for (int j = column - 1; j <= column + 1; j++)
+					{
+						if (i >= 0 && j >= 0 && i < BombCounts.GetLength(0) && j < BombCounts.GetLength(1))
+						{
+							BombCounts[i, j]--;
+						}
+					}
+				}
+			}
 		}
 		private byte CountSurroundingBombs(int row, int column)
 		{
