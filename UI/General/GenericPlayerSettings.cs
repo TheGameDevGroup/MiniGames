@@ -2,7 +2,7 @@
 
 namespace UI.General
 {
-	public partial class GenericPlayerSettings : UserControl
+	public partial class GenericPlayerSettings<TEnum> : UserControl where TEnum : Enum
 	{
 		static Random random = new();
 		public Color PlayerColor => BtnColor.BackColor;
@@ -20,7 +20,12 @@ namespace UI.General
 			BtnColor.BackColor = color;
 			TxtName.Text = name;
 		}
-		public virtual IGenericPlayer GetPlayer()
+		public void SetPlayer(IGenericPlayer<TEnum> player)
+		{
+			TxtName.Text = player.Name;
+			BtnColor.BackColor = player.Color;
+		}
+		public virtual IGenericPlayer<IGenericPlayer<Enum>.PlayerTypes> GetPlayer()
 		{
 			return new GenericPlayer(PlayerName, PlayerColor); 
 		}

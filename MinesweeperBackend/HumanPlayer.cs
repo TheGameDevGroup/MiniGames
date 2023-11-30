@@ -7,6 +7,7 @@ namespace MinesweeperBackend
 		public string Name { get; set; } = "Human";
 		public Color Color { get; set; } = Color.Red;
 		public int WinCount { get; set; }
+		public string PlayerType { get; init; } = "Human";
 		public CancellationToken CancellationToken { get; set; }
 		public EventHandler<((int, int), byte)>? OnUpdateState { get; set; }
 		public EventHandler? OnUpdateUI { get; set; }

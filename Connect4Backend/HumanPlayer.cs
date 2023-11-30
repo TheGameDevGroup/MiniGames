@@ -7,6 +7,7 @@ namespace Connect4Backend
 		public string Name { get; set; }
 		public Color Color { get; set; }
 		public int WinCount { get; set; }
+		public IConnect4Player.PlayerTypes PlayerType => IConnect4Player.PlayerTypes.Human;
 		public CancellationToken CancellationToken { get; set; }
 
 		private readonly ManualResetEventSlim MoveSubmitEvent = new(false);

@@ -1,7 +1,7 @@
 ﻿namespace UI.General
 {
-	partial class GenericPlayerSettings
-	{
+	partial class GenericPlayerSettings<TEnum>
+    {
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>

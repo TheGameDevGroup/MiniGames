@@ -10,6 +10,7 @@ namespace UI.Connect4.v2
 		public bool Infinite = true;
 		public bool ShiftFirstPlayer = true;
 		public int BetweenGameDelay = 2000;
+		public int WinningLength;
 
 		CancellationTokenSource CTS = new();
 
@@ -33,56 +34,74 @@ namespace UI.Connect4.v2
 		}
 		public void StartGame()
 		{
+			if (Players.Count == 0) { return; }
 			CTS = new();
 			var test = Task.Run(() =>
 			{
-				int result;
-				do
+				try
 				{
-					Game game = new(Rows, Columns, Players)
+					int result;
+					do
 					{
-						WinningLength = 4,
-					};
-					game.OnMove += (object? sender, int[,] state) => { board1.Update(state, Players.Select(p => p.Color).ToList()); };
-					game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
-					board1.Reset(Rows, Columns);
-					result = game.Play(CTS.Token);
-					if (CTS.IsCancellationRequested)
-					{
-						return;
-					}
+						Game game = new(Rows, Columns, Players)
+						{
+							WinningLength = this.WinningLength,
+						};
+						game.OnMove += (object? sender, int[,] state) => { board1.Update(state, Players.Select(p => p.Color).ToList()); };
+						game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
+						board1.Reset(Rows, Columns);
+						result = game.Play(CTS.Token);
+						if (CTS.IsCancellationRequested)
+						{
+							return;
+						}
+						if (result == -1)
+						{
+							Stalemates++;
+						}
+						else
+						{
+							Players[result].WinCount++;
+						}
+						string winString = $"Stalemates: {Stalemates}";
+						for (int i = 0; i < Players.Count; i++)
+						{
+							var temp = Players.OrderBy(p => p.Name);
+							winString += $"; {temp.ElementAt(i).Color.Name}: {temp.ElementAt(i).WinCount}";
+						}
+						Debug.WriteLine(winString);
+						if (ShiftFirstPlayer)
+						{
+							var fp = Players.First();
+							Players.Remove(fp);
+							Players.Add(fp);
+						}
+						Thread.Sleep(BetweenGameDelay);
+					} while (Infinite && !CTS.IsCancellationRequested);
 					if (result == -1)
 					{
-						Stalemates++;
+						MessageBox.Show("Stalemate");
 					}
 					else
 					{
-						Players[result].WinCount++;
+						MessageBox.Show($"{Players[result].Name} Wins.");
 					}
-					string winString = $"Stalemates: {Stalemates}";
-					for (int i = 0; i < Players.Count; i++)
-					{
-						var temp = Players.OrderBy(p => p.Name);
-						winString += $"; {temp.ElementAt(i).Color.Name}: {temp.ElementAt(i).WinCount}";
-					}
-					Debug.WriteLine(winString);
-					if (ShiftFirstPlayer)
-					{
-						var fp = Players.First();
-						Players.Remove(fp);
-						Players.Add(fp);
-					}
-					Thread.Sleep(BetweenGameDelay);
-				} while (Infinite && !CTS.IsCancellationRequested);
-				if (result == -1)
-				{
-					MessageBox.Show("Stalemate");
 				}
-				else
-				{
-					MessageBox.Show($"{Players[result].Name} Wins.");
-				}
-			}, CTS.Token);
+				catch (OperationCanceledException) { }
+			});
+		}
+
+		private void MenuSettings_Click(object sender, EventArgs e)
+		{
+			CTS.Cancel();
+			Connect4Settings settings = new(Players);
+			settings.ShowDialog();
+			Players.Clear();
+			settings.GetPlayers().ForEach(AddPlayer);
+			Rows = settings.RowCount;
+			Columns = settings.ColumnCount;
+			WinningLength = settings.WinLength;
+			StartGame();
 		}
 	}
 }

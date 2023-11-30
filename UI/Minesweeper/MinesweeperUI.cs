@@ -35,21 +35,28 @@ namespace UI.Minesweeper
 			CTS = new();
 			Task.Run(() =>
 			{
-				while (!this.IsHandleCreated) { } // Wait for UI
-				do
+				try
 				{
-					minesweeperBoard1.Reset(Rows, Columns);
-					Game game = new(Rows, Columns, BombCount, Player);
-					game.OnEnd += (object? sender, bool[,] bombs) => { minesweeperBoard1.HandleEnd(bombs); };
-					if (game.Play(CTS.Token))
+					while (!this.IsHandleCreated) { } // Wait for UI
+					do
 					{
-						WinCount++;
-					}
-					GameCount++;
-					Debug.WriteLine($"Game Count: {GameCount}, WinCount: {WinCount}");
-					Thread.Sleep(BetweenGameDelay);
-				} while (Infinite && !CTS.IsCancellationRequested);
-			}, CTS.Token);
+						minesweeperBoard1.Reset(Rows, Columns);
+						Game game = new(Rows, Columns, BombCount, Player);
+						game.OnEnd += (object? sender, bool[,] bombs) => { minesweeperBoard1.HandleEnd(bombs); };
+						if (game.Play(CTS.Token))
+						{
+							WinCount++;
+						}
+						GameCount++;
+						Debug.WriteLine($"Game Count: {GameCount}, WinCount: {WinCount}");
+						Thread.Sleep(BetweenGameDelay);
+					} while (Infinite && !CTS.IsCancellationRequested);
+				}
+				catch (OperationCanceledException)
+				{
+					// do nothing
+				}
+			});
 		}
 		private void PlayerUpdateState(object? sender, ((int, int), byte) moveState)
 		{

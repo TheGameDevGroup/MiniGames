@@ -7,7 +7,7 @@ namespace Connect4Backend
 	/// 
 	/// If you want to make a Connect 4 (AI) player, implement this interface.
 	/// </summary>
-	public interface IConnect4Player : Utilities.IGenericPlayer
+	public interface IConnect4Player : IGenericPlayer<IConnect4Player.PlayerTypes>
 	{
 		/// <summary>
 		/// Choose a move to play.
@@ -21,5 +21,11 @@ namespace Connect4Backend
 		/// </summary>
 		/// <param name="column"></param>
 		void HandleClick(int column) { }
+		public new enum PlayerTypes
+		{
+			Human,
+			RandomSimple,
+			RandomWeighted
+		}
 	}
 }
