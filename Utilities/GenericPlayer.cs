@@ -2,10 +2,15 @@
 
 namespace Utilities
 {
-	public interface IGenericPlayer
+	public class GenericPlayer : IGenericPlayer
 	{
 		public string Name { get; set; }
 		public Color Color { get; set; }
 		public int WinCount { get; set; }
+		public GenericPlayer(string name, Color color)
+		{
+			Name = name;
+			Color = color;
+		}
 	}
 }

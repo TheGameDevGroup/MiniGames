@@ -10,6 +10,7 @@ namespace Connect4Backend
 		private int[,]? PreviousState;
 		public string Name { get; set; }
 		public Color Color { get; set; }
+		public int WinCount { get; set; }
 		public RandomBot(string name, Color color, bool isWeighted)
 		{
 			this.Name = name;

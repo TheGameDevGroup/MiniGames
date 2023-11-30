@@ -6,6 +6,7 @@ namespace Connect4Backend
 	{
 		public string Name { get; set; }
 		public Color Color { get; set; }
+		public int WinCount { get; set; }
 
 		private readonly ManualResetEventSlim MoveSubmitEvent = new(false);
 		private int ProposedMove;
