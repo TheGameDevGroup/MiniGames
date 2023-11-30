@@ -7,6 +7,7 @@ namespace Connect4Backend
         public string Name { get; set; } = "test";
         public Color Color { get; set; } = Color.Cyan;
         public int WinCount { get; set; }
+        public CancellationToken CancellationToken { get; set; }
 
         public int MakeMove(in int[,] gameState, int playerToken)
         {

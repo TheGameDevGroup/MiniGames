@@ -11,7 +11,8 @@ namespace Connect4Backend
 		public string Name { get; set; }
 		public Color Color { get; set; }
 		public int WinCount { get; set; }
-		public RandomBot(string name, Color color, bool isWeighted)
+		public CancellationToken CancellationToken { get; set; }
+        public RandomBot(string name, Color color, bool isWeighted)
 		{
 			this.Name = name;
 			this.Color = color;

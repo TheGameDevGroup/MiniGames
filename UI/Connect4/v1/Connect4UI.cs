@@ -36,7 +36,7 @@ namespace UI.Connect4.v1
 					game.OnMove += (object? sender, int[,] state) => { board1.Update(state); };
 					game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
 					board1.Reset(rows, columns);
-					result = game.Play();
+					result = game.Play(new CancellationToken());
 
 					Thread.Sleep(betweenGameDelay);
 				} while (infinite);

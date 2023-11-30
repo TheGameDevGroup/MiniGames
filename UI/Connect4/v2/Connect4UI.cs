@@ -5,64 +5,75 @@ namespace UI.Connect4.v2
 {
 	public partial class Connect4UI : Form
 	{
+		public int Rows = 6;
+		public int Columns = 7;
+		public bool Infinite = true;
+		public bool ShiftFirstPlayer = true;
+		public int BetweenGameDelay = 2000;
+
+		CancellationTokenSource CTS = new();
+
 		List<IConnect4Player> Players = new();
-		Dictionary<IConnect4Player, int> Wins = new();
 		int Stalemates = 0;
-		public Connect4UI() : this(6, 7) { }
-		public Connect4UI(int rowCount, int columnCount)
+		public Connect4UI()
 		{
 			InitializeComponent();
-			//AddPlayer(new HumanPlayer("Red", Color.Red));
-			//AddPlayer(new HumanPlayer("Blue", Color.Blue));
-			AddPlayer(new HumanPlayer("Green", Color.Green));
-			//AddPlayer(new RandomBot("Random 1", Color.Orange, false));
-			AddPlayer(new RandomBot("Random 2", Color.Purple, true));
-			StartGame(rowCount, columnCount, true, true);
+			AddPlayer(new HumanPlayer("Player 1", Color.Blue));
+			AddPlayer(new RandomBot("Player 2", Color.Red, true));
+			StartGame();
+		}
+		public void ClearPlayers()
+		{
+			Players.Clear();
 		}
 		public void AddPlayer(IConnect4Player player)
 		{
 			Players.Add(player);
-			Wins[player] = 0;
 			board1.ColumnClick += (object? sender, int column) => { player.HandleClick(column); };
 		}
-		public void StartGame(int rows, int columns, bool infinite = false, bool shiftFirstPlayer = false, int betweenGameDelay = 2000)
+		public void StartGame()
 		{
-			Task.Run(() =>
+			CTS = new();
+			var test = Task.Run(() =>
 			{
 				int result;
 				do
 				{
-					Game game = new(rows, columns, Players)
+					Game game = new(Rows, Columns, Players)
 					{
 						WinningLength = 4,
 					};
 					game.OnMove += (object? sender, int[,] state) => { board1.Update(state, Players.Select(p => p.Color).ToList()); };
 					game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
-					board1.Reset(rows, columns);
-					result = game.Play();
+					board1.Reset(Rows, Columns);
+					result = game.Play(CTS.Token);
+					if (CTS.IsCancellationRequested)
+					{
+						return;
+					}
 					if (result == -1)
 					{
 						Stalemates++;
 					}
 					else
 					{
-						Wins[Players[result]]++;
+						Players[result].WinCount++;
 					}
 					string winString = $"Stalemates: {Stalemates}";
 					for (int i = 0; i < Players.Count; i++)
 					{
 						var temp = Players.OrderBy(p => p.Name);
-						winString += $"; {temp.ElementAt(i).Color.Name}: {Wins[temp.ElementAt(i)]}";
+						winString += $"; {temp.ElementAt(i).Color.Name}: {temp.ElementAt(i).WinCount}";
 					}
 					Debug.WriteLine(winString);
-					if (shiftFirstPlayer)
+					if (ShiftFirstPlayer)
 					{
 						var fp = Players.First();
 						Players.Remove(fp);
 						Players.Add(fp);
 					}
-					Thread.Sleep(betweenGameDelay);
-				} while (infinite);
+					Thread.Sleep(BetweenGameDelay);
+				} while (Infinite && !CTS.IsCancellationRequested);
 				if (result == -1)
 				{
 					MessageBox.Show("Stalemate");
@@ -71,7 +82,7 @@ namespace UI.Connect4.v2
 				{
 					MessageBox.Show($"{Players[result].Name} Wins.");
 				}
-			});
+			}, CTS.Token);
 		}
 	}
 }
