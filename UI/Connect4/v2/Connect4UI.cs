@@ -10,7 +10,7 @@ namespace UI.Connect4.v2
 		public bool Infinite = true;
 		public bool ShiftFirstPlayer = true;
 		public int BetweenGameDelay = 2000;
-		public int WinningLength;
+		public int WinningLength = 4;
 
 		CancellationTokenSource CTS = new();
 
@@ -78,13 +78,16 @@ namespace UI.Connect4.v2
 						}
 						Thread.Sleep(BetweenGameDelay);
 					} while (Infinite && !CTS.IsCancellationRequested);
-					if (result == -1)
+					if (!CTS.IsCancellationRequested)
 					{
-						MessageBox.Show("Stalemate");
-					}
-					else
-					{
-						MessageBox.Show($"{Players[result].Name} Wins.");
+						if (result == -1)
+						{
+							MessageBox.Show("Stalemate");
+						}
+						else
+						{
+							MessageBox.Show($"{Players[result].Name} Wins.");
+						}
 					}
 				}
 				catch (OperationCanceledException) { }
@@ -94,7 +97,7 @@ namespace UI.Connect4.v2
 		private void MenuSettings_Click(object sender, EventArgs e)
 		{
 			CTS.Cancel();
-			Connect4Settings settings = new(Players);
+			Connect4Settings settings = new(Players, Rows, Columns, WinningLength);
 			settings.ShowDialog();
 			Players.Clear();
 			settings.GetPlayers().ForEach(AddPlayer);

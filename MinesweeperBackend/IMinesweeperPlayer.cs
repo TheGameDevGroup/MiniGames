@@ -2,7 +2,7 @@
 
 namespace MinesweeperBackend
 {
-	public interface IMinesweeperPlayer : IGenericPlayer
+	public interface IMinesweeperPlayer : IGenericPlayer<IMinesweeperPlayer.PlayerTypes>
 	{
 		/// <summary>
 		/// 
@@ -30,5 +30,9 @@ namespace MinesweeperBackend
 		/// Used to indicate that a new game has begun and the player should clear anything from the previous game.
 		/// </summary>
 		public void NewGame();
+		public new enum PlayerTypes
+		{
+			Human
+		}
 	}
 }

@@ -12,6 +12,7 @@ namespace Connect4Backend
 
 		private readonly ManualResetEventSlim MoveSubmitEvent = new(false);
 		private int ProposedMove;
+		public HumanPlayer() : this("Human", Color.Blue) { }
 		public HumanPlayer(string name, Color color)
 		{
 			Name = name;
