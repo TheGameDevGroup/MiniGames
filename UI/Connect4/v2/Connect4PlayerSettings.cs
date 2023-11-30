@@ -22,5 +22,9 @@ namespace UI.Connect4.v2
 			ComboType.SelectedIndex = type;
 			base.SetPlayer(player);
 		}
+		public void FitWidth(object? control, EventArgs? e = null)
+		{
+			Size = new(((Control)control!).Size.Width - Margin.Horizontal * 2, Size.Height);
+		}
 	}
 }

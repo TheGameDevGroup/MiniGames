@@ -34,11 +34,12 @@
             NumColumns = new NumericUpDown();
             NumRows = new NumericUpDown();
             GrpPlayers = new GroupBox();
+            BtnCancel = new Button();
+            BtnOk = new Button();
             BtnAddPlayer = new Button();
             PanPlayers = new FlowLayoutPanel();
             label3 = new Label();
             NumWinLength = new NumericUpDown();
-            BtnOk = new Button();
             GrpBoardSize.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)NumColumns).BeginInit();
             ((System.ComponentModel.ISupportInitialize)NumRows).BeginInit();
@@ -55,7 +56,7 @@
             GrpBoardSize.Controls.Add(NumRows);
             GrpBoardSize.Location = new Point(12, 12);
             GrpBoardSize.Name = "GrpBoardSize";
-            GrpBoardSize.Size = new Size(390, 92);
+            GrpBoardSize.Size = new Size(371, 92);
             GrpBoardSize.TabIndex = 0;
             GrpBoardSize.TabStop = false;
             GrpBoardSize.Text = "Board Size";
@@ -85,9 +86,9 @@
             NumColumns.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             NumColumns.Minimum = new decimal(new int[] { 4, 0, 0, 0 });
             NumColumns.Name = "NumColumns";
-            NumColumns.Size = new Size(303, 27);
+            NumColumns.Size = new Size(284, 27);
             NumColumns.TabIndex = 1;
-            NumColumns.Value = new decimal(new int[] { 4, 0, 0, 0 });
+            NumColumns.Value = new decimal(new int[] { 7, 0, 0, 0 });
             // 
             // NumRows
             // 
@@ -96,22 +97,45 @@
             NumRows.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             NumRows.Minimum = new decimal(new int[] { 4, 0, 0, 0 });
             NumRows.Name = "NumRows";
-            NumRows.Size = new Size(303, 27);
+            NumRows.Size = new Size(284, 27);
             NumRows.TabIndex = 0;
-            NumRows.Value = new decimal(new int[] { 4, 0, 0, 0 });
+            NumRows.Value = new decimal(new int[] { 6, 0, 0, 0 });
             // 
             // GrpPlayers
             // 
             GrpPlayers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            GrpPlayers.Controls.Add(BtnCancel);
             GrpPlayers.Controls.Add(BtnOk);
             GrpPlayers.Controls.Add(BtnAddPlayer);
             GrpPlayers.Controls.Add(PanPlayers);
             GrpPlayers.Location = new Point(12, 143);
             GrpPlayers.Name = "GrpPlayers";
-            GrpPlayers.Size = new Size(390, 286);
+            GrpPlayers.Size = new Size(371, 286);
             GrpPlayers.TabIndex = 1;
             GrpPlayers.TabStop = false;
             GrpPlayers.Text = "Players";
+            // 
+            // BtnCancel
+            // 
+            BtnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            BtnCancel.Location = new Point(171, 251);
+            BtnCancel.Name = "BtnCancel";
+            BtnCancel.Size = new Size(94, 29);
+            BtnCancel.TabIndex = 3;
+            BtnCancel.Text = "Cancel";
+            BtnCancel.UseVisualStyleBackColor = true;
+            BtnCancel.Click += BtnCancel_Click;
+            // 
+            // BtnOk
+            // 
+            BtnOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            BtnOk.Location = new Point(271, 251);
+            BtnOk.Name = "BtnOk";
+            BtnOk.Size = new Size(94, 29);
+            BtnOk.TabIndex = 2;
+            BtnOk.Text = "Ok";
+            BtnOk.UseVisualStyleBackColor = true;
+            BtnOk.Click += BtnOk_Click;
             // 
             // BtnAddPlayer
             // 
@@ -131,7 +155,7 @@
             PanPlayers.FlowDirection = FlowDirection.TopDown;
             PanPlayers.Location = new Point(3, 23);
             PanPlayers.Name = "PanPlayers";
-            PanPlayers.Size = new Size(384, 222);
+            PanPlayers.Size = new Size(365, 222);
             PanPlayers.TabIndex = 0;
             PanPlayers.WrapContents = false;
             // 
@@ -146,35 +170,28 @@
             // 
             // NumWinLength
             // 
+            NumWinLength.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             NumWinLength.Location = new Point(140, 110);
             NumWinLength.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             NumWinLength.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
             NumWinLength.Name = "NumWinLength";
-            NumWinLength.Size = new Size(256, 27);
+            NumWinLength.Size = new Size(237, 27);
             NumWinLength.TabIndex = 3;
-            NumWinLength.Value = new decimal(new int[] { 2, 0, 0, 0 });
-            // 
-            // BtnOk
-            // 
-            BtnOk.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            BtnOk.Location = new Point(290, 251);
-            BtnOk.Name = "BtnOk";
-            BtnOk.Size = new Size(94, 29);
-            BtnOk.TabIndex = 2;
-            BtnOk.Text = "Ok";
-            BtnOk.UseVisualStyleBackColor = true;
-            BtnOk.Click += BtnOk_Click;
+            NumWinLength.Value = new decimal(new int[] { 4, 0, 0, 0 });
             // 
             // Connect4Settings
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(414, 441);
+            ClientSize = new Size(395, 441);
             ControlBox = false;
             Controls.Add(NumWinLength);
             Controls.Add(label3);
             Controls.Add(GrpPlayers);
             Controls.Add(GrpBoardSize);
+            FormBorderStyle = FormBorderStyle.SizableToolWindow;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "Connect4Settings";
             Text = "Connect4 Settings";
             GrpBoardSize.ResumeLayout(false);
@@ -200,5 +217,6 @@
         private Label label3;
         private NumericUpDown NumWinLength;
         private Button BtnOk;
+        private Button BtnCancel;
     }
 }

@@ -38,6 +38,7 @@ namespace UI.Connect4.v2
 			CTS = new();
 			var test = Task.Run(() =>
 			{
+				var token = CTS.Token;
 				try
 				{
 					int result;
@@ -50,8 +51,8 @@ namespace UI.Connect4.v2
 						game.OnMove += (object? sender, int[,] state) => { board1.Update(state, Players.Select(p => p.Color).ToList()); };
 						game.OnWin += (object? sender, List<(int, int)> win) => { board1.HighlightPieces(win, Color.LawnGreen); };
 						board1.Reset(Rows, Columns);
-						result = game.Play(CTS.Token);
-						if (CTS.IsCancellationRequested)
+						result = game.Play(token);
+						if (token.IsCancellationRequested)
 						{
 							return;
 						}
@@ -77,8 +78,8 @@ namespace UI.Connect4.v2
 							Players.Add(fp);
 						}
 						Thread.Sleep(BetweenGameDelay);
-					} while (Infinite && !CTS.IsCancellationRequested);
-					if (!CTS.IsCancellationRequested)
+					} while (Infinite && !token.IsCancellationRequested);
+					if (!token.IsCancellationRequested)
 					{
 						if (result == -1)
 						{
@@ -96,15 +97,17 @@ namespace UI.Connect4.v2
 
 		private void MenuSettings_Click(object sender, EventArgs e)
 		{
-			CTS.Cancel();
 			Connect4Settings settings = new(Players, Rows, Columns, WinningLength);
-			settings.ShowDialog();
-			Players.Clear();
-			settings.GetPlayers().ForEach(AddPlayer);
-			Rows = settings.RowCount;
-			Columns = settings.ColumnCount;
-			WinningLength = settings.WinLength;
-			StartGame();
+			if (settings.ShowDialog() == DialogResult.OK)
+			{
+				CTS.Cancel();
+				Players.Clear();
+				settings.GetPlayers().ForEach(AddPlayer);
+				Rows = settings.RowCount;
+				Columns = settings.ColumnCount;
+				WinningLength = settings.WinLength;
+				StartGame();
+			}
 		}
 	}
 }

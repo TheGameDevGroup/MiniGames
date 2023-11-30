@@ -39,6 +39,7 @@
             ComboType.Name = "ComboType";
             ComboType.Size = new Size(230, 28);
             ComboType.TabIndex = 5;
+            ComboType.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             // 
             // Connect4PlayerSettings
             // 

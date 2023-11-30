@@ -53,6 +53,8 @@ namespace UI.Connect4.v2
 				newPlayer.SetPlayer(player, PlayerTypes.IndexOf(player.PlayerType));
 			}
 			PanPlayers.Controls.Add(newPlayer);
+			newPlayer.FitWidth(PanPlayers);
+			PanPlayers.Resize += newPlayer.FitWidth;
 		}
 		private void RemovePlayer(Connect4PlayerSettings player)
 		{
@@ -64,6 +66,12 @@ namespace UI.Connect4.v2
 		}
 
 		private void BtnOk_Click(object sender, EventArgs e)
+		{
+			this.DialogResult = DialogResult.OK;
+			this.Close();
+		}
+
+		private void BtnCancel_Click(object sender, EventArgs e)
 		{
 			this.Close();
 		}
