@@ -1,6 +1,5 @@
 ﻿using MinesweeperBackend;
 using System.Diagnostics;
-using Utilities;
 
 namespace UI.Minesweeper
 {
@@ -22,6 +21,7 @@ namespace UI.Minesweeper
 			InitializeComponent();
 			minesweeperBoard1.MoveClick += BoardClick;
 			SetPlayer(new HumanPlayer());
+			StartGame();
 		}
 		public void Reset()
 		{
