@@ -7,7 +7,7 @@ namespace UI.Minesweeper
 		public EventHandler<(int, int)>? MoveClick;
 		private byte?[,] CurrentState;
 		private int MineSize = 20;
-		private readonly Dictionary<byte, Brush> ColorMap = new()
+		private readonly Dictionary<byte, Brush> NumberColorMap = new()
 		{
 			{ 1, Brushes.Lime },
 			{ 2, Brushes.GreenYellow },
@@ -18,6 +18,9 @@ namespace UI.Minesweeper
 			{ 7, Brushes.OrangeRed },
 			{ 8, Brushes.Red },
 		};
+		public (Brush, Brush) TileCheckeredColorsCovered = (Brushes.GreenYellow, Brushes.YellowGreen);
+		public (Brush, Brush) TileCheckeredColorsUncovered = (Brushes.NavajoWhite, Brushes.AntiqueWhite);
+		public bool CheckeredStyle = true;
 		public MinesweeperBoard() : this(30, 30) { }
 		public MinesweeperBoard(int rows, int columns)
 		{
@@ -95,19 +98,27 @@ namespace UI.Minesweeper
 				{
 					Rectangle rect = new(column * MineSize, row * MineSize, MineSize, MineSize);
 					var state = CurrentState[row, column];
-					if (state == 255)
+					int position = column + row * CurrentState.GetLength(1) + (row % 2 == 0 ? 1 : 0);
+					if (state != null)
 					{
-						graphics.DrawImage(bomb, rect);
-					}
-					else if (state != null)
-					{
-						graphics.DrawImage(uncovered, rect);
-						if (state != 0)
+						if (CheckeredStyle)
+						{
+							graphics.FillRectangle(position % 2 == 0 ? TileCheckeredColorsUncovered.Item1 : TileCheckeredColorsUncovered.Item2, rect);
+						}
+						else
+						{
+							graphics.DrawImage(uncovered, rect);
+						}
+                        if (state == 255)
+                        {
+                            graphics.DrawImage(bomb, rect);
+                        }
+                        else if (state != 0)
 						{
 							graphics.DrawString(
 								state.ToString(),
 								font,
-								ColorMap.TryGetValue(state.Value, out var color) ? color : Brushes.Black,
+								NumberColorMap.TryGetValue(state.Value, out var color) ? color : Brushes.Black,
 								rect,
 								format
 							);
@@ -115,7 +126,14 @@ namespace UI.Minesweeper
 					}
 					else
 					{
-						graphics.DrawImage(covered, rect);
+						if (CheckeredStyle)
+						{
+							graphics.FillRectangle(position % 2 == 0 ? TileCheckeredColorsCovered.Item1 : TileCheckeredColorsCovered.Item2, rect);
+						}
+						else
+						{
+							graphics.DrawImage(covered, rect);
+						}
 					}
 				}
 			}
