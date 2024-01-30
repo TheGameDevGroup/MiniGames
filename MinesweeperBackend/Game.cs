@@ -28,21 +28,18 @@
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
 
-			if (bombCount >= TotalTileCount)
-			{
-				throw new ArgumentOutOfRangeException(nameof(bombCount));
-			}
-
+			ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(bombCount, TotalTileCount, nameof(bombCount));
 			PopulateBombs(rows, columns, bombCount);
 		}
 		/// <summary>
 		/// Synchronously start the game.
 		/// </summary>
 		/// <returns>True if the game is won.</returns>
-		public bool Play()
+		public bool Play(CancellationToken ct)
 		{
+			Player.CancellationToken = ct;
 			bool isFirstMove = true;
-			while (true)
+			while (true && !ct.IsCancellationRequested)
 			{
 				var move = Player.MakeMove(BombCounts.GetLength(0), BombCounts.GetLength(1));
 				if (isFirstMove && Bombs[move.Item1, move.Item2])
@@ -67,6 +64,7 @@
 					}
 				}
 			}
+			return false;
 		}
 		private void AddBomb(int row, int column)
 		{
@@ -121,7 +119,7 @@
 			int k = 0;
 			foreach (var location in locations)
 			{
-				if (k < bombCount) AddBomb(location.Item1, location.Item2);
+				if (k++ < bombCount) AddBomb(location.Item1, location.Item2);
 				else Replacement = location;
 			}
 		}

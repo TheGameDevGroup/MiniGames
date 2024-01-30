@@ -1,6 +1,6 @@
 ﻿namespace UI.Connect4.v2
 {
-    partial class Connect4Board
+    partial class Connect4PlayerSettings
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,32 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pictureBox1 = new PictureBox();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ComboType = new ComboBox();
             SuspendLayout();
             // 
-            // pictureBox1
+            // ComboType
             // 
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Location = new Point(0, 0);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(292, 203);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
+            ComboType.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboType.FormattingEnabled = true;
+            ComboType.Location = new Point(38, 37);
+            ComboType.Name = "ComboType";
+            ComboType.Size = new Size(230, 28);
+            ComboType.TabIndex = 5;
+            ComboType.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             // 
-            // Connect4Board
+            // Connect4PlayerSettings
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(pictureBox1);
-            Name = "Connect4Board";
-            Size = new Size(289, 203);
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            Controls.Add(ComboType);
+            Name = "Connect4PlayerSettings";
+            Size = new Size(271, 68);
+            Controls.SetChildIndex(ComboType, 0);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private PictureBox pictureBox1;
+        private ComboBox ComboType;
     }
 }

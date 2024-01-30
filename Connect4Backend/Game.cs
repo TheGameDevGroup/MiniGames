@@ -137,10 +137,11 @@
 		/// Starts the game synchronously.
 		/// </summary>
 		/// <returns>-1 if there is no winner; otherwise the player's index in <see cref="Players"/></returns>
-		public int Play()
+		public int Play(CancellationToken ct)
 		{
 			if (Players.Count == 0) return -1;
-			while(true)
+			Players.ForEach(p => p.CancellationToken = ct);
+			while(!ct.IsCancellationRequested)
 			{
 				for (int i = 0; i < Players.Count; i++)
 				{
@@ -148,7 +149,7 @@
 					int playerToken = i + 1;
 
 					// Loop until a valid move is made
-					while (true)
+					while (!ct.IsCancellationRequested)
 					{
 						// Get the move from the player
 						int column = player.MakeMove((int[,])BoardState.Clone(), playerToken);
@@ -175,6 +176,7 @@
 					}
 				}
 			}
+			return -1;
 		}
 
 		public void Driver()
