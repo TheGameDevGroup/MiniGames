@@ -2,23 +2,19 @@
 
 namespace Connect4Backend
 {
-	public class RandomBot : IConnect4Player
+	public class RandomBot : Connect4PlayerBase
 	{
 		private readonly Random random = new();
 		private readonly bool IsWeighted;
 		private int[,]? PreviousState;
-		public string Name { get; set; }
-		public Color Color { get; set; }
-		public int WinCount { get; set; }
-		public IConnect4Player.PlayerTypes PlayerType => IsWeighted ? IConnect4Player.PlayerTypes.RandomWeighted : IConnect4Player.PlayerTypes.RandomSimple;
-		public CancellationToken CancellationToken { get; set; }
 		public RandomBot(string name, Color color, bool isWeighted)
 		{
 			this.Name = name;
 			this.Color = color;
 			this.IsWeighted = isWeighted;
+			this.PlayerType = IsWeighted ? "Random (weighted)" : "Random (simple)";
 		}
-		public int MakeMove(in int[,] gameState, int playerToken)
+		public override int MakeMove(in int[,] gameState, int playerToken)
 		{
 			if (IsWeighted)
 			{

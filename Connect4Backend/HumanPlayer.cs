@@ -2,14 +2,8 @@
 
 namespace Connect4Backend
 {
-	public class HumanPlayer : IConnect4Player
+	public class HumanPlayer : Connect4PlayerBase
 	{
-		public string Name { get; set; }
-		public Color Color { get; set; }
-		public int WinCount { get; set; }
-		public IConnect4Player.PlayerTypes PlayerType => IConnect4Player.PlayerTypes.Human;
-		public CancellationToken CancellationToken { get; set; }
-
 		private readonly ManualResetEventSlim MoveSubmitEvent = new(false);
 		private int ProposedMove;
 		public HumanPlayer() : this("Human", Color.Blue) { }
@@ -17,9 +11,10 @@ namespace Connect4Backend
 		{
 			Name = name;
 			Color = color;
+			PlayerType = "Human";
 		}
 
-		public int MakeMove(in int[,] gameState, int playerToken)
+		public override int MakeMove(in int[,] gameState, int playerToken)
 		{
 			MoveSubmitEvent.Reset();
 			MoveSubmitEvent.Wait(CancellationToken);
@@ -28,7 +23,7 @@ namespace Connect4Backend
 				return ProposedMove;
 			}
 		}
-		public void HandleClick(int column)
+		public override void HandleClick(int column)
 		{
 			lock (this)
 			{

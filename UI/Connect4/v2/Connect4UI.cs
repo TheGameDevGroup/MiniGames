@@ -14,7 +14,7 @@ namespace UI.Connect4.v2
 
 		CancellationTokenSource CTS = new();
 
-		List<IConnect4Player> Players = new();
+		List<Connect4PlayerBase> Players = new();
 		int Stalemates = 0;
 		public Connect4UI()
 		{
@@ -27,7 +27,7 @@ namespace UI.Connect4.v2
 		{
 			Players.Clear();
 		}
-		public void AddPlayer(IConnect4Player player)
+		public void AddPlayer(Connect4PlayerBase player)
 		{
 			Players.Add(player);
 			board1.ColumnClick += (object? sender, int column) => { player.HandleClick(column); };

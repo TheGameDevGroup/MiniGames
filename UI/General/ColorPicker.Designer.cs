@@ -28,10 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BtnColor = new Button();
+            DiaColor = new ColorDialog();
+            SuspendLayout();
+            // 
+            // BtnColor
+            // 
+            BtnColor.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            BtnColor.Location = new Point(0, 0);
+            BtnColor.Name = "BtnColor";
+            BtnColor.Size = new Size(29, 29);
+            BtnColor.TabIndex = 4;
+            BtnColor.UseVisualStyleBackColor = true;
+            BtnColor.Click += BtnColor_Click;
+            // 
+            // DiaColor
+            // 
+            DiaColor.Color = Color.Blue;
+            // 
+            // ColorPicker
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(BtnColor);
+            Name = "ColorPicker";
+            Size = new Size(29, 29);
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private Button BtnColor;
+        private ColorDialog DiaColor;
     }
 }

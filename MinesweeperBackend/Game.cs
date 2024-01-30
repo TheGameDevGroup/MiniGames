@@ -7,7 +7,7 @@
 		/// </summary>
 		public event EventHandler<bool[,]>? OnEnd;
 
-		public IMinesweeperPlayer Player;
+		public MinesweeperPlayerBase Player;
 
 		private readonly bool[,] Bombs;
 		private readonly bool[,] Uncovered;
@@ -19,7 +19,7 @@
 
 		// Use to store valid locations for new bombs
 		private (int, int) Replacement;
-		public Game(int rows, int columns, int bombCount, IMinesweeperPlayer player)
+		public Game(int rows, int columns, int bombCount, MinesweeperPlayerBase player)
 		{
 			TotalTileCount = rows * columns;
 			TotalBombCount = bombCount;
@@ -29,6 +29,7 @@
 			BombCounts = new byte[rows, columns];
 
 			ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(bombCount, TotalTileCount, nameof(bombCount));
+
 			PopulateBombs(rows, columns, bombCount);
 		}
 		/// <summary>

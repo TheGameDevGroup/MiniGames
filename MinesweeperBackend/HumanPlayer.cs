@@ -2,34 +2,31 @@
 
 namespace MinesweeperBackend
 {
-	public class HumanPlayer : IMinesweeperPlayer
+	public class HumanPlayer : MinesweeperPlayerBase
 	{
-		public string Name { get; set; } = "Human";
-		public Color Color { get; set; } = Color.Red;
-		public int WinCount { get; set; }
-		public IMinesweeperPlayer.PlayerTypes PlayerType => IMinesweeperPlayer.PlayerTypes.Human;
-		public CancellationToken CancellationToken { get; set; }
-		public EventHandler<((int, int), byte)>? OnUpdateState { get; set; }
-		public EventHandler? OnUpdateUI { get; set; }
-
 		private (int, int) ProposedMove;
 		private ManualResetEventSlim ResetEvent = new(false);
-
-		public (int, int) MakeMove(int rows, int columns)
+		public HumanPlayer() : this("Human", Color.Blue) { }
+		public HumanPlayer(string name, Color color)
+		{
+			Name = name;
+			Color = color;
+		}
+		public override (int, int) MakeMove(int rows, int columns)
 		{
 			OnUpdateUI?.Invoke(this, new());
 			ResetEvent.Reset();
 			ResetEvent.Wait(CancellationToken);
 			return ProposedMove;
 		}
-		public void HandleClick(int row, int column)
+		public override void HandleClick(int row, int column)
 		{
 			ProposedMove = (row, column);
 			ResetEvent.Set();
 		}
-		public void NewGame()
+		public override void NewGame()
 		{
-			// Do nothing
+			// Do nothing, can't clear human memory
 		}
 	}
 }

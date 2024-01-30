@@ -11,7 +11,7 @@ namespace UI.Minesweeper
 		public bool Infinite = true;
 		public int BetweenGameDelay = 2000;
 
-		public IMinesweeperPlayer Player { get; private set; } = new HumanPlayer();
+		public MinesweeperPlayerBase Player { get; private set; } = new HumanPlayer();
 		int GameCount = 0;
 		int WinCount = 0;
 
@@ -29,7 +29,7 @@ namespace UI.Minesweeper
 			GameCount = 0;
 			WinCount = 0;
 		}
-		public void SetPlayer(IMinesweeperPlayer player)
+		public void SetPlayer(MinesweeperPlayerBase player)
 		{
 			Player = player;
 			Player.OnUpdateState += PlayerUpdateState;

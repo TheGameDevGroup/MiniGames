@@ -4,7 +4,7 @@ namespace UI.Connect4.v1
 {
 	public partial class Connect4UI : Form
 	{
-		List<IConnect4Player> Players { get; set; } = new();
+		List<Connect4PlayerBase> Players { get; set; } = new();
 		public Connect4UI(int rows, int columns)
 		{
 			InitializeComponent();
@@ -16,7 +16,7 @@ namespace UI.Connect4.v1
 			AddPlayer(new RandomBot("Random 2", Color.Purple, true));
 			StartGame(rows, columns, true);
 		}
-		public void AddPlayer(IConnect4Player player)
+		public void AddPlayer(Connect4PlayerBase player)
 		{
 			Players.Add(player);
 			board1.ColorMap.Add(player.Color);

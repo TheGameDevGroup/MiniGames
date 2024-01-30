@@ -4,7 +4,7 @@ namespace UI.Minesweeper
 {
 	public partial class MinesweeperBoard : UserControl
 	{
-		public EventHandler<(int, int)>? MoveClick;
+		public event EventHandler<(int, int)>? MoveClick;
 		private byte?[,] CurrentState;
 		private int MineSize = 20;
 		private readonly Dictionary<byte, Brush> NumberColorMap = new()
