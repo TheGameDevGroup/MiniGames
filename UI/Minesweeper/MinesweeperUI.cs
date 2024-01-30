@@ -22,7 +22,12 @@ namespace UI.Minesweeper
 			InitializeComponent();
 			minesweeperBoard1.MoveClick += BoardClick;
 			SetPlayer(new HumanPlayer());
-			StartGame();
+		}
+		public void Reset()
+		{
+			CTS.Cancel();
+			GameCount = 0;
+			WinCount = 0;
 		}
 		public void SetPlayer(IMinesweeperPlayer player)
 		{

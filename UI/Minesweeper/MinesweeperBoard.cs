@@ -19,7 +19,7 @@ namespace UI.Minesweeper
 			{ 8, Brushes.Red },
 		};
 		public (Brush, Brush) TileCheckeredColorsCovered = (Brushes.GreenYellow, Brushes.YellowGreen);
-		public (Brush, Brush) TileCheckeredColorsUncovered = (Brushes.NavajoWhite, Brushes.AntiqueWhite);
+		public (Brush, Brush) TileCheckeredColorsUncovered = (Brushes.AntiqueWhite, Brushes.NavajoWhite);
 		public bool CheckeredStyle = true;
 		public MinesweeperBoard() : this(30, 30) { }
 		public MinesweeperBoard(int rows, int columns)
@@ -27,15 +27,6 @@ namespace UI.Minesweeper
 			InitializeComponent();
 			CurrentState = new byte?[rows, columns];
 			pictureBox1.Paint += HandlePaint;
-			CurrentState[1, 1] = 1;
-			CurrentState[1, 2] = 2;
-			CurrentState[1, 3] = 3;
-			CurrentState[1, 4] = 4;
-			CurrentState[1, 5] = 5;
-			CurrentState[1, 6] = 6;
-			CurrentState[1, 7] = 7;
-			CurrentState[1, 8] = 8;
-			CurrentState[1, 9] = 9;
 		}
 		public void UpdateState(((int, int), byte) stateUpdate)
 		{
@@ -98,22 +89,22 @@ namespace UI.Minesweeper
 				{
 					Rectangle rect = new(column * MineSize, row * MineSize, MineSize, MineSize);
 					var state = CurrentState[row, column];
-					int position = column + row * CurrentState.GetLength(1) + (row % 2 == 0 ? 1 : 0);
+					bool checkerdOn = ((column + row) % 2) == 0;
 					if (state != null)
 					{
 						if (CheckeredStyle)
 						{
-							graphics.FillRectangle(position % 2 == 0 ? TileCheckeredColorsUncovered.Item1 : TileCheckeredColorsUncovered.Item2, rect);
+							graphics.FillRectangle(checkerdOn ? TileCheckeredColorsUncovered.Item1 : TileCheckeredColorsUncovered.Item2, rect);
 						}
 						else
 						{
 							graphics.DrawImage(uncovered, rect);
 						}
-                        if (state == 255)
-                        {
-                            graphics.DrawImage(bomb, rect);
-                        }
-                        else if (state != 0)
+						if (state == 255)
+						{
+							graphics.DrawImage(bomb, rect);
+						}
+						else if (state != 0)
 						{
 							graphics.DrawString(
 								state.ToString(),
@@ -128,7 +119,7 @@ namespace UI.Minesweeper
 					{
 						if (CheckeredStyle)
 						{
-							graphics.FillRectangle(position % 2 == 0 ? TileCheckeredColorsCovered.Item1 : TileCheckeredColorsCovered.Item2, rect);
+							graphics.FillRectangle(checkerdOn ? TileCheckeredColorsCovered.Item1 : TileCheckeredColorsCovered.Item2, rect);
 						}
 						else
 						{
