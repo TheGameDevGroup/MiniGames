@@ -6,9 +6,13 @@ namespace Connect4Backend
 	{
 		public string Name { get; set; }
 		public Color Color { get; set; }
+		public int WinCount { get; set; }
+		public IConnect4Player.PlayerTypes PlayerType => IConnect4Player.PlayerTypes.Human;
+		public CancellationToken CancellationToken { get; set; }
 
 		private readonly ManualResetEventSlim MoveSubmitEvent = new(false);
 		private int ProposedMove;
+		public HumanPlayer() : this("Human", Color.Blue) { }
 		public HumanPlayer(string name, Color color)
 		{
 			Name = name;
@@ -18,7 +22,7 @@ namespace Connect4Backend
 		public int MakeMove(in int[,] gameState, int playerToken)
 		{
 			MoveSubmitEvent.Reset();
-			MoveSubmitEvent.Wait();
+			MoveSubmitEvent.Wait(CancellationToken);
 			lock (this)
 			{
 				return ProposedMove;

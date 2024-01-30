@@ -11,8 +11,9 @@ namespace UI
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
 			ApplicationConfiguration.Initialize();
-			//Application.Run(new Connect4.v2.Connect4UI(6, 7));
-			Application.Run(new Minesweeper.MinesweeperUI(15, 30, 20, new MinesweeperBackend.HumanPlayer(), true));
+			Application.Run(new Connect4.v2.Connect4UI());
+			//Application.Run(new Minesweeper.MinesweeperUI());
+			//Application.Run(new Connect4.v2.Connect4Settings());
 		}
 	}
 }

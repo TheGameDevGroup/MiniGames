@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Connect4Backend
 {
@@ -10,6 +9,9 @@ namespace Connect4Backend
 		private int[,]? PreviousState;
 		public string Name { get; set; }
 		public Color Color { get; set; }
+		public int WinCount { get; set; }
+		public IConnect4Player.PlayerTypes PlayerType => IsWeighted ? IConnect4Player.PlayerTypes.RandomWeighted : IConnect4Player.PlayerTypes.RandomSimple;
+		public CancellationToken CancellationToken { get; set; }
 		public RandomBot(string name, Color color, bool isWeighted)
 		{
 			this.Name = name;
@@ -34,7 +36,6 @@ namespace Connect4Backend
 			return columns.Count > 0 ? columns.ElementAt(random.Next(columns.Count)) : RandomMove(gameState);
 
 		}
-
 		private HashSet<int> GetMoves(in int[,] gameState, int playerToken)
 		{
 			HashSet<int> movesMade = new();
