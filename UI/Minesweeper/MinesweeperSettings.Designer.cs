@@ -28,87 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            BoardSize = new GroupBox();
-            label2 = new Label();
-            label1 = new Label();
-            Columns = new NumericUpDown();
-            Rows = new NumericUpDown();
             Bombs = new GroupBox();
             NumBombs = new NumericUpDown();
-            BoardSize.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)Columns).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)Rows).BeginInit();
+            boardSizeSettings = new General.BoardSizeSettings();
+            groupBox1 = new GroupBox();
             Bombs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)NumBombs).BeginInit();
             SuspendLayout();
             // 
-            // BoardSize
-            // 
-            BoardSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            BoardSize.Controls.Add(label2);
-            BoardSize.Controls.Add(label1);
-            BoardSize.Controls.Add(Columns);
-            BoardSize.Controls.Add(Rows);
-            BoardSize.Location = new Point(10, 11);
-            BoardSize.Margin = new Padding(2, 2, 2, 2);
-            BoardSize.Name = "BoardSize";
-            BoardSize.Padding = new Padding(2, 2, 2, 2);
-            BoardSize.Size = new Size(448, 103);
-            BoardSize.TabIndex = 0;
-            BoardSize.TabStop = false;
-            BoardSize.Text = "Board Size";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(4, 57);
-            label2.Margin = new Padding(2, 0, 2, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(69, 20);
-            label2.TabIndex = 3;
-            label2.Text = "Columns:";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(4, 26);
-            label1.Margin = new Padding(2, 0, 2, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(47, 20);
-            label1.TabIndex = 2;
-            label1.Text = "Rows:";
-            // 
-            // Columns
-            // 
-            Columns.Location = new Point(83, 55);
-            Columns.Margin = new Padding(2, 2, 2, 2);
-            Columns.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            Columns.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
-            Columns.Name = "Columns";
-            Columns.Size = new Size(361, 27);
-            Columns.TabIndex = 1;
-            Columns.Value = new decimal(new int[] { 2, 0, 0, 0 });
-            Columns.ValueChanged += numericUpDown1_ValueChanged;
-            // 
-            // Rows
-            // 
-            Rows.Location = new Point(83, 24);
-            Rows.Margin = new Padding(2, 2, 2, 2);
-            Rows.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            Rows.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
-            Rows.Name = "Rows";
-            Rows.Size = new Size(361, 27);
-            Rows.TabIndex = 0;
-            Rows.Value = new decimal(new int[] { 2, 0, 0, 0 });
-            Rows.ValueChanged += numericUpDown1_ValueChanged;
-            // 
             // Bombs
             // 
             Bombs.Controls.Add(NumBombs);
-            Bombs.Location = new Point(31, 176);
-            Bombs.Margin = new Padding(2, 2, 2, 2);
+            Bombs.Location = new Point(12, 110);
             Bombs.Name = "Bombs";
-            Bombs.Padding = new Padding(2, 2, 2, 2);
+            Bombs.Padding = new Padding(2);
             Bombs.Size = new Size(240, 63);
             Bombs.TabIndex = 1;
             Bombs.TabStop = false;
@@ -117,7 +50,7 @@
             // NumBombs
             // 
             NumBombs.Location = new Point(5, 24);
-            NumBombs.Margin = new Padding(2, 2, 2, 2);
+            NumBombs.Margin = new Padding(2);
             NumBombs.Maximum = new decimal(new int[] { 3, 0, 0, 0 });
             NumBombs.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             NumBombs.Name = "NumBombs";
@@ -125,37 +58,51 @@
             NumBombs.TabIndex = 0;
             NumBombs.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
+            // boardSizeSettings
+            // 
+            boardSizeSettings.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            boardSizeSettings.Columns = 2;
+            boardSizeSettings.Location = new Point(12, 12);
+            boardSizeSettings.MinimumSize = new Size(0, 92);
+            boardSizeSettings.Name = "boardSizeSettings";
+            boardSizeSettings.Rows = 2;
+            boardSizeSettings.Size = new Size(495, 92);
+            boardSizeSettings.TabIndex = 2;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Location = new Point(17, 212);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(490, 258);
+            groupBox1.TabIndex = 3;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Style";
+            // 
             // MinesweeperSettings
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(469, 287);
+            ClientSize = new Size(519, 482);
             ControlBox = false;
+            Controls.Add(groupBox1);
+            Controls.Add(boardSizeSettings);
             Controls.Add(Bombs);
-            Controls.Add(BoardSize);
             FormBorderStyle = FormBorderStyle.SizableToolWindow;
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "MinesweeperSettings";
             Text = "Minesweeper Settings";
-            BoardSize.ResumeLayout(false);
-            BoardSize.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)Columns).EndInit();
-            ((System.ComponentModel.ISupportInitialize)Rows).EndInit();
             Bombs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)NumBombs).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
-
-        private GroupBox BoardSize;
-        private Label label2;
-        private Label label1;
-        private NumericUpDown Columns;
-        private NumericUpDown Rows;
         private GroupBox Bombs;
         private NumericUpDown NumBombs;
+        private General.BoardSizeSettings boardSizeSettings;
+        private GroupBox groupBox1;
     }
 }

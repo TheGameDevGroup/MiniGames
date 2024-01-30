@@ -1,20 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace UI.General
+﻿namespace UI.General
 {
-    public partial class BoardSizeSettings : UserControl
-    {
-        public BoardSizeSettings()
-        {
-            InitializeComponent();
-        }
-    }
+	public partial class BoardSizeSettings : UserControl
+	{
+		public event EventHandler? BoardSizeChanged;
+		public int Rows
+		{
+			get { return (int)NumRows.Value; }
+			set {
+				NumRows.Value = value;
+				BoardSizeChanged?.Invoke(this, new());
+			}
+		}
+		public int Columns
+		{
+			get { return (int)NumColumns.Value; }
+			set {
+				NumColumns.Value = value;
+				BoardSizeChanged?.Invoke(this, new());
+			}
+		}
+		public BoardSizeSettings()
+		{
+			InitializeComponent();
+		}
+	}
 }

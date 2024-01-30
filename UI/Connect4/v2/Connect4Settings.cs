@@ -18,16 +18,16 @@ namespace UI.Connect4.v2
 		{
 			PlayerTypes = PlayerTypesMap.Keys.ToList();
 			InitializeComponent();
-			NumRows.Value = rows;
-			NumColumns.Value = columns;
+			boardSizeSettings.Rows = rows;
+			boardSizeSettings.Columns = columns;
 			NumWinLength.Value = winLength;
 			foreach (var player in players)
 			{
 				AddPlayer(player);
 			}
 		}
-		public int RowCount => (int)NumRows.Value;
-		public int ColumnCount => (int)NumColumns.Value;
+		public int RowCount => boardSizeSettings.Rows;
+		public int ColumnCount => boardSizeSettings.Columns;
 		public int WinLength => (int)NumWinLength.Value;
 		public List<IConnect4Player> GetPlayers()
 		{

@@ -47,7 +47,7 @@
             GrpBoardSize.Controls.Add(NumRows);
             GrpBoardSize.Location = new Point(0, 0);
             GrpBoardSize.Name = "GrpBoardSize";
-            GrpBoardSize.Size = new Size(290, 92);
+            GrpBoardSize.Size = new Size(278, 92);
             GrpBoardSize.TabIndex = 1;
             GrpBoardSize.TabStop = false;
             GrpBoardSize.Text = "Board Size";
@@ -74,31 +74,32 @@
             // 
             NumColumns.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             NumColumns.Location = new Point(81, 59);
-            NumColumns.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
-            NumColumns.Minimum = new decimal(new int[] { 4, 0, 0, 0 });
+            NumColumns.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            NumColumns.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
             NumColumns.Name = "NumColumns";
-            NumColumns.Size = new Size(203, 27);
+            NumColumns.Size = new Size(191, 27);
             NumColumns.TabIndex = 1;
-            NumColumns.Value = new decimal(new int[] { 7, 0, 0, 0 });
+            NumColumns.Value = new decimal(new int[] { 2, 0, 0, 0 });
             // 
             // NumRows
             // 
             NumRows.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             NumRows.Location = new Point(81, 26);
-            NumRows.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
-            NumRows.Minimum = new decimal(new int[] { 4, 0, 0, 0 });
+            NumRows.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            NumRows.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
             NumRows.Name = "NumRows";
-            NumRows.Size = new Size(203, 27);
+            NumRows.Size = new Size(191, 27);
             NumRows.TabIndex = 0;
-            NumRows.Value = new decimal(new int[] { 6, 0, 0, 0 });
+            NumRows.Value = new decimal(new int[] { 2, 0, 0, 0 });
             // 
             // BoardSizeSettings
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(GrpBoardSize);
+            MinimumSize = new Size(0, 92);
             Name = "BoardSizeSettings";
-            Size = new Size(290, 92);
+            Size = new Size(278, 92);
             GrpBoardSize.ResumeLayout(false);
             GrpBoardSize.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)NumColumns).EndInit();

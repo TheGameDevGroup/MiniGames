@@ -1,25 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace UI.Minesweeper
+﻿namespace UI.Minesweeper
 {
-	public partial class MinesweeperSettings : Form
+    public partial class MinesweeperSettings : Form
 	{
 		public MinesweeperSettings()
 		{
 			InitializeComponent();
 		}
 
-		private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+		private void numericUpDown_ValueChanged(object sender, EventArgs e)
 		{
-			NumBombs.Maximum = Rows.Value * Columns.Value - 1;
+			NumBombs.Maximum = boardSizeSettings.Rows * boardSizeSettings.Columns - 1;
 		}
 	}
 }
