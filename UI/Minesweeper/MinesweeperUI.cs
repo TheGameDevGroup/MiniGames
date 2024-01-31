@@ -1,9 +1,11 @@
 ﻿using MinesweeperBackend;
 using System.Diagnostics;
+using UI.Connect4.v2;
+using UI.General;
 
 namespace UI.Minesweeper
 {
-	public partial class MinesweeperUI : Form
+	public partial class MinesweeperUI : GameUIBase
 	{
 		public int Rows = 30;
 		public int Columns = 30;
@@ -62,6 +64,27 @@ namespace UI.Minesweeper
 					// do nothing
 				}
 			});
+		}
+		protected override void MenuSettings_Click(object sender, EventArgs e)
+		{
+			MinesweeperSettings settings = new(
+				Rows,
+				Columns,
+				BombCount,
+				minesweeperBoard1.CheckeredStyle,
+				minesweeperBoard1.TileColorsCovered,
+				minesweeperBoard1.TileColorsUncovered
+			) { };
+			if (settings.ShowDialog() == DialogResult.OK)
+			{
+				Rows = settings.Rows;
+				Columns = settings.Columns;
+				BombCount = settings.BombCount;
+				minesweeperBoard1.CheckeredStyle = settings.CheckeredStyle;
+				minesweeperBoard1.TileColorsCovered = settings.CoveredColors;
+				minesweeperBoard1.TileColorsUncovered = settings.UncoveredColors;
+				StartGame();
+			}
 		}
 		private void PlayerUpdateState(object? sender, ((int, int), byte) moveState)
 		{

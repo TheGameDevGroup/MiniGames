@@ -139,10 +139,11 @@
             Controls.Add(NumWinLength);
             Controls.Add(label3);
             Controls.Add(GrpPlayers);
-            FormBorderStyle = FormBorderStyle.SizableToolWindow;
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Connect4Settings";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Connect4 Settings";
             GrpPlayers.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)NumWinLength).EndInit();

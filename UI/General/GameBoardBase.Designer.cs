@@ -1,6 +1,6 @@
-﻿namespace UI.Minesweeper
+﻿namespace UI.General
 {
-    partial class MinesweeperBoard
+    partial class GameBoardBase
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,20 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            myPictureBox = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)myPictureBox).BeginInit();
             SuspendLayout();
             // 
-            // MinesweeperBoard
+            // myPictureBox
+            // 
+            myPictureBox.Location = new Point(0, 0);
+            myPictureBox.Name = "myPictureBox";
+            myPictureBox.Size = new Size(258, 223);
+            myPictureBox.TabIndex = 0;
+            myPictureBox.TabStop = false;
+            // 
+            // GameBoardBase
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            Margin = new Padding(3, 4, 3, 4);
-            Name = "MinesweeperBoard";
-            Size = new Size(351, 277);
+            AutoScroll = true;
+            Controls.Add(myPictureBox);
+            Name = "GameBoardBase";
+            Size = new Size(359, 363);
             ((System.ComponentModel.ISupportInitialize)myPictureBox).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
+
+        protected PictureBox myPictureBox;
     }
 }

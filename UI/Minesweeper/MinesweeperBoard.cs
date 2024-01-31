@@ -1,12 +1,13 @@
-﻿using UI.Properties;
+﻿using UI.General;
+using UI.Properties;
 
 namespace UI.Minesweeper
 {
-	public partial class MinesweeperBoard : UserControl
+	public partial class MinesweeperBoard : GameBoardBase
 	{
 		public event EventHandler<(int, int)>? MoveClick;
-		private byte?[,] CurrentState;
-		private int MineSize = 20;
+		private byte?[,] CurrentState = new byte?[0,0];
+		private int TileSize = 20;
 		private readonly Dictionary<byte, Brush> NumberColorMap = new()
 		{
 			{ 1, Brushes.Lime },
@@ -18,15 +19,16 @@ namespace UI.Minesweeper
 			{ 7, Brushes.OrangeRed },
 			{ 8, Brushes.Red },
 		};
-		public (Brush, Brush) TileCheckeredColorsCovered = (Brushes.GreenYellow, Brushes.YellowGreen);
-		public (Brush, Brush) TileCheckeredColorsUncovered = (Brushes.AntiqueWhite, Brushes.NavajoWhite);
+		public (Color light, Color dark) TileColorsCovered = (Color.GreenYellow, Color.YellowGreen);
+		public (Color light, Color dark) TileColorsUncovered = (Color.AntiqueWhite, Color.NavajoWhite);
 		public bool CheckeredStyle = true;
 		public MinesweeperBoard() : this(30, 30) { }
 		public MinesweeperBoard(int rows, int columns)
 		{
 			InitializeComponent();
-			CurrentState = new byte?[rows, columns];
-			pictureBox1.Paint += HandlePaint;
+			myPictureBox.Paint += HandlePaint;
+			myPictureBox.MouseUp += Picture_Click;
+			Reset(rows, columns);
 		}
 		public void UpdateState(((int, int), byte) stateUpdate)
 		{
@@ -35,18 +37,7 @@ namespace UI.Minesweeper
 		public void Reset(int rows, int columns)
 		{
 			CurrentState = new byte?[rows, columns];
-			UpdateUI();
-		}
-		public void UpdateUI()
-		{
-			if (pictureBox1.InvokeRequired)
-			{
-				pictureBox1.Invoke(pictureBox1.Refresh);
-			}
-			else
-			{
-				pictureBox1.Refresh();
-			}
+			ReSizeBoard(columns * TileSize, rows * TileSize);
 		}
 		public void HandleEnd(bool[,] bombs)
 		{
@@ -64,8 +55,8 @@ namespace UI.Minesweeper
 		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{
-			int row = e.Y / MineSize;
-			int column = e.X / MineSize;
+			int row = e.Y / TileSize;
+			int column = e.X / TileSize;
 			if (row >= 0 && column >= 0 && row < CurrentState.GetLength(0) && column < CurrentState.GetLength(1))
 			{
 				MoveClick?.Invoke(this, (row, column));
@@ -77,24 +68,26 @@ namespace UI.Minesweeper
 			var covered = Resources.Minesweeper_Covered;
 			var uncovered = Resources.Minesweeper_Uncovered;
 			var bomb = Resources.Minesweeper_Bomb;
-			Font font = new("Arial", MineSize * 0.55f, FontStyle.Bold, GraphicsUnit.Point);
+			Font font = new("Arial", TileSize * 0.55f, FontStyle.Bold, GraphicsUnit.Point);
 			StringFormat format = new()
 			{
 				Alignment = StringAlignment.Center,
 				LineAlignment = StringAlignment.Center,
 			};
+			var brushesCovered = (new SolidBrush(TileColorsCovered.light), new SolidBrush(TileColorsCovered.dark));
+			var brushesUncovered = (new SolidBrush(TileColorsUncovered.light), new SolidBrush(TileColorsUncovered.dark));
 			for (int row = 0; row < CurrentState.GetLength(0); row++)
 			{
 				for (int column = 0; column < CurrentState.GetLength(1); column++)
 				{
-					Rectangle rect = new(column * MineSize, row * MineSize, MineSize, MineSize);
+					Rectangle rect = new(column * TileSize, row * TileSize, TileSize, TileSize);
 					var state = CurrentState[row, column];
 					bool checkerdOn = ((column + row) % 2) == 0;
 					if (state != null)
 					{
 						if (CheckeredStyle)
 						{
-							graphics.FillRectangle(checkerdOn ? TileCheckeredColorsUncovered.Item1 : TileCheckeredColorsUncovered.Item2, rect);
+							graphics.FillRectangle(checkerdOn ? brushesUncovered.Item1 : brushesUncovered.Item2, rect);
 						}
 						else
 						{
@@ -119,7 +112,7 @@ namespace UI.Minesweeper
 					{
 						if (CheckeredStyle)
 						{
-							graphics.FillRectangle(checkerdOn ? TileCheckeredColorsCovered.Item1 : TileCheckeredColorsCovered.Item2, rect);
+							graphics.FillRectangle(checkerdOn ? brushesCovered.Item1 : brushesCovered.Item2, rect);
 						}
 						else
 						{

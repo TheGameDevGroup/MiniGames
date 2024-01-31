@@ -1,9 +1,10 @@
 ﻿using Connect4Backend;
 using System.Diagnostics;
+using UI.General;
 
 namespace UI.Connect4.v2
 {
-	public partial class Connect4UI : Form
+	public partial class Connect4UI : GameUIBase
 	{
 		public int Rows = 6;
 		public int Columns = 7;
@@ -95,7 +96,7 @@ namespace UI.Connect4.v2
 			});
 		}
 
-		private void MenuSettings_Click(object sender, EventArgs e)
+		protected override void MenuSettings_Click(object sender, EventArgs e)
 		{
 			Connect4Settings settings = new(Players, Rows, Columns, WinningLength);
 			if (settings.ShowDialog() == DialogResult.OK)

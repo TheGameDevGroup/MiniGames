@@ -3,6 +3,7 @@
 	public partial class ColorPicker : UserControl
 	{
 		static Random random = new();
+		Color InitialColor;
 		public Color SelectedColor
 		{
 			get { return BtnColor.BackColor; }
@@ -16,7 +17,15 @@
 		public ColorPicker(Color color)
 		{
 			InitializeComponent();
-			SelectedColor = color;
+			SelectedColor = InitialColor = color;
+		}
+		public void Reset()
+		{
+			SelectedColor = InitialColor;
+		}
+		public void Reset(Color initialColor)
+		{
+			SelectedColor = InitialColor = initialColor;
 		}
 		private void BtnColor_Click(object sender, EventArgs e)
 		{

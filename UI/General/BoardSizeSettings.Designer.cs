@@ -80,6 +80,7 @@
             NumColumns.Size = new Size(191, 27);
             NumColumns.TabIndex = 1;
             NumColumns.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            NumColumns.ValueChanged += Num_ValueChanged;
             // 
             // NumRows
             // 
@@ -91,6 +92,7 @@
             NumRows.Size = new Size(191, 27);
             NumRows.TabIndex = 0;
             NumRows.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            NumRows.ValueChanged += Num_ValueChanged;
             // 
             // BoardSizeSettings
             // 

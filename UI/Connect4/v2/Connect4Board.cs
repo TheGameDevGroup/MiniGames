@@ -1,9 +1,10 @@
 ﻿using System.Drawing.Imaging;
+using UI.General;
 using UI.Properties;
 
 namespace UI.Connect4.v2
 {
-	public partial class Connect4Board : UserControl
+	public partial class Connect4Board : GameBoardBase
 	{
 		private Dictionary<(int, int), (int, ImageAttributes, Color?)> Attributes { get; set; } = new();
 		private ImageAttributes DefaultAttributes { get; set; }
@@ -32,26 +33,15 @@ namespace UI.Connect4.v2
 			InitializeComponent();
 			SetTokenSize(TokenSize);
 			DefaultAttributes = BuildAttributes(Color.White);
-			pictureBox1.Paint += Board_Paint;
-			pictureBox1.MouseUp += Picture_Click;
-			pictureBox1.BackColor = Color.Yellow;
+			myPictureBox.Paint += Board_Paint;
+			myPictureBox.MouseUp += Picture_Click;
+			myPictureBox.BackColor = Color.Yellow;
 			Reset(rowCount, columnCount);
 		}
 		public void SetTokenSize(int size)
 		{
 			TokenSize = size;
-			if (this.InvokeRequired)
-			{
-				this.Invoke(() => { this.Size = new(ColumnCount * TokenSize, RowCount * TokenSize); });
-			}
-			else
-			{
-				this.Size = new(ColumnCount * TokenSize, RowCount * TokenSize);
-			}
-			if (pictureBox1.IsHandleCreated)
-			{
-				pictureBox1.Invoke(pictureBox1.Refresh);
-			}
+			ReSizeBoard(ColumnCount * TokenSize, RowCount * TokenSize);
 		}
 		public void Reset(int rows, int columns)
 		{
@@ -75,7 +65,7 @@ namespace UI.Connect4.v2
 					}
 				}
 			}
-			pictureBox1.Invoke(pictureBox1.Refresh);
+			UpdateUI();
 		}
 		public void HighlightPieces(List<(int, int)> positions, Color color)
 		{
@@ -86,7 +76,7 @@ namespace UI.Connect4.v2
 					Attributes[pos] = (temp.Item1, temp.Item2, color);
 				}
 			}
-			pictureBox1.Invoke(pictureBox1.Refresh);
+			UpdateUI();
 		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{
