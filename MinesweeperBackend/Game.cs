@@ -23,6 +23,7 @@
 
 		// Use to store valid locations for new bombs
 		private List<(int, int)> Replacement = new();
+		public const int ReplacementBombCount = 9;
 		public Game(int rows, int columns, int bombCount, MinesweeperPlayerBase player)
 		{
 			TotalTileCount = rows * columns;
@@ -32,7 +33,7 @@
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
 
-			ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(bombCount, TotalTileCount - 8, nameof(bombCount));
+			ArgumentOutOfRangeException.ThrowIfGreaterThan(bombCount + ReplacementBombCount, TotalTileCount, nameof(bombCount));
 
 			PopulateBombs(rows, columns, bombCount);
 		}
@@ -47,11 +48,29 @@
 			while (!ct.IsCancellationRequested)
 			{
 				var move = Player.MakeMove(BombCounts.GetLength(0), BombCounts.GetLength(1));
-				if (isFirstMove && Bombs[move.Item1, move.Item2])
+				if (isFirstMove)
 				{
+					// Filter the replacement list
+					for(int i = move.Item1 - 1; i <= move.Item1 + 1; i++)
+					{
+						for (int j = move.Item2 - 1; j <= move.Item2 + 1; j++)
+						{
+							Replacement.RemoveAll(x => x.Item1 == i && x.Item2 == j);
+						}
+					}
 					// Move the bomb
-					RemoveBomb(move.Item1, move.Item2);
-					AddBomb(Replacement.First().Item1, Replacement.First().Item2);
+					for (int i = move.Item1 - 1; i <= move.Item1 + 1; i++)
+					{
+						for (int j = move.Item2 - 1; j <= move.Item2 + 1; j++)
+						{
+							if (i >= 0 && j >= 0 && i < Bombs.GetLength(0) && j < Bombs.GetLength(1) && Bombs[i, j])
+							{
+								RemoveBomb(i, j);
+								AddBomb(Replacement.First().Item1, Replacement.First().Item2);
+								Replacement.RemoveAt(0);
+							}
+						}
+					}
 				}
 				isFirstMove = false;
 				if (Bombs[move.Item1, move.Item2])
@@ -95,7 +114,7 @@
 			Random random = new();
 			int row, column, randRow, randColumn;
 
-			for (int i = 0; i <= bombCount; i++)
+			for (int i = 0; i < bombCount + ReplacementBombCount; i++)
 			{
 				row = i / columns;
 				column = i % columns;
@@ -103,7 +122,7 @@
 				locations.Add((row, column));
 			}
 
-			for (int i = 0; i < bombCount + 9; i++)
+			for (int i = 0; i < bombCount + ReplacementBombCount; i++)
 			{
 				row = i / columns;
 				column = i % columns;
@@ -124,11 +143,14 @@
 
 			int k = 0;
 			Replacement = new();
-			foreach (var location in locations)
+			while (k++ < bombCount)
 			{
-				if (k++ < bombCount) AddBomb(location.Item1, location.Item2);
-				else Replacement.Add(location);
+				// randomly select a location
+				var location = locations.ElementAt(random.Next(locations.Count));
+				locations.Remove(location);
+				AddBomb(location.Item1, location.Item2);
 			}
+			Replacement.AddRange(locations);
 		}
 		private void RemoveBomb(int row, int column)
 		{

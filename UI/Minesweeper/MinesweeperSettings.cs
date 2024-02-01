@@ -37,7 +37,7 @@
 
 		private void numericUpDown_ValueChanged(object sender, EventArgs e)
 		{
-			NumBombs.Maximum = boardSizeSettings.Rows * boardSizeSettings.Columns - 1;
+			NumBombs.Maximum = boardSizeSettings.Rows * boardSizeSettings.Columns - 9;
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)
