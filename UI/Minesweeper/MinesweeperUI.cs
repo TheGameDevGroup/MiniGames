@@ -11,7 +11,7 @@ namespace UI.Minesweeper
 		public int Columns = 30;
 		public int BombCount = 20;
 		public bool Infinite = true;
-		public int BetweenGameDelay = 2000;
+		public int BetweenGameDelay = 3000;
 
 		public MinesweeperPlayerBase Player { get; private set; } = new HumanPlayer();
 		int GameCount = 0;
@@ -50,6 +50,7 @@ namespace UI.Minesweeper
 						minesweeperBoard1.Reset(Rows, Columns);
 						Game game = new(Rows, Columns, BombCount, Player);
 						game.OnEnd += (object? sender, bool[,] bombs) => { minesweeperBoard1.HandleEnd(bombs); };
+						game.OnLose += (object? sender, (int, int) bomb) => { minesweeperBoard1.HighlightTiles([bomb]); };
 						if (game.Play(CTS.Token))
 						{
 							WinCount++;
@@ -77,6 +78,7 @@ namespace UI.Minesweeper
 			) { };
 			if (settings.ShowDialog() == DialogResult.OK)
 			{
+				CTS.Cancel();
 				Rows = settings.Rows;
 				Columns = settings.Columns;
 				BombCount = settings.BombCount;

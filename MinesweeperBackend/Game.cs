@@ -6,6 +6,10 @@
 		/// Provides the array indicating which tiles have bombs
 		/// </summary>
 		public event EventHandler<bool[,]>? OnEnd;
+		/// <summary>
+		/// Triggers when the game is lost and provides the location of the bomb clicked
+		/// </summary>
+		public event EventHandler<(int, int)>? OnLose;
 
 		public MinesweeperPlayerBase Player;
 
@@ -18,7 +22,7 @@
 		private readonly int TotalTileCount;
 
 		// Use to store valid locations for new bombs
-		private (int, int) Replacement;
+		private List<(int, int)> Replacement = new();
 		public Game(int rows, int columns, int bombCount, MinesweeperPlayerBase player)
 		{
 			TotalTileCount = rows * columns;
@@ -28,7 +32,7 @@
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
 
-			ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(bombCount, TotalTileCount, nameof(bombCount));
+			ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(bombCount, TotalTileCount - 8, nameof(bombCount));
 
 			PopulateBombs(rows, columns, bombCount);
 		}
@@ -40,18 +44,19 @@
 		{
 			Player.CancellationToken = ct;
 			bool isFirstMove = true;
-			while (true && !ct.IsCancellationRequested)
+			while (!ct.IsCancellationRequested)
 			{
 				var move = Player.MakeMove(BombCounts.GetLength(0), BombCounts.GetLength(1));
 				if (isFirstMove && Bombs[move.Item1, move.Item2])
 				{
 					// Move the bomb
 					RemoveBomb(move.Item1, move.Item2);
-					AddBomb(Replacement.Item1, Replacement.Item2);
+					AddBomb(Replacement.First().Item1, Replacement.First().Item2);
 				}
 				isFirstMove = false;
 				if (Bombs[move.Item1, move.Item2])
 				{
+					OnLose?.Invoke(this, move);
 					OnEnd?.Invoke(this, Bombs);
 					return false; // lost
 				}
@@ -98,7 +103,7 @@
 				locations.Add((row, column));
 			}
 
-			for (int i = 0; i <= bombCount; i++)
+			for (int i = 0; i < bombCount + 9; i++)
 			{
 				row = i / columns;
 				column = i % columns;
@@ -118,10 +123,11 @@
 			}
 
 			int k = 0;
+			Replacement = new();
 			foreach (var location in locations)
 			{
 				if (k++ < bombCount) AddBomb(location.Item1, location.Item2);
-				else Replacement = location;
+				else Replacement.Add(location);
 			}
 		}
 		private void RemoveBomb(int row, int column)

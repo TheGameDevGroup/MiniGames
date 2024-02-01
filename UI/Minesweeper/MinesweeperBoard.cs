@@ -7,6 +7,8 @@ namespace UI.Minesweeper
 	{
 		public event EventHandler<(int, int)>? MoveClick;
 		private byte?[,] CurrentState = new byte?[0,0];
+		private HashSet<(int, int)> HighlightedTiles = new();
+		private Color HighlightColor = Color.Red;
 		private int TileSize = 20;
 		private readonly Dictionary<byte, Brush> NumberColorMap = new()
 		{
@@ -37,6 +39,7 @@ namespace UI.Minesweeper
 		public void Reset(int rows, int columns)
 		{
 			CurrentState = new byte?[rows, columns];
+			HighlightedTiles = new();
 			ReSizeBoard(columns * TileSize, rows * TileSize);
 		}
 		public void HandleEnd(bool[,] bombs)
@@ -62,6 +65,15 @@ namespace UI.Minesweeper
 				MoveClick?.Invoke(this, (row, column));
 			}
 		}
+		public void HighlightTiles(IEnumerable<(int, int)> tiles, Color? color = null)
+		{
+			HighlightedTiles = new(tiles);
+			if (color != null)
+			{
+				HighlightColor = color.Value;
+			}
+			UpdateUI();
+		}
 		private void HandlePaint(object? sender, PaintEventArgs e)
 		{
 			var graphics = e.Graphics;
@@ -76,6 +88,7 @@ namespace UI.Minesweeper
 			};
 			var brushesCovered = (new SolidBrush(TileColorsCovered.light), new SolidBrush(TileColorsCovered.dark));
 			var brushesUncovered = (new SolidBrush(TileColorsUncovered.light), new SolidBrush(TileColorsUncovered.dark));
+			var Highlighter = new SolidBrush(HighlightColor);
 			for (int row = 0; row < CurrentState.GetLength(0); row++)
 			{
 				for (int column = 0; column < CurrentState.GetLength(1); column++)
@@ -85,7 +98,11 @@ namespace UI.Minesweeper
 					bool checkerdOn = ((column + row) % 2) == 0;
 					if (state != null)
 					{
-						if (CheckeredStyle)
+						if (HighlightedTiles.Contains((row, column)))
+						{
+							graphics.FillRectangle(Highlighter, rect);
+						}
+						else if (CheckeredStyle)
 						{
 							graphics.FillRectangle(checkerdOn ? brushesUncovered.Item1 : brushesUncovered.Item2, rect);
 						}
