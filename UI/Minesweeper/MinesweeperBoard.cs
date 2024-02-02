@@ -13,7 +13,7 @@ namespace UI.Minesweeper
 		private bool[,] Flags = new bool[0,0];
 		private HashSet<(int, int)> HighlightedTiles = new();
 		private Color HighlightColor = Color.Red;
-		private int _TileSize = 20;
+		private int _TileSize = 35;
 		public int TileSize
 		{
 			get => _TileSize;
@@ -37,7 +37,7 @@ namespace UI.Minesweeper
 		public (Color light, Color dark) TileColorsCovered = (Color.GreenYellow, Color.YellowGreen);
 		public (Color light, Color dark) TileColorsUncovered = (Color.AntiqueWhite, Color.NavajoWhite);
 		public bool CheckeredStyle = true;
-		public MinesweeperBoard() : this(30, 30) { }
+		public MinesweeperBoard() : this(16, 30) { }
 		public MinesweeperBoard(int rows, int columns)
 		{
 			InitializeComponent();
@@ -49,7 +49,7 @@ namespace UI.Minesweeper
 
 		private void Picture_MouseDown(object? sender, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Middle)
+			if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.Right)
 			{
 				int row = e.Y / _TileSize;
 				int column = e.X / _TileSize;
@@ -128,16 +128,19 @@ namespace UI.Minesweeper
 			int column = e.X / _TileSize;
 			if (row >= 0 && column >= 0 && row < CurrentState.GetLength(0) && column < CurrentState.GetLength(1))
 			{
-				if (e.Button == MouseButtons.Right && CurrentState[row, column] is null)
+				if (CurrentState[row, column] is null) // currently covered tile
 				{
-					Flags[row, column] = !Flags[row, column];
-					MoveClick?.Invoke(this, (row, column, true));
+					if (e.Button == MouseButtons.Right)
+					{
+						Flags[row, column] = !Flags[row, column];
+						MoveClick?.Invoke(this, (row, column, true));
+					}
+					else if (e.Button == MouseButtons.Left)
+					{
+						MoveClick?.Invoke(this, (row, column, Flags[row, column]));
+					}
 				}
-				else if (e.Button == MouseButtons.Left)
-				{
-					MoveClick?.Invoke(this, (row, column, Flags[row, column]));
-				}
-				else if (e.Button == MouseButtons.Middle)
+				else if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.Right)
 				{
 					ClearArea(row, column);
 					MoveClick?.Invoke(this, (row, column, true));
