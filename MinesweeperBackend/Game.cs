@@ -1,4 +1,5 @@
-﻿using Utilities.Extensions;
+﻿using System.Data.Common;
+using Utilities.Extensions;
 
 namespace MinesweeperBackend
 {
@@ -190,31 +191,36 @@ namespace MinesweeperBackend
 				}
 			}
 		}
-		private void DoMove(int row, int column)
+		private void DoMove(int initialRow, int initialColumn)
 		{
-			if (row < 0 || column < 0 || row >= Uncovered.GetLength(0) || column >= Uncovered.GetLength(1))
+			Queue<(int row, int column)> moveQueue = new(new[] { (initialRow, initialColumn) });
+			while (moveQueue.Count > 0)
 			{
-				return; //invalid move
-			}
-			// Check for repeated move (e.i., already uncovered)
-			if (Uncovered[row, column])
-			{
-				return;
-			}
-			Uncovered[row, column] = true;
-			TotalClearedCount++;
-			// Update state
-			Player.UpdateState(row, column, BombCounts[row, column]);
-			if (BombCounts[row, column] == 0 && !Bombs[row, column])
-			{
-				// Auto expand
-				for (int i = row - 1; i <= row + 1; i++)
+				var move = moveQueue.Dequeue();
+				if (move.row < 0 || move.column < 0 || move.row >= Uncovered.GetLength(0) || move.column >= Uncovered.GetLength(1))
 				{
-					for (int j = column - 1; j <= column + 1; j++)
+					continue; //invalid move
+				}
+				// Check for repeated move (e.i., already uncovered)
+				if (Uncovered[move.row, move.column])
+				{
+					continue;
+				}
+				Uncovered[move.row, move.column] = true;
+				TotalClearedCount++;
+				// Update state
+				Player.UpdateState(move.row, move.column, BombCounts[move.row, move.column]);
+				if (BombCounts[move.row, move.column] == 0 && !Bombs[move.row, move.column])
+				{
+					// Auto expand
+					for (int i = move.row - 1; i <= move.row + 1; i++)
 					{
-						if (i != row || j != column)
+						for (int j = move.column - 1; j <= move.column + 1; j++)
 						{
-							DoMove(i, j);
+							if (i != move.row || j != move.column)
+							{
+								moveQueue.Enqueue((i, j));
+							}
 						}
 					}
 				}
