@@ -1,4 +1,5 @@
-﻿using UI.General;
+﻿using Microsoft.VisualBasic.Devices;
+using UI.General;
 using UI.Properties;
 using Utilities.Extensions;
 
@@ -42,8 +43,27 @@ namespace UI.Minesweeper
 			InitializeComponent();
 			myPictureBox.Paint += HandlePaint;
 			myPictureBox.MouseUp += Picture_Click;
+			myPictureBox.MouseDown += Picture_MouseDown;
 			Reset(rows, columns);
 		}
+
+		private void Picture_MouseDown(object? sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Middle)
+			{
+				int row = e.Y / _TileSize;
+				int column = e.X / _TileSize;
+				if (CurrentState[row, column] is null) return; // Only usable on uncovered tiles
+				CurrentState.DoAtEach(row - 1, column - 1, row + 1, column + 1, (r, c) =>
+				{
+					if (CurrentState[r, c] is null && !Flags[r, c])
+					{
+						OverlayTile(r, c, Color.FromArgb(64, Color.Black));
+					}
+				});
+			}
+		}
+
 		public void UpdateState(((int, int), byte) stateUpdate)
 		{
 			CurrentState[stateUpdate.Item1.Item1, stateUpdate.Item1.Item2] = stateUpdate.Item2;
@@ -111,7 +131,6 @@ namespace UI.Minesweeper
 				if (e.Button == MouseButtons.Right && CurrentState[row, column] is null)
 				{
 					Flags[row, column] = !Flags[row, column];
-					UpdateUI();
 					MoveClick?.Invoke(this, (row, column, true));
 				}
 				else if (e.Button == MouseButtons.Left)
@@ -124,6 +143,14 @@ namespace UI.Minesweeper
 					MoveClick?.Invoke(this, (row, column, true));
 				}
 			}
+			// Always do this to clear overlays (if any)
+			UpdateUI();
+		}
+		private void OverlayTile(int row, int column, Color color)
+		{
+			var g = myPictureBox.CreateGraphics();
+			Rectangle rect = new(column * _TileSize, row * _TileSize, _TileSize, _TileSize);
+			g.FillRectangle(new SolidBrush(color), rect);
 		}
 		public void HighlightTiles(IEnumerable<(int, int)> tiles, Color? color = null)
 		{
