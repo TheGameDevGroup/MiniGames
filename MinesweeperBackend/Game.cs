@@ -1,4 +1,6 @@
-﻿namespace MinesweeperBackend
+﻿using Utilities.Extensions;
+
+namespace MinesweeperBackend
 {
 	public class Game
 	{
@@ -108,21 +110,21 @@
 				}
 			}
 		}
-		private void PopulateBombs(int rows, int columns, int bombCount)
+		[Obsolete("Not truly random, earlier bombs have a higher chance.")]
+		private HashSet<(int row, int column)> GenerateLocations_Mod(int rows, int columns, int count, Random random)
 		{
-			HashSet<(int, int)> locations = new();
-			Random random = new();
+			HashSet<(int, int)> toReturn = new();
 			int row, column, randRow, randColumn;
 
-			for (int i = 0; i < bombCount + ReplacementBombCount; i++)
+			for (int i = 0; i < count; i++)
 			{
 				row = i / columns;
 				column = i % columns;
 
-				locations.Add((row, column));
+				toReturn.Add((row, column));
 			}
 
-			for (int i = 0; i < bombCount + ReplacementBombCount; i++)
+			for (int i = 0; i < count; i++)
 			{
 				row = i / columns;
 				column = i % columns;
@@ -130,17 +132,36 @@
 				randRow = random.Next(rows);
 				randColumn = random.Next(columns);
 
-				if (!locations.Contains((randRow, randColumn)))
+				if (!toReturn.Contains((randRow, randColumn)))
 				{
-					locations.Remove((row, column));
-					locations.Add((randRow, randColumn));
+					toReturn.Remove((row, column));
+					toReturn.Add((randRow, randColumn));
 				}
 				else
 				{
 					continue;
 				}
 			}
-
+			return toReturn;
+		}
+		private HashSet<(int row, int column)> GenerateLocations(int rows, int columns, int count, Random random)
+		{
+			var locationsFlat = IEnumerableExtensions.PermuteIntegers(0, rows * columns - 1, random);
+			var locations = new HashSet<(int, int)>();
+			foreach (var location in locationsFlat)
+			{
+				locations.Add((location / columns, location % columns));
+				if (locations.Count == count)
+				{
+					break;
+				}
+			}
+			return locations;
+		}
+		private void PopulateBombs(int rows, int columns, int bombCount)
+		{
+			Random random = new();
+			var locations = GenerateLocations(rows, columns, bombCount + ReplacementBombCount, random);
 			int k = 0;
 			Replacement = new();
 			while (k++ < bombCount)
@@ -202,6 +223,15 @@
 		private bool IsWin()
 		{
 			return TotalClearedCount == TotalTileCount - TotalBombCount;
+		}
+		/// <summary>
+		/// Reveals the bombs array and breaks the game
+		/// </summary>
+		/// <returns></returns>
+		public bool[,] GetBombs()
+		{
+			TotalClearedCount = -1; // Should now be impossible to win
+			return Bombs;
 		}
 		[Obsolete]
 		private byte CountSurroundingBombs(int row, int column)

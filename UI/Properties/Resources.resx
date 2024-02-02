@@ -127,6 +127,9 @@
   <data name="Minesweeper_Covered" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Minesweeper_Covered.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Minesweeper_Flag" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Minesweeper_Flag.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Minesweeper_Uncovered" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Minesweeper_Uncovered.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

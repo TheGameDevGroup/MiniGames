@@ -7,10 +7,10 @@ namespace UI.Minesweeper
 {
 	public partial class MinesweeperUI : GameUIBase
 	{
-		public int Rows = 30;
+		public int Rows = 16;
 		public int Columns = 30;
-		public int BombCount = 20;
-		public bool Infinite = true;
+		public int BombCount = 99;
+		public bool Infinite = false;
 		public int BetweenGameDelay = 3000;
 
 		public MinesweeperPlayerBase Player { get; private set; } = new HumanPlayer();
@@ -22,6 +22,7 @@ namespace UI.Minesweeper
 		{
 			InitializeComponent();
 			minesweeperBoard1.MoveClick += BoardClick;
+			minesweeperBoard1.TileSize = 35;
 			SetPlayer(new HumanPlayer());
 			StartGame();
 		}
@@ -57,8 +58,10 @@ namespace UI.Minesweeper
 						}
 						GameCount++;
 						Debug.WriteLine($"Game Count: {GameCount}, WinCount: {WinCount}");
-						Thread.Sleep(BetweenGameDelay);
-					} while (Infinite && !CTS.IsCancellationRequested);
+						if (Infinite && !CTS.IsCancellationRequested) Thread.Sleep(BetweenGameDelay);
+						else break;
+					} while (true);
+					CTS.Cancel();
 				}
 				catch (OperationCanceledException)
 				{
@@ -72,20 +75,32 @@ namespace UI.Minesweeper
 				Rows,
 				Columns,
 				BombCount,
+				minesweeperBoard1.TileSize,
 				minesweeperBoard1.CheckeredStyle,
 				minesweeperBoard1.TileColorsCovered,
 				minesweeperBoard1.TileColorsUncovered
 			) { };
 			if (settings.ShowDialog() == DialogResult.OK)
 			{
-				CTS.Cancel();
-				Rows = settings.Rows;
-				Columns = settings.Columns;
-				BombCount = settings.BombCount;
+				if (settings.Rows != Rows || settings.Columns != Columns || settings.BombCount != BombCount)
+				{
+					CTS.Cancel();
+					Rows = settings.Rows;
+					Columns = settings.Columns;
+					BombCount = settings.BombCount;
+				}
+				minesweeperBoard1.TileSize = settings.TileSize;
 				minesweeperBoard1.CheckeredStyle = settings.CheckeredStyle;
 				minesweeperBoard1.TileColorsCovered = settings.CoveredColors;
 				minesweeperBoard1.TileColorsUncovered = settings.UncoveredColors;
-				StartGame();
+				if (CTS.IsCancellationRequested)
+				{
+					StartGame();
+				}
+				else
+				{
+					minesweeperBoard1.UpdateUI();
+				}
 			}
 		}
 		private void PlayerUpdateState(object? sender, ((int, int), byte) moveState)
@@ -96,9 +111,16 @@ namespace UI.Minesweeper
 		{
 			minesweeperBoard1.Invoke(minesweeperBoard1.UpdateUI);
 		}
-		private void BoardClick(object? sender, (int, int) move)
+		private void BoardClick(object? sender, (int row, int column, bool isFlagged) move)
 		{
-			this.Player.HandleClick(move.Item1, move.Item2);
+			if (CTS.IsCancellationRequested)
+			{
+				StartGame();
+			}
+			else if (!move.isFlagged)
+			{
+				this.Player.HandleClick(move.row, move.column);
+			}
 		}
 	}
 }

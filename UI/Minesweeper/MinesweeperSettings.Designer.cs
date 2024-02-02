@@ -46,6 +46,9 @@
             radioBtnImage = new RadioButton();
             btnCancel = new Button();
             btnOk = new Button();
+            splitContainer1 = new SplitContainer();
+            groupBox4 = new GroupBox();
+            NumTileSize = new NumericUpDown();
             Bombs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)NumBombs).BeginInit();
             groupBox1.SuspendLayout();
@@ -63,28 +66,34 @@
             splitContainer3.Panel1.SuspendLayout();
             splitContainer3.Panel2.SuspendLayout();
             splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)NumTileSize).BeginInit();
             SuspendLayout();
             // 
             // Bombs
             // 
             Bombs.Controls.Add(NumBombs);
-            Bombs.Location = new Point(12, 110);
+            Bombs.Dock = DockStyle.Fill;
+            Bombs.Location = new Point(0, 0);
             Bombs.Name = "Bombs";
-            Bombs.Padding = new Padding(2);
-            Bombs.Size = new Size(266, 63);
+            Bombs.Size = new Size(133, 63);
             Bombs.TabIndex = 1;
             Bombs.TabStop = false;
-            Bombs.Text = "Bombs";
+            Bombs.Text = "Bomb Count";
             // 
             // NumBombs
             // 
             NumBombs.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            NumBombs.Location = new Point(4, 24);
+            NumBombs.Location = new Point(5, 24);
             NumBombs.Margin = new Padding(2);
             NumBombs.Maximum = new decimal(new int[] { 3, 0, 0, 0 });
             NumBombs.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             NumBombs.Name = "NumBombs";
-            NumBombs.Size = new Size(258, 27);
+            NumBombs.Size = new Size(123, 27);
             NumBombs.TabIndex = 0;
             NumBombs.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -276,6 +285,43 @@
             btnOk.UseVisualStyleBackColor = true;
             btnOk.Click += btnOk_Click;
             // 
+            // splitContainer1
+            // 
+            splitContainer1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            splitContainer1.Location = new Point(12, 110);
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            splitContainer1.Panel1.Controls.Add(Bombs);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(groupBox4);
+            splitContainer1.Size = new Size(266, 63);
+            splitContainer1.SplitterDistance = 133;
+            splitContainer1.TabIndex = 6;
+            // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(NumTileSize);
+            groupBox4.Dock = DockStyle.Fill;
+            groupBox4.Location = new Point(0, 0);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(129, 63);
+            groupBox4.TabIndex = 0;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Tile Size (px)";
+            // 
+            // NumTileSize
+            // 
+            NumTileSize.Location = new Point(6, 24);
+            NumTileSize.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            NumTileSize.Name = "NumTileSize";
+            NumTileSize.Size = new Size(117, 27);
+            NumTileSize.TabIndex = 0;
+            NumTileSize.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            // 
             // MinesweeperSettings
             // 
             AcceptButton = btnOk;
@@ -284,11 +330,11 @@
             CancelButton = btnCancel;
             ClientSize = new Size(290, 482);
             ControlBox = false;
+            Controls.Add(splitContainer1);
             Controls.Add(btnOk);
             Controls.Add(btnCancel);
             Controls.Add(groupBox1);
             Controls.Add(boardSizeSettings);
-            Controls.Add(Bombs);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(2);
             MaximizeBox = false;
@@ -314,6 +360,12 @@
             splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
             splitContainer3.ResumeLayout(false);
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)NumTileSize).EndInit();
             ResumeLayout(false);
         }
 
@@ -336,5 +388,8 @@
         private Button btnCancel;
         private Button btnOk;
         private Button btnColorReset;
+        private SplitContainer splitContainer1;
+        private GroupBox groupBox4;
+        private NumericUpDown NumTileSize;
     }
 }

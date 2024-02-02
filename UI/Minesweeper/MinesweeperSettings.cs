@@ -5,6 +5,7 @@
 		public int Rows => boardSizeSettings.Rows;
 		public int Columns => boardSizeSettings.Columns;
 		public int BombCount => (int)NumBombs.Value;
+		public int TileSize => (int)NumTileSize.Value;
 		public bool CheckeredStyle => radioBtnColor.Checked;
 		public (Color light, Color dark) CoveredColors => (colorPicker1.SelectedColor, colorPicker2.SelectedColor);
 		public (Color light, Color dark) UncoveredColors => (colorPicker3.SelectedColor, colorPicker4.SelectedColor);
@@ -12,6 +13,7 @@
 			20,
 			20,
 			10,
+			20,
 			true,
 			(Color.Black, Color.Gray),
 			(Color.LightGray, Color.White)
@@ -20,6 +22,7 @@
 			int rows,
 			int columns,
 			int bombCount,
+			int tileSize,
 			bool checkered,
 			(Color, Color) coveredColors,
 			(Color, Color) uncoveredColors)
@@ -28,7 +31,9 @@
 			boardSizeSettings.Rows = rows;
 			boardSizeSettings.Columns = columns;
 			NumBombs.Value = bombCount;
+			NumTileSize.Value = tileSize;
 			radioBtnColor.Checked = checkered;
+			radioBtnImage.Checked = !checkered;
 			colorPicker1.Reset(coveredColors.Item1);
 			colorPicker2.Reset(coveredColors.Item2);
 			colorPicker3.Reset(uncoveredColors.Item1);

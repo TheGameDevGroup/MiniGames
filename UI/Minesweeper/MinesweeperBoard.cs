@@ -5,11 +5,21 @@ namespace UI.Minesweeper
 {
 	public partial class MinesweeperBoard : GameBoardBase
 	{
-		public event EventHandler<(int, int)>? MoveClick;
+		public event EventHandler<(int row, int column, bool isFlagged)>? MoveClick;
 		private byte?[,] CurrentState = new byte?[0,0];
+		private bool[,] Flags = new bool[0,0];
 		private HashSet<(int, int)> HighlightedTiles = new();
 		private Color HighlightColor = Color.Red;
-		private int TileSize = 20;
+		private int _TileSize = 20;
+		public int TileSize
+		{
+			get => _TileSize;
+			set
+			{
+				_TileSize = value;
+				ReSizeBoard(CurrentState.GetLength(1) * _TileSize, CurrentState.GetLength(0) * _TileSize);
+			}
+		}
 		private readonly Dictionary<byte, Brush> NumberColorMap = new()
 		{
 			{ 1, Brushes.Lime },
@@ -39,8 +49,15 @@ namespace UI.Minesweeper
 		public void Reset(int rows, int columns)
 		{
 			CurrentState = new byte?[rows, columns];
+			Flags = new bool[rows, columns];
 			HighlightedTiles = new();
-			ReSizeBoard(columns * TileSize, rows * TileSize);
+			ReSizeBoard(columns * _TileSize, rows * _TileSize);
+
+			//debug
+
+			Flags[0,0] = true;
+
+			//\debug
 		}
 		public void HandleEnd(bool[,] bombs)
 		{
@@ -56,13 +73,18 @@ namespace UI.Minesweeper
 			}
 			UpdateUI();
 		}
+		public void SetFlag(int row, int column, bool isFlagged)
+		{
+			if (row >= 0 && column >= 0 && row < Flags.GetLength(0) && column < Flags.GetLength(1))
+				Flags[row, column] = isFlagged;
+		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{
-			int row = e.Y / TileSize;
-			int column = e.X / TileSize;
+			int row = e.Y / _TileSize;
+			int column = e.X / _TileSize;
 			if (row >= 0 && column >= 0 && row < CurrentState.GetLength(0) && column < CurrentState.GetLength(1))
 			{
-				MoveClick?.Invoke(this, (row, column));
+				MoveClick?.Invoke(this, (row, column, Flags[row, column]));
 			}
 		}
 		public void HighlightTiles(IEnumerable<(int, int)> tiles, Color? color = null)
@@ -80,7 +102,7 @@ namespace UI.Minesweeper
 			var covered = Resources.Minesweeper_Covered;
 			var uncovered = Resources.Minesweeper_Uncovered;
 			var bomb = Resources.Minesweeper_Bomb;
-			Font font = new("Arial", TileSize * 0.55f, FontStyle.Bold, GraphicsUnit.Point);
+			Font font = new("Arial", _TileSize * 0.55f, FontStyle.Bold, GraphicsUnit.Point);
 			StringFormat format = new()
 			{
 				Alignment = StringAlignment.Center,
@@ -93,7 +115,7 @@ namespace UI.Minesweeper
 			{
 				for (int column = 0; column < CurrentState.GetLength(1); column++)
 				{
-					Rectangle rect = new(column * TileSize, row * TileSize, TileSize, TileSize);
+					Rectangle rect = new(column * _TileSize, row * _TileSize, _TileSize, _TileSize);
 					var state = CurrentState[row, column];
 					bool checkerdOn = ((column + row) % 2) == 0;
 					if (state != null)
@@ -135,6 +157,11 @@ namespace UI.Minesweeper
 						{
 							graphics.DrawImage(covered, rect);
 						}
+					}
+					// Draw flag
+					if (Flags[row, column])
+					{
+						graphics.DrawImage(Resources.Minesweeper_Flag, rect);
 					}
 				}
 			}

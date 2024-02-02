@@ -93,6 +93,16 @@ namespace UI.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Minesweeper_Flag {
+            get {
+                object obj = ResourceManager.GetObject("Minesweeper_Flag", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Minesweeper_Uncovered {
             get {
                 object obj = ResourceManager.GetObject("Minesweeper_Uncovered", resourceCulture);
