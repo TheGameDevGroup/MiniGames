@@ -9,14 +9,13 @@ namespace UI.Minesweeper
 		public int Rows = 16;
 		public int Columns = 30;
 		public int BombCount = 99;
-		public bool Infinite = false;
-		public int BetweenGameDelay = 3000;
 
 		public MinesweeperPlayerBase Player { get; private set; } = new HumanPlayer();
 		int GameCount = 0;
 		int WinCount = 0;
 
 		CancellationTokenSource CTS = new();
+		DateTime? startTime = null;
 		public MinesweeperUI()
 		{
 			InitializeComponent();
@@ -42,26 +41,22 @@ namespace UI.Minesweeper
 		{
 			CTS.Cancel();
 			CTS = new();
+			LblBombCount.Text = $"{BombCount}";
 			Task.Run(() =>
 			{
 				try
 				{
 					while (!this.IsHandleCreated) { } // Wait for UI
-					do
+					minesweeperBoard1.Reset(Rows, Columns);
+					Game game = new(Rows, Columns, BombCount, Player);
+					game.OnEnd += (object? sender, bool[,] bombs) => { minesweeperBoard1.HandleEnd(bombs); };
+					game.OnLose += (object? sender, (int, int) bomb) => { minesweeperBoard1.HighlightTiles([bomb]); };
+					if (game.Play(CTS.Token))
 					{
-						minesweeperBoard1.Reset(Rows, Columns);
-						Game game = new(Rows, Columns, BombCount, Player);
-						game.OnEnd += (object? sender, bool[,] bombs) => { minesweeperBoard1.HandleEnd(bombs); };
-						game.OnLose += (object? sender, (int, int) bomb) => { minesweeperBoard1.HighlightTiles([bomb]); };
-						if (game.Play(CTS.Token))
-						{
-							WinCount++;
-						}
-						GameCount++;
-						Debug.WriteLine($"Game Count: {GameCount}, WinCount: {WinCount}");
-						if (Infinite && !CTS.IsCancellationRequested) Thread.Sleep(BetweenGameDelay);
-						else break;
-					} while (true);
+						WinCount++;
+					}
+					GameCount++;
+					Debug.WriteLine($"Game Count: {GameCount}, WinCount: {WinCount}");
 					CTS.Cancel();
 				}
 				catch (OperationCanceledException)
@@ -118,14 +113,32 @@ namespace UI.Minesweeper
 		}
 		private void BoardClick(object? sender, (int row, int column, bool ignoreClick) move)
 		{
-			if (CTS.IsCancellationRequested)
+            LblBombCount.Text = $"{BombCount - minesweeperBoard1.FlagCount}";
+            if (CTS.IsCancellationRequested)
 			{
 				StartGame();
 			}
 			else if (!move.ignoreClick)
 			{
+				StartTimer(CTS.Token);
 				this.Player.HandleClick(move.row, move.column);
 			}
+		}
+		private void StartTimer(CancellationToken token)
+		{
+			if (startTime != null) return; // timer already started
+			startTime = DateTime.Now;
+			Task.Run(() =>
+			{
+				while (!token.IsCancellationRequested)
+				{
+					LblTimePassed.Invoke(() =>
+					{
+						LblTimePassed.Text = $"{(DateTime.Now - startTime).Value.ToString("mm\\:ss")}";
+					});
+				}
+				startTime = null;
+			});
 		}
 	}
 }

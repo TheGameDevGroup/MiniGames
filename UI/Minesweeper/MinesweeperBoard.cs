@@ -11,6 +11,7 @@ namespace UI.Minesweeper
 		public event EventHandler<IEnumerable<(int row, int column)>>? MassMoveClick;
 		private byte?[,] CurrentState = new byte?[0,0];
 		private bool[,] Flags = new bool[0,0];
+		public int FlagCount => Flags.Cast<bool>().Count(x => x);
 		private HashSet<(int, int)> HighlightedTiles = new();
 		private Color HighlightColor = Color.Red;
 		private int _TileSize = 35;
@@ -139,10 +140,18 @@ namespace UI.Minesweeper
 					{
 						MoveClick?.Invoke(this, (row, column, Flags[row, column]));
 					}
+					else
+					{
+						MoveClick?.Invoke(this, (row, column, true));
+					}
 				}
 				else if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.Right)
 				{
 					ClearArea(row, column);
+					MoveClick?.Invoke(this, (row, column, true));
+				}
+				else
+				{
 					MoveClick?.Invoke(this, (row, column, true));
 				}
 			}
