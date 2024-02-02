@@ -52,12 +52,6 @@ namespace UI.Minesweeper
 			Flags = new bool[rows, columns];
 			HighlightedTiles = new();
 			ReSizeBoard(columns * _TileSize, rows * _TileSize);
-
-			//debug
-
-			Flags[0,0] = true;
-
-			//\debug
 		}
 		public void HandleEnd(bool[,] bombs)
 		{
@@ -75,8 +69,12 @@ namespace UI.Minesweeper
 		}
 		public void SetFlag(int row, int column, bool isFlagged)
 		{
-			if (row >= 0 && column >= 0 && row < Flags.GetLength(0) && column < Flags.GetLength(1))
+			if (row >= 0 && column >= 0 && row < Flags.GetLength(0) && column < Flags.GetLength(1) && CurrentState[row, column] is null)
 				Flags[row, column] = isFlagged;
+		}
+		public void ClearArea(int row, int column)
+		{
+
 		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{
@@ -84,7 +82,15 @@ namespace UI.Minesweeper
 			int column = e.X / _TileSize;
 			if (row >= 0 && column >= 0 && row < CurrentState.GetLength(0) && column < CurrentState.GetLength(1))
 			{
-				MoveClick?.Invoke(this, (row, column, Flags[row, column]));
+				if (e.Button == MouseButtons.Right && CurrentState[row, column] is null)
+				{
+					Flags[row, column] = !Flags[row, column];
+					UpdateUI();
+				}
+				else if (e.Button == MouseButtons.Left)
+				{
+					MoveClick?.Invoke(this, (row, column, Flags[row, column]));
+				}
 			}
 		}
 		public void HighlightTiles(IEnumerable<(int, int)> tiles, Color? color = null)

@@ -1,6 +1,5 @@
 ﻿using MinesweeperBackend;
 using System.Diagnostics;
-using UI.Connect4.v2;
 using UI.General;
 
 namespace UI.Minesweeper
@@ -40,6 +39,7 @@ namespace UI.Minesweeper
 		}
 		public void StartGame()
 		{
+			CTS.Cancel();
 			CTS = new();
 			Task.Run(() =>
 			{

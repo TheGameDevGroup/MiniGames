@@ -58,10 +58,10 @@
 
 		private void btnColorReset_Click(object sender, EventArgs e)
 		{
-			colorPicker1.Reset();
-			colorPicker2.Reset();
-			colorPicker3.Reset();
-			colorPicker4.Reset();
+			colorPicker1.Reset(Color.GreenYellow);
+			colorPicker2.Reset(Color.YellowGreen);
+			colorPicker3.Reset(Color.AntiqueWhite);
+			colorPicker4.Reset(Color.NavajoWhite);
 		}
 
 		private void radioBtnColor_CheckedChanged(object sender, EventArgs e)
