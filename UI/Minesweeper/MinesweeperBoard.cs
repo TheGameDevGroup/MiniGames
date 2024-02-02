@@ -1,11 +1,13 @@
 ﻿using UI.General;
 using UI.Properties;
+using Utilities.Extensions;
 
 namespace UI.Minesweeper
 {
 	public partial class MinesweeperBoard : GameBoardBase
 	{
-		public event EventHandler<(int row, int column, bool isFlagged)>? MoveClick;
+		public event EventHandler<(int row, int column, bool ignoreClick)>? MoveClick;
+		public event EventHandler<IEnumerable<(int row, int column)>>? MassMoveClick;
 		private byte?[,] CurrentState = new byte?[0,0];
 		private bool[,] Flags = new bool[0,0];
 		private HashSet<(int, int)> HighlightedTiles = new();
@@ -22,12 +24,12 @@ namespace UI.Minesweeper
 		}
 		private readonly Dictionary<byte, Brush> NumberColorMap = new()
 		{
-			{ 1, Brushes.Lime },
-			{ 2, Brushes.GreenYellow },
+			{ 1, Brushes.Green },
+			{ 2, Brushes.LimeGreen },
 			{ 3, Brushes.YellowGreen },
-			{ 4, Brushes.Yellow },
+			{ 4, Brushes.Olive },
 			{ 5, Brushes.Goldenrod },
-			{ 6, Brushes.Orange },
+			{ 6, Brushes.DarkOrange },
 			{ 7, Brushes.OrangeRed },
 			{ 8, Brushes.Red },
 		};
@@ -49,6 +51,14 @@ namespace UI.Minesweeper
 		public void Reset(int rows, int columns)
 		{
 			CurrentState = new byte?[rows, columns];
+			//CurrentState[0, 0] = 1;
+			//CurrentState[1, 0] = 2;
+			//CurrentState[2, 0] = 3;
+			//CurrentState[3, 0] = 4;
+			//CurrentState[4, 0] = 5;
+			//CurrentState[5, 0] = 6;
+			//CurrentState[6, 0] = 7;
+			//CurrentState[7, 0] = 8;
 			Flags = new bool[rows, columns];
 			HighlightedTiles = new();
 			ReSizeBoard(columns * _TileSize, rows * _TileSize);
@@ -74,7 +84,23 @@ namespace UI.Minesweeper
 		}
 		public void ClearArea(int row, int column)
 		{
-
+			if (CurrentState[row, column] is null) return; // Only usable on uncovered tiles
+			// These counts consider the current tile (but it *should* not fulfill the conditions for either)
+			var coveredCount = CurrentState.GetArea(row - 1, column - 1, row + 1, column + 1).Count(x => x is null);
+			var flagCount = Flags.GetArea(row - 1, column - 1, row + 1, column + 1).Count(x => x);
+			// Check if clearing the (unflagged) surrounding tiles is safe
+			if (flagCount >= CurrentState[row, column] && coveredCount - flagCount > 0)
+			{
+				HashSet<(int row, int column)> moves = new();
+				CurrentState.DoAtEach(row - 1, column - 1, row + 1, column + 1, (r, c) =>
+				{
+					if (CurrentState[r, c] is null && !Flags[r, c])
+					{
+						moves.Add((r, c));
+					}
+				});
+				MassMoveClick?.Invoke(this, moves);
+			}
 		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{
@@ -86,10 +112,16 @@ namespace UI.Minesweeper
 				{
 					Flags[row, column] = !Flags[row, column];
 					UpdateUI();
+					MoveClick?.Invoke(this, (row, column, true));
 				}
 				else if (e.Button == MouseButtons.Left)
 				{
 					MoveClick?.Invoke(this, (row, column, Flags[row, column]));
+				}
+				else if (e.Button == MouseButtons.Middle)
+				{
+					ClearArea(row, column);
+					MoveClick?.Invoke(this, (row, column, true));
 				}
 			}
 		}

@@ -29,6 +29,12 @@ namespace MinesweeperBackend
 		/// <param name="column"></param>
 		public virtual void HandleClick(int row, int column) { }
 		/// <summary>
+		/// Optionally handle when a user middle clicks (clearing multiple tiles) on the game board.
+		/// </summary>
+		/// <param name="row"></param>
+		/// <param name="column"></param>
+		public virtual void HandleMassClick(IEnumerable<(int row, int column)> clicks) { }
+		/// <summary>
 		/// ((row, column), bombCount)
 		/// Provide a hook for player specific UI updates.
 		/// </summary>

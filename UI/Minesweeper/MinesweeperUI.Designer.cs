@@ -33,18 +33,20 @@
             // 
             // minesweeperBoard1
             // 
+            minesweeperBoard1.AutoScroll = true;
             minesweeperBoard1.Dock = DockStyle.Fill;
             minesweeperBoard1.Location = new Point(0, 28);
             minesweeperBoard1.Margin = new Padding(3, 5, 3, 5);
             minesweeperBoard1.Name = "minesweeperBoard1";
-            minesweeperBoard1.Size = new Size(733, 673);
+            minesweeperBoard1.Size = new Size(1189, 673);
             minesweeperBoard1.TabIndex = 0;
+            minesweeperBoard1.TileSize = 20;
             // 
             // MinesweeperUI
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(733, 701);
+            ClientSize = new Size(1189, 701);
             Controls.Add(minesweeperBoard1);
             Margin = new Padding(3, 4, 3, 4);
             Name = "MinesweeperUI";

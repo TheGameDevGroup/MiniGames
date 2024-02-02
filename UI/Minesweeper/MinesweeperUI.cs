@@ -21,6 +21,7 @@ namespace UI.Minesweeper
 		{
 			InitializeComponent();
 			minesweeperBoard1.MoveClick += BoardClick;
+			minesweeperBoard1.MassMoveClick += BoardMassClick;
 			minesweeperBoard1.TileSize = 35;
 			SetPlayer(new HumanPlayer());
 			StartGame();
@@ -111,13 +112,17 @@ namespace UI.Minesweeper
 		{
 			minesweeperBoard1.Invoke(minesweeperBoard1.UpdateUI);
 		}
-		private void BoardClick(object? sender, (int row, int column, bool isFlagged) move)
+		private void BoardMassClick(object? sender, IEnumerable<(int row, int column)> e)
+		{
+			this.Player.HandleMassClick(e);
+		}
+		private void BoardClick(object? sender, (int row, int column, bool ignoreClick) move)
 		{
 			if (CTS.IsCancellationRequested)
 			{
 				StartGame();
 			}
-			else if (!move.isFlagged)
+			else if (!move.ignoreClick)
 			{
 				this.Player.HandleClick(move.row, move.column);
 			}
