@@ -8,7 +8,7 @@ namespace MinesweeperBackend
 		/// <summary>
 		/// Provides the array indicating which tiles have bombs
 		/// </summary>
-		public event EventHandler<bool[,]>? OnEnd;
+		public event EventHandler<(bool[,] bombs, bool isWin)>? OnEnd;
 		/// <summary>
 		/// Triggers when the game is lost and provides the location of the bomb clicked
 		/// </summary>
@@ -79,7 +79,7 @@ namespace MinesweeperBackend
 				if (Bombs[move.Item1, move.Item2])
 				{
 					OnLose?.Invoke(this, move);
-					OnEnd?.Invoke(this, Bombs);
+					OnEnd?.Invoke(this, (Bombs, false));
 					return false; // lost
 				}
 				else
@@ -87,7 +87,7 @@ namespace MinesweeperBackend
 					DoMove(move.Item1, move.Item2);
 					if (IsWin())
 					{
-						OnEnd?.Invoke(this, Bombs);
+						OnEnd?.Invoke(this, (Bombs, true));
 						return true; // win
 					}
 				}
@@ -147,7 +147,7 @@ namespace MinesweeperBackend
 		}
 		private HashSet<(int row, int column)> GenerateLocations(int rows, int columns, int count, Random random)
 		{
-			var locationsFlat = IEnumerableExtensions.PermuteIntegers(0, rows * columns - 1, random);
+			var locationsFlat = random.PermuteIntegers(0, rows * columns - 1);
 			var locations = new HashSet<(int, int)>();
 			foreach (var location in locationsFlat)
 			{

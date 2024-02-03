@@ -1,9 +1,13 @@
-﻿using System;
+﻿using System.Drawing;
 
 namespace Utilities.Extensions
 {
-	public static class IEnumerableExtensions
+	public static class RandomExtensions
 	{
+		public static Color RandomColor(this Random random)
+		{
+			return Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
+		}
 		/// <summary>
 		/// Return a random sequence of these elements.
 		/// </summary>
@@ -15,7 +19,7 @@ namespace Utilities.Extensions
 		/// <param name="source"></param>
 		/// <param name="random"></param>
 		/// <returns></returns>
-		public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random random)
+		public static IEnumerable<T> Shuffle<T>(this Random random, IEnumerable<T> source)
 		{
 			T[] elements = source.ToArray();
 			for (int i = elements.Length - 1; i >= 0; i--)
@@ -39,7 +43,7 @@ namespace Utilities.Extensions
 		/// <param name="min">Minimum value (inclusive)</param>
 		/// <param name="max">Maximum value (inclusive)</param>
 		/// <returns></returns>
-		public static IEnumerable<int> PermuteIntegers(int min, int max, Random random)
+		public static IEnumerable<int> PermuteIntegers(this Random random, int min, int max)
 		{
 			int[] elements = Enumerable.Range(min, max - min + 1).ToArray();
 			for (int i = elements.Length - 1; i >= 0; i--)

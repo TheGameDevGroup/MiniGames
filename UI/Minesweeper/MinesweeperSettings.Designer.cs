@@ -32,7 +32,6 @@
             NumBombs = new NumericUpDown();
             boardSizeSettings = new General.BoardSizeSettings();
             groupBox1 = new GroupBox();
-            btnColorReset = new Button();
             splitColors = new SplitContainer();
             groupBox2 = new GroupBox();
             splitContainer2 = new SplitContainer();
@@ -44,11 +43,21 @@
             colorPicker4 = new General.ColorPicker();
             radioBtnColor = new RadioButton();
             radioBtnImage = new RadioButton();
+            btnColorReset = new Button();
             btnCancel = new Button();
             btnOk = new Button();
             splitContainer1 = new SplitContainer();
+            groupBox6 = new GroupBox();
+            NumDensity = new NumericUpDown();
             groupBox4 = new GroupBox();
             NumTileSize = new NumericUpDown();
+            groupBox5 = new GroupBox();
+            colorPicker5 = new General.ColorPicker();
+            BtnEasy = new Button();
+            BtnHard = new Button();
+            BtnNormal = new Button();
+            groupBox7 = new GroupBox();
+            colorPicker6 = new General.ColorPicker();
             Bombs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)NumBombs).BeginInit();
             groupBox1.SuspendLayout();
@@ -70,8 +79,12 @@
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)NumDensity).BeginInit();
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)NumTileSize).BeginInit();
+            groupBox5.SuspendLayout();
+            groupBox7.SuspendLayout();
             SuspendLayout();
             // 
             // Bombs
@@ -80,7 +93,7 @@
             Bombs.Dock = DockStyle.Fill;
             Bombs.Location = new Point(0, 0);
             Bombs.Name = "Bombs";
-            Bombs.Size = new Size(133, 63);
+            Bombs.Size = new Size(133, 59);
             Bombs.TabIndex = 1;
             Bombs.TabStop = false;
             Bombs.Text = "Bomb Count";
@@ -88,7 +101,7 @@
             // NumBombs
             // 
             NumBombs.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            NumBombs.Location = new Point(5, 24);
+            NumBombs.Location = new Point(5, 25);
             NumBombs.Margin = new Padding(2);
             NumBombs.Maximum = new decimal(new int[] { 3, 0, 0, 0 });
             NumBombs.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -96,41 +109,34 @@
             NumBombs.Size = new Size(123, 27);
             NumBombs.TabIndex = 0;
             NumBombs.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            NumBombs.ValueChanged += NumBombs_ValueChanged;
             // 
             // boardSizeSettings
             // 
-            boardSizeSettings.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             boardSizeSettings.Columns = 2;
+            boardSizeSettings.ColumnsMaximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            boardSizeSettings.ColumnsMinimum = new decimal(new int[] { 2, 0, 0, 0 });
             boardSizeSettings.Location = new Point(12, 12);
             boardSizeSettings.MinimumSize = new Size(0, 92);
             boardSizeSettings.Name = "boardSizeSettings";
             boardSizeSettings.Rows = 2;
+            boardSizeSettings.RowsMaximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            boardSizeSettings.RowsMinimum = new decimal(new int[] { 2, 0, 0, 0 });
             boardSizeSettings.Size = new Size(266, 92);
             boardSizeSettings.TabIndex = 2;
-            boardSizeSettings.BoardSizeChanged += numericUpDown_ValueChanged;
+            boardSizeSettings.BoardSizeChanged += BoardSize_ValueChanged;
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(btnColorReset);
             groupBox1.Controls.Add(splitColors);
             groupBox1.Controls.Add(radioBtnColor);
             groupBox1.Controls.Add(radioBtnImage);
             groupBox1.Location = new Point(12, 179);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(266, 222);
+            groupBox1.Size = new Size(266, 172);
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Style";
-            // 
-            // btnColorReset
-            // 
-            btnColorReset.Location = new Point(152, 172);
-            btnColorReset.Name = "btnColorReset";
-            btnColorReset.Size = new Size(108, 29);
-            btnColorReset.TabIndex = 4;
-            btnColorReset.Text = "Reset Colors";
-            btnColorReset.UseVisualStyleBackColor = true;
-            btnColorReset.Click += btnColorReset_Click;
+            groupBox1.Text = "Board Style";
             // 
             // splitColors
             // 
@@ -263,10 +269,20 @@
             radioBtnImage.Text = "Image";
             radioBtnImage.UseVisualStyleBackColor = true;
             // 
+            // btnColorReset
+            // 
+            btnColorReset.Location = new Point(284, 351);
+            btnColorReset.Name = "btnColorReset";
+            btnColorReset.Size = new Size(108, 29);
+            btnColorReset.TabIndex = 4;
+            btnColorReset.Text = "Reset Colors";
+            btnColorReset.UseVisualStyleBackColor = true;
+            btnColorReset.Click += btnColorReset_Click;
+            // 
             // btnCancel
             // 
             btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnCancel.Location = new Point(84, 441);
+            btnCancel.Location = new Point(198, 459);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(94, 29);
             btnCancel.TabIndex = 4;
@@ -277,7 +293,7 @@
             // btnOk
             // 
             btnOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnOk.Location = new Point(184, 441);
+            btnOk.Location = new Point(298, 459);
             btnOk.Name = "btnOk";
             btnOk.Size = new Size(94, 29);
             btnOk.TabIndex = 5;
@@ -287,7 +303,6 @@
             // 
             // splitContainer1
             // 
-            splitContainer1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             splitContainer1.Location = new Point(12, 110);
             splitContainer1.Name = "splitContainer1";
             // 
@@ -297,30 +312,120 @@
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(groupBox4);
-            splitContainer1.Size = new Size(266, 63);
+            splitContainer1.Panel2.Controls.Add(groupBox6);
+            splitContainer1.Size = new Size(266, 59);
             splitContainer1.SplitterDistance = 133;
             splitContainer1.TabIndex = 6;
+            // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(NumDensity);
+            groupBox6.Dock = DockStyle.Fill;
+            groupBox6.Location = new Point(0, 0);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(129, 59);
+            groupBox6.TabIndex = 0;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Bomb Density";
+            // 
+            // NumDensity
+            // 
+            NumDensity.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            NumDensity.DecimalPlaces = 3;
+            NumDensity.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            NumDensity.Location = new Point(6, 26);
+            NumDensity.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            NumDensity.Name = "NumDensity";
+            NumDensity.Size = new Size(117, 27);
+            NumDensity.TabIndex = 0;
+            NumDensity.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            NumDensity.ValueChanged += NumDensity_ValueChanged;
             // 
             // groupBox4
             // 
             groupBox4.Controls.Add(NumTileSize);
-            groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(0, 0);
+            groupBox4.Location = new Point(12, 357);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(129, 63);
+            groupBox4.Size = new Size(266, 59);
             groupBox4.TabIndex = 0;
             groupBox4.TabStop = false;
             groupBox4.Text = "Tile Size (px)";
             // 
             // NumTileSize
             // 
-            NumTileSize.Location = new Point(6, 24);
+            NumTileSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            NumTileSize.Location = new Point(6, 26);
             NumTileSize.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             NumTileSize.Name = "NumTileSize";
-            NumTileSize.Size = new Size(117, 27);
+            NumTileSize.Size = new Size(254, 27);
             NumTileSize.TabIndex = 0;
             NumTileSize.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(colorPicker5);
+            groupBox5.Location = new Point(284, 179);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(108, 80);
+            groupBox5.TabIndex = 7;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Flag Color";
+            // 
+            // colorPicker5
+            // 
+            colorPicker5.Location = new Point(6, 26);
+            colorPicker5.Name = "colorPicker5";
+            colorPicker5.SelectedColor = Color.FromArgb(115, 167, 58);
+            colorPicker5.Size = new Size(43, 48);
+            colorPicker5.TabIndex = 2;
+            // 
+            // BtnEasy
+            // 
+            BtnEasy.Location = new Point(284, 12);
+            BtnEasy.Name = "BtnEasy";
+            BtnEasy.Size = new Size(108, 29);
+            BtnEasy.TabIndex = 8;
+            BtnEasy.Text = "Easy";
+            BtnEasy.UseVisualStyleBackColor = true;
+            BtnEasy.Click += BtnEasy_Click;
+            // 
+            // BtnHard
+            // 
+            BtnHard.Location = new Point(284, 82);
+            BtnHard.Name = "BtnHard";
+            BtnHard.Size = new Size(108, 29);
+            BtnHard.TabIndex = 10;
+            BtnHard.Text = "Hard";
+            BtnHard.UseVisualStyleBackColor = true;
+            BtnHard.Click += BtnHard_Click;
+            // 
+            // BtnNormal
+            // 
+            BtnNormal.Location = new Point(284, 47);
+            BtnNormal.Name = "BtnNormal";
+            BtnNormal.Size = new Size(108, 29);
+            BtnNormal.TabIndex = 11;
+            BtnNormal.Text = "Normal";
+            BtnNormal.UseVisualStyleBackColor = true;
+            BtnNormal.Click += BtnNormal_Click;
+            // 
+            // groupBox7
+            // 
+            groupBox7.Controls.Add(colorPicker6);
+            groupBox7.Location = new Point(284, 265);
+            groupBox7.Name = "groupBox7";
+            groupBox7.Size = new Size(108, 80);
+            groupBox7.TabIndex = 12;
+            groupBox7.TabStop = false;
+            groupBox7.Text = "Bomb Color";
+            // 
+            // colorPicker6
+            // 
+            colorPicker6.Location = new Point(6, 26);
+            colorPicker6.Name = "colorPicker6";
+            colorPicker6.SelectedColor = Color.FromArgb(115, 167, 58);
+            colorPicker6.Size = new Size(43, 48);
+            colorPicker6.TabIndex = 2;
             // 
             // MinesweeperSettings
             // 
@@ -328,8 +433,15 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = btnCancel;
-            ClientSize = new Size(290, 482);
+            ClientSize = new Size(404, 500);
             ControlBox = false;
+            Controls.Add(groupBox7);
+            Controls.Add(groupBox4);
+            Controls.Add(BtnNormal);
+            Controls.Add(BtnHard);
+            Controls.Add(BtnEasy);
+            Controls.Add(btnColorReset);
+            Controls.Add(groupBox5);
             Controls.Add(splitContainer1);
             Controls.Add(btnOk);
             Controls.Add(btnCancel);
@@ -364,8 +476,12 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            groupBox6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)NumDensity).EndInit();
             groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)NumTileSize).EndInit();
+            groupBox5.ResumeLayout(false);
+            groupBox7.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -391,5 +507,14 @@
         private SplitContainer splitContainer1;
         private GroupBox groupBox4;
         private NumericUpDown NumTileSize;
+        private GroupBox groupBox5;
+        private General.ColorPicker colorPicker5;
+        private Button BtnEasy;
+        private Button BtnHard;
+        private Button BtnNormal;
+        private GroupBox groupBox6;
+        private NumericUpDown NumDensity;
+        private GroupBox groupBox7;
+        private General.ColorPicker colorPicker6;
     }
 }

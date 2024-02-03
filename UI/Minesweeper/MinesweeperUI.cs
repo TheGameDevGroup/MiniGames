@@ -6,9 +6,9 @@ namespace UI.Minesweeper
 {
 	public partial class MinesweeperUI : GameUIBase
 	{
-		public int Rows = 16;
-		public int Columns = 30;
-		public int BombCount = 99;
+		public int Rows = 14;
+		public int Columns = 18;
+		public int BombCount = 40;
 
 		public MinesweeperPlayerBase Player { get; private set; } = new HumanPlayer();
 		int GameCount = 0;
@@ -49,7 +49,7 @@ namespace UI.Minesweeper
 					while (!this.IsHandleCreated) { } // Wait for UI
 					minesweeperBoard1.Reset(Rows, Columns);
 					Game game = new(Rows, Columns, BombCount, Player);
-					game.OnEnd += (object? sender, bool[,] bombs) => { minesweeperBoard1.HandleEnd(bombs); };
+					game.OnEnd += (object? sender, (bool[,] bombs, bool isWin) endState) => { minesweeperBoard1.HandleEnd(endState.bombs, endState.isWin); };
 					game.OnLose += (object? sender, (int, int) bomb) => { minesweeperBoard1.HighlightTiles([bomb]); };
 					if (game.Play(CTS.Token))
 					{
@@ -72,6 +72,8 @@ namespace UI.Minesweeper
 				Columns,
 				BombCount,
 				minesweeperBoard1.TileSize,
+				minesweeperBoard1.FlagColor,
+				minesweeperBoard1.BombColor,
 				minesweeperBoard1.CheckeredStyle,
 				minesweeperBoard1.TileColorsCovered,
 				minesweeperBoard1.TileColorsUncovered
@@ -89,6 +91,8 @@ namespace UI.Minesweeper
 				minesweeperBoard1.CheckeredStyle = settings.CheckeredStyle;
 				minesweeperBoard1.TileColorsCovered = settings.CoveredColors;
 				minesweeperBoard1.TileColorsUncovered = settings.UncoveredColors;
+				minesweeperBoard1.FlagColor = settings.FlagColor;
+				minesweeperBoard1.BombColor = settings.BombColor;
 				if (CTS.IsCancellationRequested)
 				{
 					StartGame();
@@ -102,6 +106,10 @@ namespace UI.Minesweeper
 		private void PlayerUpdateState(object? sender, ((int, int), byte) moveState)
 		{
 			minesweeperBoard1.Invoke(minesweeperBoard1.UpdateState, moveState);
+			LblBombCount.Invoke(() =>
+			{
+				LblBombCount.Text = $"{BombCount - minesweeperBoard1.FlagCount}"; // In case the board removed a flag
+			});
 		}
 		private void PlayerUpdateUI(object? sender, EventArgs e)
 		{
@@ -113,8 +121,8 @@ namespace UI.Minesweeper
 		}
 		private void BoardClick(object? sender, (int row, int column, bool ignoreClick) move)
 		{
-            LblBombCount.Text = $"{BombCount - minesweeperBoard1.FlagCount}";
-            if (CTS.IsCancellationRequested)
+			LblBombCount.Text = $"{BombCount - minesweeperBoard1.FlagCount}";
+			if (CTS.IsCancellationRequested)
 			{
 				StartGame();
 			}

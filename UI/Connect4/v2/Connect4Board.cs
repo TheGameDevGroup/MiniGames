@@ -1,6 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using UI.General;
 using UI.Properties;
+using Utilities.Extensions;
 
 namespace UI.Connect4.v2
 {
@@ -13,26 +14,12 @@ namespace UI.Connect4.v2
 		public int ColumnCount { get; private set; }
 		public event EventHandler<int>? ColumnClick;
 		private readonly Image TokenImage = new Bitmap(Resources.Connect4_Token);
-		private static ImageAttributes BuildAttributes(Color color)
-		{
-			ColorMatrix matrix = new(
-			[
-				[color.R / 255f, 0, 0, 0, 0],
-				[0, color.G / 255f, 0, 0, 0],
-				[0, 0, color.B / 255f, 0, 0],
-				[0, 0, 0, color.A / 255f, 0],
-				[0, 0, 0, 0, 1]
-			]);
-			ImageAttributes toReturn = new();
-			toReturn.SetColorMatrix(matrix);
-			return toReturn;
-		}
 		public Connect4Board() : this(6, 7) { }
 		public Connect4Board(int rowCount, int columnCount)
 		{
 			InitializeComponent();
 			SetTokenSize(TokenSize);
-			DefaultAttributes = BuildAttributes(Color.White);
+			DefaultAttributes = Color.White.BuildAttributes();
 			myPictureBox.Paint += Board_Paint;
 			myPictureBox.MouseUp += Picture_Click;
 			myPictureBox.BackColor = Color.Yellow;
@@ -61,7 +48,7 @@ namespace UI.Connect4.v2
 					int tokenState = newState[row, column];
 					if (tokenState != 0 && (!Attributes.TryGetValue((row, column), out var attr) || tokenState != attr.Item1))
 					{
-						Attributes[(row, column)] = (tokenState, BuildAttributes(colorMap[tokenState - 1]), null);
+						Attributes[(row, column)] = (tokenState,colorMap[tokenState - 1].BuildAttributes(), null);
 					}
 				}
 			}

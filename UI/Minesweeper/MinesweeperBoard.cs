@@ -35,9 +35,12 @@ namespace UI.Minesweeper
 			{ 7, Brushes.OrangeRed },
 			{ 8, Brushes.Red },
 		};
+		public Color FlagColor = Color.Red;
+		public Color BombColor = Color.Black;
 		public (Color light, Color dark) TileColorsCovered = (Color.GreenYellow, Color.YellowGreen);
 		public (Color light, Color dark) TileColorsUncovered = (Color.AntiqueWhite, Color.NavajoWhite);
 		public bool CheckeredStyle = true;
+		private bool HasWon = false;
 		public MinesweeperBoard() : this(16, 30) { }
 		public MinesweeperBoard(int rows, int columns)
 		{
@@ -65,9 +68,13 @@ namespace UI.Minesweeper
 			}
 		}
 
-		public void UpdateState(((int, int), byte) stateUpdate)
+		public void UpdateState(((int row, int column) location, byte state) stateUpdate)
 		{
-			CurrentState[stateUpdate.Item1.Item1, stateUpdate.Item1.Item2] = stateUpdate.Item2;
+			CurrentState[stateUpdate.location.row, stateUpdate.location.column] = stateUpdate.state;
+			if (Flags[stateUpdate.location.row, stateUpdate.location.column])
+			{
+				Flags[stateUpdate.location.row, stateUpdate.location.column] = false;
+			}
 		}
 		public void Reset(int rows, int columns)
 		{
@@ -82,10 +89,12 @@ namespace UI.Minesweeper
 			//CurrentState[7, 0] = 8;
 			Flags = new bool[rows, columns];
 			HighlightedTiles = new();
+			HasWon = false;
 			ReSizeBoard(columns * _TileSize, rows * _TileSize);
 		}
-		public void HandleEnd(bool[,] bombs)
+		public void HandleEnd(bool[,] bombs, bool isWin)
 		{
+			HasWon = isWin;
 			for (int row = 0; row < bombs.GetLength(0); row++)
 			{
 				for (int col = 0; col < bombs.GetLength(1); col++)
@@ -175,6 +184,7 @@ namespace UI.Minesweeper
 		}
 		private void HandlePaint(object? sender, PaintEventArgs e)
 		{
+			Random random = new(); // Used for random colors on win
 			var graphics = e.Graphics;
 			var covered = Resources.Minesweeper_Covered;
 			var uncovered = Resources.Minesweeper_Uncovered;
@@ -188,6 +198,8 @@ namespace UI.Minesweeper
 			var brushesCovered = (new SolidBrush(TileColorsCovered.light), new SolidBrush(TileColorsCovered.dark));
 			var brushesUncovered = (new SolidBrush(TileColorsUncovered.light), new SolidBrush(TileColorsUncovered.dark));
 			var Highlighter = new SolidBrush(HighlightColor);
+			var FlagAttributes = FlagColor.BuildAttributes();
+			var BombAttributes = BombColor.BuildAttributes();
 			for (int row = 0; row < CurrentState.GetLength(0); row++)
 			{
 				for (int column = 0; column < CurrentState.GetLength(1); column++)
@@ -195,7 +207,19 @@ namespace UI.Minesweeper
 					Rectangle rect = new(column * _TileSize, row * _TileSize, _TileSize, _TileSize);
 					var state = CurrentState[row, column];
 					bool checkerdOn = ((column + row) % 2) == 0;
-					if (state != null)
+
+					if (state == null || (state == 255 && HasWon))
+					{
+						if (CheckeredStyle)
+						{
+							graphics.FillRectangle(checkerdOn ? brushesCovered.Item1 : brushesCovered.Item2, rect);
+						}
+						else
+						{
+							graphics.DrawImage(covered, rect);
+						}
+					}
+					else
 					{
 						if (HighlightedTiles.Contains((row, column)))
 						{
@@ -211,7 +235,12 @@ namespace UI.Minesweeper
 						}
 						if (state == 255)
 						{
-							graphics.DrawImage(bomb, rect);
+							graphics.DrawImage(
+								bomb,
+								rect,
+								0, 0, bomb.Width, bomb.Height,
+								GraphicsUnit.Pixel,
+								BombAttributes);
 						}
 						else if (state != 0)
 						{
@@ -224,21 +253,16 @@ namespace UI.Minesweeper
 							);
 						}
 					}
-					else
-					{
-						if (CheckeredStyle)
-						{
-							graphics.FillRectangle(checkerdOn ? brushesCovered.Item1 : brushesCovered.Item2, rect);
-						}
-						else
-						{
-							graphics.DrawImage(covered, rect);
-						}
-					}
 					// Draw flag
 					if (Flags[row, column])
 					{
-						graphics.DrawImage(Resources.Minesweeper_Flag, rect);
+						graphics.DrawImage(
+							Resources.Minesweeper_Flag,
+							rect,
+							0, 0, Resources.Minesweeper_Flag.Width, Resources.Minesweeper_Flag.Height,
+							GraphicsUnit.Pixel,
+							HasWon ? random.RandomColor().BuildAttributes() : FlagAttributes
+						);
 					}
 				}
 			}
