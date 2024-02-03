@@ -37,23 +37,25 @@
             // 
             // minesweeperBoard1
             // 
+            minesweeperBoard1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             minesweeperBoard1.AutoScroll = true;
-            minesweeperBoard1.Dock = DockStyle.Bottom;
-            minesweeperBoard1.Location = new Point(0, 93);
+            minesweeperBoard1.Location = new Point(12, 104);
             minesweeperBoard1.Margin = new Padding(3, 5, 3, 5);
             minesweeperBoard1.Name = "minesweeperBoard1";
-            minesweeperBoard1.Size = new Size(1067, 608);
+            minesweeperBoard1.Size = new Size(937, 528);
             minesweeperBoard1.TabIndex = 0;
             minesweeperBoard1.TileSize = 20;
             // 
             // panel1
             // 
+            panel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panel1.Controls.Add(LblTimePassed);
             panel1.Controls.Add(LblBombCount);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 28);
+            panel1.Location = new Point(12, 31);
+            panel1.MaximumSize = new Size(0, 65);
+            panel1.MinimumSize = new Size(0, 65);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1067, 65);
+            panel1.Size = new Size(937, 65);
             panel1.TabIndex = 1;
             // 
             // LblTimePassed
@@ -62,7 +64,7 @@
             LblTimePassed.AutoSize = true;
             LblTimePassed.BorderStyle = BorderStyle.FixedSingle;
             LblTimePassed.Font = new Font("Segoe UI", 26F);
-            LblTimePassed.Location = new Point(1001, 0);
+            LblTimePassed.Location = new Point(871, 0);
             LblTimePassed.Name = "LblTimePassed";
             LblTimePassed.Size = new Size(63, 62);
             LblTimePassed.TabIndex = 1;
@@ -85,7 +87,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1067, 701);
+            ClientSize = new Size(961, 646);
             Controls.Add(panel1);
             Controls.Add(minesweeperBoard1);
             Margin = new Padding(3, 4, 3, 4);
