@@ -1,9 +1,11 @@
 ﻿using System.Drawing.Imaging;
+using UI.General;
 using UI.Properties;
+using Utilities.Extensions;
 
 namespace UI.Connect4.v2
 {
-	public partial class Connect4Board : UserControl
+	public partial class Connect4Board : GameBoardBase
 	{
 		private Dictionary<(int, int), (int, ImageAttributes, Color?)> Attributes { get; set; } = new();
 		private ImageAttributes DefaultAttributes { get; set; }
@@ -12,46 +14,21 @@ namespace UI.Connect4.v2
 		public int ColumnCount { get; private set; }
 		public event EventHandler<int>? ColumnClick;
 		private readonly Image TokenImage = new Bitmap(Resources.Connect4_Token);
-		private static ImageAttributes BuildAttributes(Color color)
-		{
-			ColorMatrix matrix = new(
-			[
-				[color.R / 255f, 0, 0, 0, 0],
-				[0, color.G / 255f, 0, 0, 0],
-				[0, 0, color.B / 255f, 0, 0],
-				[0, 0, 0, color.A / 255f, 0],
-				[0, 0, 0, 0, 1]
-			]);
-			ImageAttributes toReturn = new();
-			toReturn.SetColorMatrix(matrix);
-			return toReturn;
-		}
 		public Connect4Board() : this(6, 7) { }
 		public Connect4Board(int rowCount, int columnCount)
 		{
 			InitializeComponent();
 			SetTokenSize(TokenSize);
-			DefaultAttributes = BuildAttributes(Color.White);
-			pictureBox1.Paint += Board_Paint;
-			pictureBox1.MouseUp += Picture_Click;
-			pictureBox1.BackColor = Color.Yellow;
+			DefaultAttributes = Color.White.BuildAttributes();
+			myPictureBox.Paint += Board_Paint;
+			myPictureBox.MouseUp += Picture_Click;
+			myPictureBox.BackColor = Color.Yellow;
 			Reset(rowCount, columnCount);
 		}
 		public void SetTokenSize(int size)
 		{
 			TokenSize = size;
-			if (this.InvokeRequired)
-			{
-				this.Invoke(() => { this.Size = new(ColumnCount * TokenSize, RowCount * TokenSize); });
-			}
-			else
-			{
-				this.Size = new(ColumnCount * TokenSize, RowCount * TokenSize);
-			}
-			if (pictureBox1.IsHandleCreated)
-			{
-				pictureBox1.Invoke(pictureBox1.Refresh);
-			}
+			ReSizeBoard(ColumnCount * TokenSize, RowCount * TokenSize);
 		}
 		public void Reset(int rows, int columns)
 		{
@@ -71,11 +48,11 @@ namespace UI.Connect4.v2
 					int tokenState = newState[row, column];
 					if (tokenState != 0 && (!Attributes.TryGetValue((row, column), out var attr) || tokenState != attr.Item1))
 					{
-						Attributes[(row, column)] = (tokenState, BuildAttributes(colorMap[tokenState - 1]), null);
+						Attributes[(row, column)] = (tokenState,colorMap[tokenState - 1].BuildAttributes(), null);
 					}
 				}
 			}
-			pictureBox1.Invoke(pictureBox1.Refresh);
+			UpdateUI();
 		}
 		public void HighlightPieces(List<(int, int)> positions, Color color)
 		{
@@ -86,7 +63,7 @@ namespace UI.Connect4.v2
 					Attributes[pos] = (temp.Item1, temp.Item2, color);
 				}
 			}
-			pictureBox1.Invoke(pictureBox1.Refresh);
+			UpdateUI();
 		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{

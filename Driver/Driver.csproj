@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Connect4Backend\Connect4Backend.csproj" />
+    <ProjectReference Include="..\MinesweeperBackend\MinesweeperBackend.csproj" />
   </ItemGroup>
 
 </Project>

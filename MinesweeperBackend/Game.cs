@@ -1,13 +1,20 @@
-﻿namespace MinesweeperBackend
+﻿using System.Data.Common;
+using Utilities.Extensions;
+
+namespace MinesweeperBackend
 {
 	public class Game
 	{
 		/// <summary>
 		/// Provides the array indicating which tiles have bombs
 		/// </summary>
-		public event EventHandler<bool[,]>? OnEnd;
+		public event EventHandler<(bool[,] bombs, bool isWin)>? OnEnd;
+		/// <summary>
+		/// Triggers when the game is lost and provides the location of the bomb clicked
+		/// </summary>
+		public event EventHandler<(int, int)>? OnLose;
 
-		public IMinesweeperPlayer Player;
+		public MinesweeperPlayerBase Player;
 
 		private readonly bool[,] Bombs;
 		private readonly bool[,] Uncovered;
@@ -18,8 +25,9 @@
 		private readonly int TotalTileCount;
 
 		// Use to store valid locations for new bombs
-		private (int, int) Replacement;
-		public Game(int rows, int columns, int bombCount, IMinesweeperPlayer player)
+		private List<(int, int)> Replacement = new();
+		public const int ReplacementBombCount = 9;
+		public Game(int rows, int columns, int bombCount, MinesweeperPlayerBase player)
 		{
 			TotalTileCount = rows * columns;
 			TotalBombCount = bombCount;
@@ -28,7 +36,8 @@
 			Uncovered = new bool[rows, columns];
 			BombCounts = new byte[rows, columns];
 
-			ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(bombCount, TotalTileCount, nameof(bombCount));
+			ArgumentOutOfRangeException.ThrowIfGreaterThan(bombCount + ReplacementBombCount, TotalTileCount, nameof(bombCount));
+
 			PopulateBombs(rows, columns, bombCount);
 		}
 		/// <summary>
@@ -39,19 +48,38 @@
 		{
 			Player.CancellationToken = ct;
 			bool isFirstMove = true;
-			while (true && !ct.IsCancellationRequested)
+			while (!ct.IsCancellationRequested)
 			{
 				var move = Player.MakeMove(BombCounts.GetLength(0), BombCounts.GetLength(1));
-				if (isFirstMove && Bombs[move.Item1, move.Item2])
+				if (isFirstMove)
 				{
+					// Filter the replacement list
+					for(int i = move.Item1 - 1; i <= move.Item1 + 1; i++)
+					{
+						for (int j = move.Item2 - 1; j <= move.Item2 + 1; j++)
+						{
+							Replacement.RemoveAll(x => x.Item1 == i && x.Item2 == j);
+						}
+					}
 					// Move the bomb
-					RemoveBomb(move.Item1, move.Item2);
-					AddBomb(Replacement.Item1, Replacement.Item2);
+					for (int i = move.Item1 - 1; i <= move.Item1 + 1; i++)
+					{
+						for (int j = move.Item2 - 1; j <= move.Item2 + 1; j++)
+						{
+							if (i >= 0 && j >= 0 && i < Bombs.GetLength(0) && j < Bombs.GetLength(1) && Bombs[i, j])
+							{
+								RemoveBomb(i, j);
+								AddBomb(Replacement.First().Item1, Replacement.First().Item2);
+								Replacement.RemoveAt(0);
+							}
+						}
+					}
 				}
 				isFirstMove = false;
 				if (Bombs[move.Item1, move.Item2])
 				{
-					OnEnd?.Invoke(this, Bombs);
+					OnLose?.Invoke(this, move);
+					OnEnd?.Invoke(this, (Bombs, false));
 					return false; // lost
 				}
 				else
@@ -59,7 +87,7 @@
 					DoMove(move.Item1, move.Item2);
 					if (IsWin())
 					{
-						OnEnd?.Invoke(this, Bombs);
+						OnEnd?.Invoke(this, (Bombs, true));
 						return true; // win
 					}
 				}
@@ -83,21 +111,21 @@
 				}
 			}
 		}
-		private void PopulateBombs(int rows, int columns, int bombCount)
+		[Obsolete("Not truly random, earlier bombs have a higher chance.")]
+		private HashSet<(int row, int column)> GenerateLocations_Mod(int rows, int columns, int count, Random random)
 		{
-			HashSet<(int, int)> locations = new();
-			Random random = new();
+			HashSet<(int, int)> toReturn = new();
 			int row, column, randRow, randColumn;
 
-			for (int i = 0; i <= bombCount; i++)
+			for (int i = 0; i < count; i++)
 			{
 				row = i / columns;
 				column = i % columns;
 
-				locations.Add((row, column));
+				toReturn.Add((row, column));
 			}
 
-			for (int i = 0; i <= bombCount; i++)
+			for (int i = 0; i < count; i++)
 			{
 				row = i / columns;
 				column = i % columns;
@@ -105,23 +133,46 @@
 				randRow = random.Next(rows);
 				randColumn = random.Next(columns);
 
-				if (!locations.Contains((randRow, randColumn)))
+				if (!toReturn.Contains((randRow, randColumn)))
 				{
-					locations.Remove((row, column));
-					locations.Add((randRow, randColumn));
+					toReturn.Remove((row, column));
+					toReturn.Add((randRow, randColumn));
 				}
 				else
 				{
 					continue;
 				}
 			}
-
-			int k = 0;
-			foreach (var location in locations)
+			return toReturn;
+		}
+		private HashSet<(int row, int column)> GenerateLocations(int rows, int columns, int count, Random random)
+		{
+			var locationsFlat = random.PermuteIntegers(0, rows * columns - 1);
+			var locations = new HashSet<(int, int)>();
+			foreach (var location in locationsFlat)
 			{
-				if (k++ < bombCount) AddBomb(location.Item1, location.Item2);
-				else Replacement = location;
+				locations.Add((location / columns, location % columns));
+				if (locations.Count == count)
+				{
+					break;
+				}
 			}
+			return locations;
+		}
+		private void PopulateBombs(int rows, int columns, int bombCount)
+		{
+			Random random = new();
+			var locations = GenerateLocations(rows, columns, bombCount + ReplacementBombCount, random);
+			int k = 0;
+			Replacement = new();
+			while (k++ < bombCount)
+			{
+				// randomly select a location
+				var location = locations.ElementAt(random.Next(locations.Count));
+				locations.Remove(location);
+				AddBomb(location.Item1, location.Item2);
+			}
+			Replacement.AddRange(locations);
 		}
 		private void RemoveBomb(int row, int column)
 		{
@@ -140,31 +191,36 @@
 				}
 			}
 		}
-		private void DoMove(int row, int column)
+		private void DoMove(int initialRow, int initialColumn)
 		{
-			if (row < 0 || column < 0 || row >= Uncovered.GetLength(0) || column >= Uncovered.GetLength(1))
+			Queue<(int row, int column)> moveQueue = new(new[] { (initialRow, initialColumn) });
+			while (moveQueue.Count > 0)
 			{
-				return; //invalid move
-			}
-			// Check for repeated move (e.i., already uncovered)
-			if (Uncovered[row, column])
-			{
-				return;
-			}
-			Uncovered[row, column] = true;
-			TotalClearedCount++;
-			// Update state
-			Player.UpdateState(row, column, BombCounts[row, column]);
-			if (BombCounts[row, column] == 0 && !Bombs[row, column])
-			{
-				// Auto expand
-				for (int i = row - 1; i <= row + 1; i++)
+				var move = moveQueue.Dequeue();
+				if (move.row < 0 || move.column < 0 || move.row >= Uncovered.GetLength(0) || move.column >= Uncovered.GetLength(1))
 				{
-					for (int j = column - 1; j <= column + 1; j++)
+					continue; //invalid move
+				}
+				// Check for repeated move (e.i., already uncovered)
+				if (Uncovered[move.row, move.column])
+				{
+					continue;
+				}
+				Uncovered[move.row, move.column] = true;
+				TotalClearedCount++;
+				// Update state
+				Player.UpdateState(move.row, move.column, BombCounts[move.row, move.column]);
+				if (BombCounts[move.row, move.column] == 0 && !Bombs[move.row, move.column])
+				{
+					// Auto expand
+					for (int i = move.row - 1; i <= move.row + 1; i++)
 					{
-						if (i != row || j != column)
+						for (int j = move.column - 1; j <= move.column + 1; j++)
 						{
-							DoMove(i, j);
+							if (i != move.row || j != move.column)
+							{
+								moveQueue.Enqueue((i, j));
+							}
 						}
 					}
 				}
@@ -173,6 +229,15 @@
 		private bool IsWin()
 		{
 			return TotalClearedCount == TotalTileCount - TotalBombCount;
+		}
+		/// <summary>
+		/// Reveals the bombs array and breaks the game
+		/// </summary>
+		/// <returns></returns>
+		public bool[,] GetBombs()
+		{
+			TotalClearedCount = -1; // Should now be impossible to win
+			return Bombs;
 		}
 		[Obsolete]
 		private byte CountSurroundingBombs(int row, int column)

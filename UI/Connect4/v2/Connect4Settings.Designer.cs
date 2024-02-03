@@ -28,11 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            GrpBoardSize = new GroupBox();
-            label2 = new Label();
-            label1 = new Label();
-            NumColumns = new NumericUpDown();
-            NumRows = new NumericUpDown();
             GrpPlayers = new GroupBox();
             BtnCancel = new Button();
             BtnOk = new Button();
@@ -40,66 +35,10 @@
             PanPlayers = new FlowLayoutPanel();
             label3 = new Label();
             NumWinLength = new NumericUpDown();
-            GrpBoardSize.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)NumColumns).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)NumRows).BeginInit();
+            boardSizeSettings = new General.BoardSizeSettings();
             GrpPlayers.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)NumWinLength).BeginInit();
             SuspendLayout();
-            // 
-            // GrpBoardSize
-            // 
-            GrpBoardSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            GrpBoardSize.Controls.Add(label2);
-            GrpBoardSize.Controls.Add(label1);
-            GrpBoardSize.Controls.Add(NumColumns);
-            GrpBoardSize.Controls.Add(NumRows);
-            GrpBoardSize.Location = new Point(12, 12);
-            GrpBoardSize.Name = "GrpBoardSize";
-            GrpBoardSize.Size = new Size(371, 92);
-            GrpBoardSize.TabIndex = 0;
-            GrpBoardSize.TabStop = false;
-            GrpBoardSize.Text = "Board Size";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(6, 61);
-            label2.Name = "label2";
-            label2.Size = new Size(69, 20);
-            label2.TabIndex = 3;
-            label2.Text = "Columns:";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(6, 28);
-            label1.Name = "label1";
-            label1.Size = new Size(47, 20);
-            label1.TabIndex = 2;
-            label1.Text = "Rows:";
-            // 
-            // NumColumns
-            // 
-            NumColumns.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            NumColumns.Location = new Point(81, 59);
-            NumColumns.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
-            NumColumns.Minimum = new decimal(new int[] { 4, 0, 0, 0 });
-            NumColumns.Name = "NumColumns";
-            NumColumns.Size = new Size(284, 27);
-            NumColumns.TabIndex = 1;
-            NumColumns.Value = new decimal(new int[] { 7, 0, 0, 0 });
-            // 
-            // NumRows
-            // 
-            NumRows.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            NumRows.Location = new Point(81, 26);
-            NumRows.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
-            NumRows.Minimum = new decimal(new int[] { 4, 0, 0, 0 });
-            NumRows.Name = "NumRows";
-            NumRows.Size = new Size(284, 27);
-            NumRows.TabIndex = 0;
-            NumRows.Value = new decimal(new int[] { 6, 0, 0, 0 });
             // 
             // GrpPlayers
             // 
@@ -153,9 +92,9 @@
             PanPlayers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             PanPlayers.AutoScroll = true;
             PanPlayers.FlowDirection = FlowDirection.TopDown;
-            PanPlayers.Location = new Point(3, 23);
+            PanPlayers.Location = new Point(6, 23);
             PanPlayers.Name = "PanPlayers";
-            PanPlayers.Size = new Size(365, 222);
+            PanPlayers.Size = new Size(359, 222);
             PanPlayers.TabIndex = 0;
             PanPlayers.WrapContents = false;
             // 
@@ -179,25 +118,33 @@
             NumWinLength.TabIndex = 3;
             NumWinLength.Value = new decimal(new int[] { 4, 0, 0, 0 });
             // 
+            // boardSizeSettings
+            // 
+            boardSizeSettings.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            boardSizeSettings.Columns = 7;
+            boardSizeSettings.Location = new Point(12, 12);
+            boardSizeSettings.MinimumSize = new Size(0, 92);
+            boardSizeSettings.Name = "boardSizeSettings";
+            boardSizeSettings.Rows = 6;
+            boardSizeSettings.Size = new Size(371, 92);
+            boardSizeSettings.TabIndex = 4;
+            // 
             // Connect4Settings
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(395, 441);
             ControlBox = false;
+            Controls.Add(boardSizeSettings);
             Controls.Add(NumWinLength);
             Controls.Add(label3);
             Controls.Add(GrpPlayers);
-            Controls.Add(GrpBoardSize);
-            FormBorderStyle = FormBorderStyle.SizableToolWindow;
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Connect4Settings";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Connect4 Settings";
-            GrpBoardSize.ResumeLayout(false);
-            GrpBoardSize.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)NumColumns).EndInit();
-            ((System.ComponentModel.ISupportInitialize)NumRows).EndInit();
             GrpPlayers.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)NumWinLength).EndInit();
             ResumeLayout(false);
@@ -205,12 +152,6 @@
         }
 
         #endregion
-
-        private GroupBox GrpBoardSize;
-        private Label label2;
-        private Label label1;
-        private NumericUpDown NumColumns;
-        private NumericUpDown NumRows;
         private GroupBox GrpPlayers;
         private FlowLayoutPanel PanPlayers;
         private Button BtnAddPlayer;
@@ -218,5 +159,6 @@
         private NumericUpDown NumWinLength;
         private Button BtnOk;
         private Button BtnCancel;
+        private General.BoardSizeSettings boardSizeSettings;
     }
 }

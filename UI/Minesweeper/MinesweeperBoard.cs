@@ -1,55 +1,100 @@
-﻿using UI.Properties;
+﻿using Microsoft.VisualBasic.Devices;
+using UI.General;
+using UI.Properties;
+using Utilities.Extensions;
 
 namespace UI.Minesweeper
 {
-	public partial class MinesweeperBoard : UserControl
+	public partial class MinesweeperBoard : GameBoardBase
 	{
-		public EventHandler<(int, int)>? MoveClick;
-		private byte?[,] CurrentState;
-		private int MineSize = 20;
+		public event EventHandler<(int row, int column, bool ignoreClick)>? MoveClick;
+		public event EventHandler<IEnumerable<(int row, int column)>>? MassMoveClick;
+		private byte?[,] CurrentState = new byte?[0,0];
+		private bool[,] Flags = new bool[0,0];
+		public int FlagCount => Flags.Cast<bool>().Count(x => x);
+		private HashSet<(int, int)> HighlightedTiles = new();
+		private Color HighlightColor = Color.Red;
+		private int _TileSize = 35;
+		public int TileSize
+		{
+			get => _TileSize;
+			set
+			{
+				_TileSize = value;
+				ReSizeBoard(CurrentState.GetLength(1) * _TileSize, CurrentState.GetLength(0) * _TileSize);
+			}
+		}
 		private readonly Dictionary<byte, Brush> NumberColorMap = new()
 		{
-			{ 1, Brushes.Lime },
-			{ 2, Brushes.GreenYellow },
+			{ 1, Brushes.Green },
+			{ 2, Brushes.LimeGreen },
 			{ 3, Brushes.YellowGreen },
-			{ 4, Brushes.Yellow },
+			{ 4, Brushes.Olive },
 			{ 5, Brushes.Goldenrod },
-			{ 6, Brushes.Orange },
+			{ 6, Brushes.DarkOrange },
 			{ 7, Brushes.OrangeRed },
 			{ 8, Brushes.Red },
 		};
-		public (Brush, Brush) TileCheckeredColorsCovered = (Brushes.GreenYellow, Brushes.YellowGreen);
-		public (Brush, Brush) TileCheckeredColorsUncovered = (Brushes.AntiqueWhite, Brushes.NavajoWhite);
+		public Color FlagColor = Color.Red;
+		public Color BombColor = Color.Black;
+		public (Color light, Color dark) TileColorsCovered = (Color.GreenYellow, Color.YellowGreen);
+		public (Color light, Color dark) TileColorsUncovered = (Color.AntiqueWhite, Color.NavajoWhite);
 		public bool CheckeredStyle = true;
-		public MinesweeperBoard() : this(30, 30) { }
+		private bool HasWon = false;
+		public MinesweeperBoard() : this(16, 30) { }
 		public MinesweeperBoard(int rows, int columns)
 		{
 			InitializeComponent();
-			CurrentState = new byte?[rows, columns];
-			pictureBox1.Paint += HandlePaint;
+			myPictureBox.Paint += HandlePaint;
+			myPictureBox.MouseUp += Picture_Click;
+			myPictureBox.MouseDown += Picture_MouseDown;
+			Reset(rows, columns);
 		}
-		public void UpdateState(((int, int), byte) stateUpdate)
+
+		private void Picture_MouseDown(object? sender, MouseEventArgs e)
 		{
-			CurrentState[stateUpdate.Item1.Item1, stateUpdate.Item1.Item2] = stateUpdate.Item2;
+			if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.Right)
+			{
+				int row = e.Y / _TileSize;
+				int column = e.X / _TileSize;
+				if (CurrentState[row, column] is null) return; // Only usable on uncovered tiles
+				CurrentState.DoAtEach(row - 1, column - 1, row + 1, column + 1, (r, c) =>
+				{
+					if (CurrentState[r, c] is null && !Flags[r, c])
+					{
+						OverlayTile(r, c, Color.FromArgb(64, Color.Black));
+					}
+				});
+			}
+		}
+
+		public void UpdateState(((int row, int column) location, byte state) stateUpdate)
+		{
+			CurrentState[stateUpdate.location.row, stateUpdate.location.column] = stateUpdate.state;
+			if (Flags[stateUpdate.location.row, stateUpdate.location.column])
+			{
+				Flags[stateUpdate.location.row, stateUpdate.location.column] = false;
+			}
 		}
 		public void Reset(int rows, int columns)
 		{
 			CurrentState = new byte?[rows, columns];
-			UpdateUI();
+			//CurrentState[0, 0] = 1;
+			//CurrentState[1, 0] = 2;
+			//CurrentState[2, 0] = 3;
+			//CurrentState[3, 0] = 4;
+			//CurrentState[4, 0] = 5;
+			//CurrentState[5, 0] = 6;
+			//CurrentState[6, 0] = 7;
+			//CurrentState[7, 0] = 8;
+			Flags = new bool[rows, columns];
+			HighlightedTiles = new();
+			HasWon = false;
+			ReSizeBoard(columns * _TileSize, rows * _TileSize);
 		}
-		public void UpdateUI()
+		public void HandleEnd(bool[,] bombs, bool isWin)
 		{
-			if (pictureBox1.InvokeRequired)
-			{
-				pictureBox1.Invoke(pictureBox1.Refresh);
-			}
-			else
-			{
-				pictureBox1.Refresh();
-			}
-		}
-		public void HandleEnd(bool[,] bombs)
-		{
+			HasWon = isWin;
 			for (int row = 0; row < bombs.GetLength(0); row++)
 			{
 				for (int col = 0; col < bombs.GetLength(1); col++)
@@ -62,39 +107,127 @@ namespace UI.Minesweeper
 			}
 			UpdateUI();
 		}
+		public void SetFlag(int row, int column, bool isFlagged)
+		{
+			if (row >= 0 && column >= 0 && row < Flags.GetLength(0) && column < Flags.GetLength(1) && CurrentState[row, column] is null)
+				Flags[row, column] = isFlagged;
+		}
+		public void ClearArea(int row, int column)
+		{
+			if (CurrentState[row, column] is null) return; // Only usable on uncovered tiles
+			// These counts consider the current tile (but it *should* not fulfill the conditions for either)
+			var coveredCount = CurrentState.GetArea(row - 1, column - 1, row + 1, column + 1).Count(x => x is null);
+			var flagCount = Flags.GetArea(row - 1, column - 1, row + 1, column + 1).Count(x => x);
+			// Check if clearing the (unflagged) surrounding tiles is safe
+			if (flagCount >= CurrentState[row, column] && coveredCount - flagCount > 0)
+			{
+				HashSet<(int row, int column)> moves = new();
+				CurrentState.DoAtEach(row - 1, column - 1, row + 1, column + 1, (r, c) =>
+				{
+					if (CurrentState[r, c] is null && !Flags[r, c])
+					{
+						moves.Add((r, c));
+					}
+				});
+				MassMoveClick?.Invoke(this, moves);
+			}
+		}
 		private void Picture_Click(object? sender, MouseEventArgs e)
 		{
-			int row = e.Y / MineSize;
-			int column = e.X / MineSize;
+			int row = e.Y / _TileSize;
+			int column = e.X / _TileSize;
 			if (row >= 0 && column >= 0 && row < CurrentState.GetLength(0) && column < CurrentState.GetLength(1))
 			{
-				MoveClick?.Invoke(this, (row, column));
+				if (CurrentState[row, column] is null) // currently covered tile
+				{
+					if (e.Button == MouseButtons.Right)
+					{
+						Flags[row, column] = !Flags[row, column];
+						MoveClick?.Invoke(this, (row, column, true));
+					}
+					else if (e.Button == MouseButtons.Left)
+					{
+						MoveClick?.Invoke(this, (row, column, Flags[row, column]));
+					}
+					else
+					{
+						MoveClick?.Invoke(this, (row, column, true));
+					}
+				}
+				else if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.Right)
+				{
+					ClearArea(row, column);
+					MoveClick?.Invoke(this, (row, column, true));
+				}
+				else
+				{
+					MoveClick?.Invoke(this, (row, column, true));
+				}
 			}
+			// Always do this to clear overlays (if any)
+			UpdateUI();
+		}
+		private void OverlayTile(int row, int column, Color color)
+		{
+			var g = myPictureBox.CreateGraphics();
+			Rectangle rect = new(column * _TileSize, row * _TileSize, _TileSize, _TileSize);
+			g.FillRectangle(new SolidBrush(color), rect);
+		}
+		public void HighlightTiles(IEnumerable<(int, int)> tiles, Color? color = null)
+		{
+			HighlightedTiles = new(tiles);
+			if (color != null)
+			{
+				HighlightColor = color.Value;
+			}
+			UpdateUI();
 		}
 		private void HandlePaint(object? sender, PaintEventArgs e)
 		{
+			Random random = new(); // Used for random colors on win
 			var graphics = e.Graphics;
 			var covered = Resources.Minesweeper_Covered;
 			var uncovered = Resources.Minesweeper_Uncovered;
 			var bomb = Resources.Minesweeper_Bomb;
-			Font font = new("Arial", MineSize * 0.55f, FontStyle.Bold, GraphicsUnit.Point);
+			Font font = new("Arial", _TileSize * 0.55f, FontStyle.Bold, GraphicsUnit.Point);
 			StringFormat format = new()
 			{
 				Alignment = StringAlignment.Center,
 				LineAlignment = StringAlignment.Center,
 			};
+			var brushesCovered = (new SolidBrush(TileColorsCovered.light), new SolidBrush(TileColorsCovered.dark));
+			var brushesUncovered = (new SolidBrush(TileColorsUncovered.light), new SolidBrush(TileColorsUncovered.dark));
+			var Highlighter = new SolidBrush(HighlightColor);
+			var FlagAttributes = FlagColor.BuildAttributes();
+			var BombAttributes = BombColor.BuildAttributes();
 			for (int row = 0; row < CurrentState.GetLength(0); row++)
 			{
 				for (int column = 0; column < CurrentState.GetLength(1); column++)
 				{
-					Rectangle rect = new(column * MineSize, row * MineSize, MineSize, MineSize);
+					Rectangle rect = new(column * _TileSize, row * _TileSize, _TileSize, _TileSize);
 					var state = CurrentState[row, column];
 					bool checkerdOn = ((column + row) % 2) == 0;
-					if (state != null)
+
+					if (state == null || (state == 255 && HasWon))
 					{
 						if (CheckeredStyle)
 						{
-							graphics.FillRectangle(checkerdOn ? TileCheckeredColorsUncovered.Item1 : TileCheckeredColorsUncovered.Item2, rect);
+							graphics.FillRectangle(checkerdOn ? brushesCovered.Item1 : brushesCovered.Item2, rect);
+						}
+						else
+						{
+							graphics.DrawImage(covered, rect);
+						}
+					}
+					else
+					{
+						if (HighlightedTiles.Contains((row, column)))
+						{
+							graphics.FillRectangle(Highlighter, rect);
+						}
+						else if (CheckeredStyle)
+						{
+							graphics.FillRectangle(checkerdOn ? brushesUncovered.Item1 : brushesUncovered.Item2, rect);
 						}
 						else
 						{
@@ -102,7 +235,12 @@ namespace UI.Minesweeper
 						}
 						if (state == 255)
 						{
-							graphics.DrawImage(bomb, rect);
+							graphics.DrawImage(
+								bomb,
+								rect,
+								0, 0, bomb.Width, bomb.Height,
+								GraphicsUnit.Pixel,
+								BombAttributes);
 						}
 						else if (state != 0)
 						{
@@ -115,16 +253,16 @@ namespace UI.Minesweeper
 							);
 						}
 					}
-					else
+					// Draw flag
+					if (Flags[row, column])
 					{
-						if (CheckeredStyle)
-						{
-							graphics.FillRectangle(checkerdOn ? TileCheckeredColorsCovered.Item1 : TileCheckeredColorsCovered.Item2, rect);
-						}
-						else
-						{
-							graphics.DrawImage(covered, rect);
-						}
+						graphics.DrawImage(
+							Resources.Minesweeper_Flag,
+							rect,
+							0, 0, Resources.Minesweeper_Flag.Width, Resources.Minesweeper_Flag.Height,
+							GraphicsUnit.Pixel,
+							HasWon ? random.RandomColor().BuildAttributes() : FlagAttributes
+						);
 					}
 				}
 			}

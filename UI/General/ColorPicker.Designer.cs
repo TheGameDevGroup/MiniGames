@@ -1,6 +1,6 @@
-﻿namespace UI.Minesweeper
+﻿namespace UI.General
 {
-    partial class MinesweeperBoard
+    partial class ColorPicker
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,20 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ((System.ComponentModel.ISupportInitialize)myPictureBox).BeginInit();
+            BtnColor = new Button();
+            DiaColor = new ColorDialog();
             SuspendLayout();
             // 
-            // MinesweeperBoard
+            // BtnColor
+            // 
+            BtnColor.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            BtnColor.Location = new Point(0, 0);
+            BtnColor.Name = "BtnColor";
+            BtnColor.Size = new Size(29, 29);
+            BtnColor.TabIndex = 4;
+            BtnColor.UseVisualStyleBackColor = true;
+            BtnColor.Click += BtnColor_Click;
+            // 
+            // DiaColor
+            // 
+            DiaColor.Color = Color.Blue;
+            // 
+            // ColorPicker
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            Margin = new Padding(3, 4, 3, 4);
-            Name = "MinesweeperBoard";
-            Size = new Size(351, 277);
-            ((System.ComponentModel.ISupportInitialize)myPictureBox).EndInit();
+            Controls.Add(BtnColor);
+            Name = "ColorPicker";
+            Size = new Size(29, 29);
             ResumeLayout(false);
         }
 
         #endregion
+
+        private Button BtnColor;
+        private ColorDialog DiaColor;
     }
 }

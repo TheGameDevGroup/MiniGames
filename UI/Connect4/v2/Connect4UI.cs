@@ -1,9 +1,10 @@
 ﻿using Connect4Backend;
 using System.Diagnostics;
+using UI.General;
 
 namespace UI.Connect4.v2
 {
-	public partial class Connect4UI : Form
+	public partial class Connect4UI : GameUIBase
 	{
 		public int Rows = 6;
 		public int Columns = 7;
@@ -14,7 +15,7 @@ namespace UI.Connect4.v2
 
 		CancellationTokenSource CTS = new();
 
-		List<IConnect4Player> Players = new();
+		List<Connect4PlayerBase> Players = new();
 		int Stalemates = 0;
 		public Connect4UI()
 		{
@@ -27,7 +28,7 @@ namespace UI.Connect4.v2
 		{
 			Players.Clear();
 		}
-		public void AddPlayer(IConnect4Player player)
+		public void AddPlayer(Connect4PlayerBase player)
 		{
 			Players.Add(player);
 			board1.ColumnClick += (object? sender, int column) => { player.HandleClick(column); };
@@ -95,7 +96,7 @@ namespace UI.Connect4.v2
 			});
 		}
 
-		private void MenuSettings_Click(object sender, EventArgs e)
+		protected override void MenuSettings_Click(object sender, EventArgs e)
 		{
 			Connect4Settings settings = new(Players, Rows, Columns, WinningLength);
 			if (settings.ShowDialog() == DialogResult.OK)

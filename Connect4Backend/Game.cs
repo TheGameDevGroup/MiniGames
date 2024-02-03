@@ -5,7 +5,7 @@
 		public event EventHandler<int[,]>? OnMove;
 
 		public event EventHandler<List<(int,int)>>? OnWin;
-		public List<IConnect4Player> Players { get; private init; }
+		public List<Connect4PlayerBase> Players { get; private init; }
 		/// <summary>
 		/// [row, column]
 		/// <br/>
@@ -14,7 +14,7 @@
 		public int[,] BoardState { get; init; }
 		public int WinningLength { get; init; } = 4;
 
-		public Game(int rowCount, int columnCount, List<IConnect4Player> playerHandlers)
+		public Game(int rowCount, int columnCount, List<Connect4PlayerBase> playerHandlers)
 		{
 			BoardState = new int[rowCount, columnCount];
 			Players = new(playerHandlers);

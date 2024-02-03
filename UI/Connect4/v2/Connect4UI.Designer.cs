@@ -29,48 +29,26 @@
         private void InitializeComponent()
         {
             board1 = new Connect4Board();
-            menuStrip1 = new MenuStrip();
-            MenuSettings = new ToolStripMenuItem();
-            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // board1
             // 
-            board1.Location = new Point(12, 27);
+            board1.AutoScroll = true;
+            board1.Dock = DockStyle.Fill;
+            board1.Location = new Point(0, 28);
             board1.Name = "board1";
-            board1.Size = new Size(800, 803);
+            board1.Size = new Size(843, 671);
             board1.TabIndex = 0;
-            // 
-            // menuStrip1
-            // 
-            menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { MenuSettings });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(898, 28);
-            menuStrip1.TabIndex = 1;
-            menuStrip1.Text = "menuStrip1";
-            // 
-            // MenuSettings
-            // 
-            MenuSettings.Name = "MenuSettings";
-            MenuSettings.Size = new Size(76, 24);
-            MenuSettings.Text = "Settings";
-            MenuSettings.Click += MenuSettings_Click;
             // 
             // Connect4UI
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoScroll = true;
-            ClientSize = new Size(898, 852);
+            ClientSize = new Size(843, 699);
             Controls.Add(board1);
-            Controls.Add(menuStrip1);
-            MainMenuStrip = menuStrip1;
             Name = "Connect4UI";
             Text = "Connect4UI";
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
+            Controls.SetChildIndex(board1, 0);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -78,7 +56,5 @@
         #endregion
 
         private Connect4Board board1;
-        private MenuStrip menuStrip1;
-        private ToolStripMenuItem MenuSettings;
     }
 }

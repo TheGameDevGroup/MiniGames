@@ -13,7 +13,7 @@ namespace UI
 			ApplicationConfiguration.Initialize();
 			//Application.Run(new Connect4.v2.Connect4UI());
 			Application.Run(new Minesweeper.MinesweeperUI());
-			//Application.Run(new Connect4.v2.Connect4Settings());
+			//Application.Run(new Minesweeper.MinesweeperSettings());
 		}
 	}
 }
